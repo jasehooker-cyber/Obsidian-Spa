@@ -34,9 +34,14 @@ function lazyEnv() {
     },
 
     google: {
-      clientEmail: required("GOOGLE_CLIENT_EMAIL"),
-      privateKey: required("GOOGLE_PRIVATE_KEY"),
-      calendarId: required("GOOGLE_CALENDAR_ID"),
+      clientEmail: process.env.GOOGLE_CLIENT_EMAIL ?? "",
+      privateKey: process.env.GOOGLE_PRIVATE_KEY ?? "",
+      calendarId: process.env.GOOGLE_CALENDAR_ID ?? "",
+      configured: !!(
+        process.env.GOOGLE_CLIENT_EMAIL &&
+        process.env.GOOGLE_PRIVATE_KEY &&
+        process.env.GOOGLE_CALENDAR_ID
+      ),
     },
 
     auth: {

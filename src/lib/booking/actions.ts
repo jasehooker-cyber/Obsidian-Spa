@@ -2,6 +2,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { stripe } from "@/lib/stripe/server";
 import { createBooking as calCreateBooking } from "@/lib/cal/server";
 import { createCalendarEvent } from "@/lib/google/server";
+import { getEnv } from "@/lib/config/env";
 import { BUSINESS } from "@/lib/config/business-rules";
 import { generateIntakeToken, buildIntakeUrl } from "@/lib/booking/intake";
 import type { BookingDraftInput, CreateSetupSessionInput } from "@/lib/schemas/booking";
@@ -200,16 +201,18 @@ export async function confirmBooking(setupIntentId: string) {
   }
 
   let googleEventId: string | null = null;
-  try {
-    const event = await createCalendarEvent({
-      summary: `${service.name} — ${client.name} w/ ${therapist.name}`,
-      start: booking.starts_at,
-      end: booking.ends_at,
-      description: `Service: ${service.name}\nClient: ${client.name} (${client.email})`,
-    });
-    googleEventId = event.id;
-  } catch (err) {
-    console.error("Google Calendar event creation failed:", err);
+  if (getEnv().google.configured) {
+    try {
+      const event = await createCalendarEvent({
+        summary: `${service.name} — ${client.name} w/ ${therapist.name}`,
+        start: booking.starts_at,
+        end: booking.ends_at,
+        description: `Service: ${service.name}\nClient: ${client.name} (${client.email})`,
+      });
+      googleEventId = event.id;
+    } catch (err) {
+      console.error("Google Calendar event creation failed:", err);
+    }
   }
 
   await supabase

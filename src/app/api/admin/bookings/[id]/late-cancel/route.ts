@@ -3,6 +3,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { chargeOffSession } from "@/lib/payments/charge";
 import { cancelBooking } from "@/lib/cal/server";
 import { deleteCalendarEvent } from "@/lib/google/server";
+import { getEnv } from "@/lib/config/env";
 import { BUSINESS } from "@/lib/config/business-rules";
 
 export async function POST(
@@ -68,7 +69,7 @@ export async function POST(
       }
     }
 
-    if (booking.google_event_id) {
+    if (booking.google_event_id && getEnv().google.configured) {
       try {
         await deleteCalendarEvent(booking.google_event_id);
       } catch (err) {
