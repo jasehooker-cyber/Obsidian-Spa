@@ -1,21 +1,22 @@
 import { SERVICES, ADD_ONS } from "@/lib/config/business-rules";
+import { supabaseServer } from "@/lib/supabase/server";
 import BookingFlow from "@/components/booking/BookingFlow";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Book Now | Obsidian Men's Spa",
   description: "Choose your therapist and book your session online.",
 };
 
-// TODO: fetch therapists from Supabase once database is connected
-const PLACEHOLDER_THERAPISTS = [
-  { id: "00000000-0000-0000-0000-000000000001", name: "Alex" },
-  { id: "00000000-0000-0000-0000-000000000002", name: "Jordan" },
-  { id: "00000000-0000-0000-0000-000000000003", name: "Morgan" },
-  { id: "00000000-0000-0000-0000-000000000004", name: "Taylor" },
-  { id: "00000000-0000-0000-0000-000000000005", name: "Casey" },
-];
+export default async function BookingPage() {
+  const supabase = supabaseServer();
+  const { data: therapists } = await supabase
+    .from("therapists")
+    .select("id, name")
+    .eq("active", true)
+    .order("name");
 
-export default function BookingPage() {
   return (
     <>
       <section className="px-6 pb-12 pt-20 text-center">
@@ -33,7 +34,7 @@ export default function BookingPage() {
         <BookingFlow
           services={SERVICES}
           addOns={ADD_ONS}
-          therapists={PLACEHOLDER_THERAPISTS}
+          therapists={therapists ?? []}
         />
       </section>
     </>
