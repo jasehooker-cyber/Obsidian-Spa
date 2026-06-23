@@ -29,18 +29,23 @@ export default function AboutPage() {
       <section className="section-glow relative px-6 py-16">
         <div className="mx-auto max-w-3xl space-y-8 text-lg leading-relaxed text-muted">
           <p className="animate-fade-up text-xl text-foreground/90">
-            Obsidian Men&apos;s Spa was built on a simple idea: men deserve a
-            space that&apos;s private, professional, and unapologetically
-            premium.
+            Look, most spas weren&apos;t built with guys in mind. You walk in,
+            it&apos;s all lavender and wind chimes, and you spend half the time
+            wondering if you&apos;re in the right place. We started Obsidian
+            because we wanted something different.
           </p>
           <p className="animate-fade-up-delay-1">
-            No frills. No gimmicks. Just skilled therapists, a refined
-            environment, and a booking experience that respects your time.
+            This is a space where you can actually relax without the fuss. Our
+            therapists know what they&apos;re doing — deep tissue, sports
+            recovery, stress relief — and they don&apos;t need you to fill out a
+            novel before your session. Book online, show up, get a great
+            massage. That&apos;s it.
           </p>
           <p className="animate-fade-up-delay-2">
-            Every detail — from the therapists we hire to the way we handle
-            payments — is designed to be seamless. You pick your therapist, book
-            a time that works, and walk in knowing everything is handled.
+            We keep things straightforward because your time matters. No
+            upselling at the front desk, no awkward small talk unless you want
+            it, no surprise charges. Your card stays on file for cancellation
+            policy purposes, and you pay after your session. Simple.
           </p>
         </div>
       </section>
@@ -52,7 +57,7 @@ export default function AboutPage() {
             <span className="text-xs text-gold/60">&#9670;</span>
           </div>
           <h2 className="mb-14 text-center text-3xl font-bold tracking-tight md:text-4xl">
-            What Sets Us Apart
+            Why Guys Come Back
           </h2>
           <div className="grid gap-10 md:grid-cols-3">
             {VALUES.map((v) => (
@@ -88,7 +93,7 @@ export default function AboutPage() {
       <section className="noise-overlay relative overflow-hidden px-6 py-20">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(201,168,76,0.06)_0%,transparent_60%)]" />
         <div className="relative mx-auto max-w-2xl text-center">
-          <h2 className="mb-4 text-3xl font-bold tracking-tight">Visit Us</h2>
+          <h2 className="mb-4 text-3xl font-bold tracking-tight">Come By</h2>
           <p className="mb-2 text-sm tracking-wider text-muted">OPEN DAILY</p>
           <p className="text-gold-gradient mb-10 text-2xl font-bold">
             {formatTime(BUSINESS.hours.open)} –{" "}
@@ -108,21 +113,21 @@ export default function AboutPage() {
 
 const VALUES = [
   {
-    title: "Discretion",
+    title: "Your Business Is Yours",
     iconPath: "M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88",
     description:
-      "Your privacy matters. From booking to checkout, everything is handled with care.",
+      "We don't blast your info everywhere or follow up with marketing emails. You booked a massage, not a newsletter.",
   },
   {
-    title: "Quality",
+    title: "Therapists Who Get It",
     iconPath: "M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z",
     description:
-      "Skilled therapists with proven technique. No shortcuts, no compromises.",
+      "Our team actually listens. Tell them where it hurts, how firm you want it, and they'll handle the rest.",
   },
   {
-    title: "Simplicity",
+    title: "Zero Hassle",
     iconPath: "M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
     description:
-      "Choose your therapist, book online, show up. We handle everything else.",
+      "Book on your phone in two minutes. No phone calls, no back-and-forth. Just pick a time and show up.",
   },
 ];

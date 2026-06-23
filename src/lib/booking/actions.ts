@@ -2,6 +2,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { stripe } from "@/lib/stripe/server";
 import { createBooking as calCreateBooking } from "@/lib/cal/server";
 import { createCalendarEvent } from "@/lib/google/server";
+import { sendBookingConfirmation } from "@/lib/email/server";
 import { getEnv } from "@/lib/config/env";
 import { BUSINESS } from "@/lib/config/business-rules";
 import { generateIntakeToken, buildIntakeUrl } from "@/lib/booking/intake";
@@ -160,7 +161,8 @@ export async function confirmBooking(setupIntentId: string) {
       therapist_id, service_id,
       clients!inner(id, name, email),
       therapists!inner(name, cal_event_type_id),
-      services!inner(name, duration_minutes)
+      services!inner(name, duration_minutes, price_cents),
+      booking_add_ons(add_ons(name, price_cents))
     `)
     .eq("stripe_setup_intent_id", setupIntentId)
     .single();
@@ -181,7 +183,8 @@ export async function confirmBooking(setupIntentId: string) {
 
   const client = booking.clients as unknown as { id: string; name: string; email: string };
   const therapist = booking.therapists as unknown as { name: string; cal_event_type_id: number };
-  const service = booking.services as unknown as { name: string; duration_minutes: number };
+  const service = booking.services as unknown as { name: string; duration_minutes: number; price_cents: number };
+  const bookingAddOns = (booking.booking_add_ons as unknown as { add_ons: { name: string; price_cents: number } }[]) ?? [];
 
   let calBookingUid: string | null = null;
   try {
@@ -227,9 +230,25 @@ export async function confirmBooking(setupIntentId: string) {
     .eq("id", booking.id);
 
   try {
+    await sendBookingConfirmation({
+      clientName: client.name,
+      clientEmail: client.email,
+      serviceName: service.name,
+      servicePrice: service.price_cents,
+      therapistName: therapist.name,
+      startsAt: booking.starts_at,
+      addOns: bookingAddOns.map((ba) => ({
+        name: ba.add_ons.name,
+        price: ba.add_ons.price_cents,
+      })),
+    });
+  } catch (err) {
+    console.error("Confirmation email failed:", err);
+  }
+
+  try {
     const token = await generateIntakeToken(booking.id);
     const intakeUrl = buildIntakeUrl(token);
-    // TODO: Send email via Resend or similar service
     console.log(
       `[INTAKE] Send to ${client.name} (${client.email}): ${intakeUrl}`
     );

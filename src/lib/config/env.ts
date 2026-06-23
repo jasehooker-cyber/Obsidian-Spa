@@ -44,6 +44,12 @@ function lazyEnv() {
       ),
     },
 
+    resend: {
+      apiKey: process.env.RESEND_API_KEY ?? "",
+      fromEmail: optional("RESEND_FROM_EMAIL", "onboarding@resend.dev"),
+      configured: !!process.env.RESEND_API_KEY,
+    },
+
     auth: {
       staffAllowedEmails: required("STAFF_ALLOWED_EMAILS")
         .split(",")
