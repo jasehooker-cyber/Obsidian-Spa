@@ -14,24 +14,14 @@ describe("availability business rules", () => {
     expect(BUSINESS.booking.bufferMinutes).toBe(20);
   });
 
-  it("request-based services should not show availability", () => {
-    const requestServices = SERVICES.filter(
-      (s) => s.bookingMode === "request"
-    );
-    expect(requestServices.length).toBeGreaterThan(0);
-    for (const s of requestServices) {
-      expect(s.requiresMultipleTherapists).toBe(true);
-    }
+  it("all services are instant-bookable", () => {
+    expect(SERVICES.every((s) => s.bookingMode === "instant")).toBe(true);
   });
 
-  it("instant-book services are single-therapist only", () => {
-    const instantServices = SERVICES.filter(
-      (s) => s.bookingMode === "instant"
-    );
-    expect(instantServices.length).toBeGreaterThan(0);
-    for (const s of instantServices) {
-      expect(s.requiresMultipleTherapists).toBe(false);
-    }
+  it("multi-therapist services skip therapist selection", () => {
+    const multi = SERVICES.filter((s) => s.requiresMultipleTherapists);
+    expect(multi.length).toBeGreaterThan(0);
+    expect(multi.every((s) => s.bookingMode === "instant")).toBe(true);
   });
 
   it("min notice filter removes slots too close to now", () => {

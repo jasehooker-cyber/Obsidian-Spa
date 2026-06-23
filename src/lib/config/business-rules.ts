@@ -81,7 +81,7 @@ export const SERVICES: Service[] = [
     price: 260_00,
     description:
       "A shared experience in our couples suite. Two therapists, side by side.",
-    bookingMode: "request",
+    bookingMode: "instant",
     requiresMultipleTherapists: true,
   },
   {
@@ -91,7 +91,7 @@ export const SERVICES: Service[] = [
     price: 260_00,
     description:
       "Two therapists work in synchronized harmony for a deeply immersive experience.",
-    bookingMode: "request",
+    bookingMode: "instant",
     requiresMultipleTherapists: true,
   },
 ];

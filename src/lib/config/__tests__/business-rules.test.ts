@@ -36,16 +36,15 @@ describe("services", () => {
     expect(SERVICES).toHaveLength(4);
   });
 
-  it("single-therapist services are instant-book", () => {
+  it("all services are instant-book", () => {
     const instant = SERVICES.filter((s) => s.bookingMode === "instant");
-    expect(instant).toHaveLength(2);
-    expect(instant.every((s) => !s.requiresMultipleTherapists)).toBe(true);
+    expect(instant).toHaveLength(4);
   });
 
-  it("multi-therapist services are request-based", () => {
-    const request = SERVICES.filter((s) => s.bookingMode === "request");
-    expect(request).toHaveLength(2);
-    expect(request.every((s) => s.requiresMultipleTherapists)).toBe(true);
+  it("multi-therapist services are instant-book", () => {
+    const multi = SERVICES.filter((s) => s.requiresMultipleTherapists);
+    expect(multi).toHaveLength(2);
+    expect(multi.every((s) => s.bookingMode === "instant")).toBe(true);
   });
 
   it("has correct prices in cents", () => {

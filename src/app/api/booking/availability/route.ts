@@ -21,14 +21,6 @@ export async function GET(request: NextRequest) {
     return Response.json({ error: "Invalid serviceId" }, { status: 400 });
   }
 
-  if (service.bookingMode === "request") {
-    return Response.json({
-      slots: [],
-      message:
-        "This service requires coordination. Please contact us to book.",
-    });
-  }
-
   const requestedDate = new Date(`${date}T00:00:00`);
   const now = new Date();
   const maxDate = new Date();
@@ -41,49 +33,80 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  if (!therapistId) {
-    return Response.json(
-      { error: "therapistId is required" },
-      { status: 400 }
-    );
-  }
-
   const supabase = supabaseServer();
-  const { data: therapist } = await supabase
-    .from("therapists")
-    .select("cal_event_type_id")
-    .eq("id", therapistId)
-    .eq("active", true)
-    .single();
-
-  if (!therapist) {
-    return Response.json({ error: "Therapist not found" }, { status: 404 });
-  }
 
   const startDate = `${date}T${BUSINESS.hours.open}:00`;
   const endDate = `${date}T${BUSINESS.hours.close}:00`;
-
-  const rawSlots = await getAvailableSlots(
-    therapist.cal_event_type_id,
-    startDate,
-    endDate
-  );
 
   const minNotice = new Date(
     now.getTime() + BUSINESS.booking.minNoticeMinutes * 60_000
   );
 
-  const slots = rawSlots
-    .filter((slot) => {
-      const slotStart = new Date(slot.start);
-      return slotStart >= minNotice;
+  if (therapistId) {
+    const { data: therapist } = await supabase
+      .from("therapists")
+      .select("cal_event_type_id")
+      .eq("id", therapistId)
+      .eq("active", true)
+      .single();
+
+    if (!therapist) {
+      return Response.json({ error: "Therapist not found" }, { status: 404 });
+    }
+
+    const rawSlots = await getAvailableSlots(
+      therapist.cal_event_type_id,
+      startDate,
+      endDate
+    );
+
+    const slots = rawSlots
+      .filter((slot) => new Date(slot.start) >= minNotice)
+      .map((slot) => {
+        const endTime = new Date(
+          new Date(slot.start).getTime() + service.duration * 60_000
+        );
+        return { start: slot.start, end: endTime.toISOString(), therapistId };
+      });
+
+    return Response.json({ slots });
+  }
+
+  const { data: allTherapists } = await supabase
+    .from("therapists")
+    .select("id, cal_event_type_id")
+    .eq("active", true);
+
+  if (!allTherapists?.length) {
+    return Response.json({ error: "No therapists available" }, { status: 404 });
+  }
+
+  const slotResults = await Promise.all(
+    allTherapists.map(async (t) => {
+      const rawSlots = await getAvailableSlots(
+        t.cal_event_type_id,
+        startDate,
+        endDate
+      );
+      return rawSlots.map((slot) => ({ ...slot, therapistId: t.id }));
     })
+  );
+
+  const seen = new Set<string>();
+  const slots = slotResults
+    .flat()
+    .filter((slot) => new Date(slot.start) >= minNotice)
+    .filter((slot) => {
+      if (seen.has(slot.start)) return false;
+      seen.add(slot.start);
+      return true;
+    })
+    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
     .map((slot) => {
-      if (slot.end) return slot;
       const endTime = new Date(
         new Date(slot.start).getTime() + service.duration * 60_000
       );
-      return { start: slot.start, end: endTime.toISOString() };
+      return { start: slot.start, end: endTime.toISOString(), therapistId: slot.therapistId };
     });
 
   return Response.json({ slots });

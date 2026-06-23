@@ -6,6 +6,7 @@ import { BUSINESS } from "@/lib/config/business-rules";
 interface Slot {
   start: string;
   end: string;
+  therapistId?: string;
 }
 
 interface FetchState {
@@ -17,7 +18,7 @@ interface FetchState {
 
 interface Props {
   serviceId: string;
-  therapistId: string;
+  therapistId: string | null;
   selectedSlot: Slot | null;
   onSelectSlot: (slot: Slot) => void;
 }
@@ -61,13 +62,15 @@ function formatDayLabel(dateStr: string): string {
 
 async function fetchAvailability(
   serviceId: string,
-  therapistId: string,
+  therapistId: string | null,
   date: string,
   signal: AbortSignal
 ): Promise<FetchState> {
   try {
+    const params = new URLSearchParams({ serviceId, date });
+    if (therapistId) params.set("therapistId", therapistId);
     const res = await fetch(
-      `/api/booking/availability?serviceId=${serviceId}&therapistId=${therapistId}&date=${date}`,
+      `/api/booking/availability?${params}`,
       { signal }
     );
     const data: {

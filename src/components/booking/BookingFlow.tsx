@@ -16,6 +16,7 @@ import CardForm from "./CardForm";
 interface Slot {
   start: string;
   end: string;
+  therapistId?: string;
 }
 
 interface Props {
@@ -48,12 +49,7 @@ export default function BookingFlow({ services, addOns, therapists }: Props) {
     setSelectedTherapist(null);
     setSelectedSlot(null);
     setClientSecret(null);
-
-    if (service.bookingMode === "request") {
-      setStep("service");
-    } else {
-      setStep("addons");
-    }
+    setStep("addons");
   }
 
   function handleAddOnToggle(id: AddOnId) {
@@ -70,6 +66,9 @@ export default function BookingFlow({ services, addOns, therapists }: Props) {
 
   function handleSlotSelect(slot: Slot) {
     setSelectedSlot(slot);
+    if (slot.therapistId && !selectedTherapist) {
+      setSelectedTherapist(slot.therapistId);
+    }
     setStep("info");
   }
 
@@ -133,6 +132,11 @@ export default function BookingFlow({ services, addOns, therapists }: Props) {
     }
   }
 
+  const skipTherapist = selectedService?.requiresMultipleTherapists ?? false;
+  const activeSteps: Step[] = skipTherapist
+    ? ["service", "addons", "time", "info"]
+    : ["service", "addons", "therapist", "time", "info"];
+
   const selectedAddOnItems = addOns.filter((a) =>
     selectedAddOns.includes(a.id)
   );
@@ -144,24 +148,24 @@ export default function BookingFlow({ services, addOns, therapists }: Props) {
     <div className="mx-auto max-w-2xl">
       {/* Progress indicator */}
       <div className="mb-10 flex items-center justify-center gap-2">
-        {(["service", "addons", "therapist", "time", "info"] as Step[]).map(
+        {activeSteps.map(
           (s, i) => (
             <div key={s} className="flex items-center gap-2">
               <div
                 className={`flex h-8 w-8 items-center justify-center text-xs font-semibold ${
                   step === s
                     ? "border border-gold bg-gold text-background"
-                    : STEPS_ORDER.indexOf(step) > i
+                    : activeSteps.indexOf(step) > i
                       ? "border border-gold/50 text-gold"
                       : "border border-charcoal-light text-muted"
                 }`}
               >
                 {i + 1}
               </div>
-              {i < 4 && (
+              {i < activeSteps.length - 1 && (
                 <div
                   className={`h-px w-6 ${
-                    STEPS_ORDER.indexOf(step) > i
+                    activeSteps.indexOf(step) > i
                       ? "bg-gold/50"
                       : "bg-charcoal-light"
                   }`}
@@ -180,17 +184,6 @@ export default function BookingFlow({ services, addOns, therapists }: Props) {
             selected={selectedService}
             onSelect={handleServiceSelect}
           />
-          {selectedService?.bookingMode === "request" && (
-            <div className="mt-6 border border-gold/30 bg-gold/5 p-6 text-center">
-              <p className="mb-2 font-semibold text-gold">
-                Coordination Required
-              </p>
-              <p className="text-sm text-muted">
-                {selectedService.name} requires multiple therapists. Please
-                contact us directly to schedule this service.
-              </p>
-            </div>
-          )}
         </>
       )}
 
@@ -212,7 +205,13 @@ export default function BookingFlow({ services, addOns, therapists }: Props) {
             </button>
             <button
               type="button"
-              onClick={() => setStep("therapist")}
+              onClick={() =>
+                setStep(
+                  selectedService?.requiresMultipleTherapists
+                    ? "time"
+                    : "therapist"
+                )
+              }
               className="border border-gold px-6 py-2 text-sm text-gold transition-colors hover:bg-gold hover:text-background"
             >
               Continue
@@ -242,7 +241,7 @@ export default function BookingFlow({ services, addOns, therapists }: Props) {
       )}
 
       {/* Step 4: Time */}
-      {step === "time" && selectedService && selectedTherapist && (
+      {step === "time" && selectedService && (selectedTherapist || selectedService.requiresMultipleTherapists) && (
         <>
           <SlotPicker
             serviceId={selectedService.id}
@@ -254,8 +253,12 @@ export default function BookingFlow({ services, addOns, therapists }: Props) {
             <button
               type="button"
               onClick={() => {
-                setSelectedTherapist(null);
-                setStep("therapist");
+                if (selectedService.requiresMultipleTherapists) {
+                  setStep("addons");
+                } else {
+                  setSelectedTherapist(null);
+                  setStep("therapist");
+                }
               }}
               className="text-sm text-muted transition-colors hover:text-foreground"
             >
@@ -419,4 +422,3 @@ export default function BookingFlow({ services, addOns, therapists }: Props) {
   );
 }
 
-const STEPS_ORDER: Step[] = ["service", "addons", "therapist", "time", "info"];
