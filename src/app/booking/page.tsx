@@ -31,7 +31,7 @@ export default async function BookingPage() {
           <span className="text-xs text-gold/60">&#9670;</span>
         </div>
         <p className="animate-fade-up-delay-2 relative mx-auto max-w-lg text-lg text-muted">
-          Select a service, choose your therapist, and pick an available time. A
+          Select a service, pick an available time, and you&apos;re all set. A
           card on file is required to secure your booking.
         </p>
       </section>

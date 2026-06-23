@@ -101,7 +101,7 @@ export default function Home() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(201,168,76,0.04)_0%,transparent_70%)]" />
         <div className="relative mx-auto grid max-w-4xl gap-8 text-center md:grid-cols-3">
           {[
-            { value: `${BUSINESS.therapistCount}+`, label: "Expert Therapists" },
+            { value: "Certified", label: "Expert Therapist" },
             { value: `${formatTime(BUSINESS.hours.open)} – ${formatTime(BUSINESS.hours.close)}`, label: "Open Daily" },
             { value: "100%", label: "Private & Discreet" },
           ].map((stat) => (

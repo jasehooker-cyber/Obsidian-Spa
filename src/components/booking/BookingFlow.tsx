@@ -66,8 +66,12 @@ export default function BookingFlow({ services, addOns, therapists }: Props) {
 
   function handleSlotSelect(slot: Slot) {
     setSelectedSlot(slot);
-    if (slot.therapistId && !selectedTherapist) {
-      setSelectedTherapist(slot.therapistId);
+    if (!selectedTherapist) {
+      if (slot.therapistId) {
+        setSelectedTherapist(slot.therapistId);
+      } else if (singleTherapist) {
+        setSelectedTherapist(therapists[0].id);
+      }
     }
     setStep("info");
   }
@@ -132,7 +136,8 @@ export default function BookingFlow({ services, addOns, therapists }: Props) {
     }
   }
 
-  const skipTherapist = selectedService?.requiresMultipleTherapists ?? false;
+  const singleTherapist = therapists.length === 1;
+  const skipTherapist = singleTherapist || (selectedService?.requiresMultipleTherapists ?? false);
   const activeSteps: Step[] = skipTherapist
     ? ["service", "addons", "time", "info"]
     : ["service", "addons", "therapist", "time", "info"];
@@ -205,13 +210,7 @@ export default function BookingFlow({ services, addOns, therapists }: Props) {
             </button>
             <button
               type="button"
-              onClick={() =>
-                setStep(
-                  selectedService?.requiresMultipleTherapists
-                    ? "time"
-                    : "therapist"
-                )
-              }
+              onClick={() => setStep(skipTherapist ? "time" : "therapist")}
               className="border border-gold px-6 py-2 text-sm text-gold transition-colors hover:bg-gold hover:text-background"
             >
               Continue
@@ -240,12 +239,12 @@ export default function BookingFlow({ services, addOns, therapists }: Props) {
         </>
       )}
 
-      {/* Step 4: Time */}
-      {step === "time" && selectedService && (selectedTherapist || selectedService.requiresMultipleTherapists) && (
+      {/* Step: Time */}
+      {step === "time" && selectedService && (selectedTherapist || skipTherapist) && (
         <>
           <SlotPicker
             serviceId={selectedService.id}
-            therapistId={selectedTherapist}
+            therapistId={singleTherapist ? therapists[0].id : selectedTherapist}
             selectedSlot={selectedSlot}
             onSelectSlot={handleSlotSelect}
           />
@@ -253,7 +252,7 @@ export default function BookingFlow({ services, addOns, therapists }: Props) {
             <button
               type="button"
               onClick={() => {
-                if (selectedService.requiresMultipleTherapists) {
+                if (skipTherapist) {
                   setStep("addons");
                 } else {
                   setSelectedTherapist(null);
@@ -272,7 +271,7 @@ export default function BookingFlow({ services, addOns, therapists }: Props) {
       {step === "info" && selectedService && selectedSlot && (
         <>
           <h2 className="mb-6 text-sm font-semibold tracking-[0.2em] text-gold">
-            STEP 5 — YOUR DETAILS
+            YOUR DETAILS
           </h2>
 
           {/* Booking summary */}

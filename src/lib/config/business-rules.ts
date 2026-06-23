@@ -24,7 +24,7 @@ export const BUSINESS = {
     noShowPercent: 50,
   },
 
-  therapistCount: 5,
+  therapistCount: 1,
 
   contact: {
     email: "info@obsidianmensspa.com",
