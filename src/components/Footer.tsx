@@ -4,61 +4,66 @@ import { formatTime } from "@/lib/config/format";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-charcoal-light bg-background">
-      <div className="mx-auto max-w-6xl px-6 py-12">
-        <div className="grid gap-8 md:grid-cols-3">
+    <footer className="relative border-t border-charcoal-light bg-background">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(201,168,76,0.03)_0%,transparent_60%)]" />
+      <div className="relative mx-auto max-w-6xl px-6 py-16">
+        <div className="grid gap-12 md:grid-cols-3">
           <div>
-            <h3 className="mb-3 text-lg font-bold tracking-widest text-gold">
+            <h3 className="text-gold-gradient mb-4 text-xl font-bold tracking-[0.25em]">
               OBSIDIAN
             </h3>
             <p className="text-sm leading-relaxed text-muted">
-              {BUSINESS.tagline}
+              {BUSINESS.tagline}. A private, refined space designed for men who
+              value discretion and quality.
             </p>
           </div>
 
           <div>
-            <h4 className="mb-3 text-sm font-semibold tracking-wide text-foreground">
-              Hours
+            <h4 className="mb-4 text-xs font-semibold tracking-widest text-foreground">
+              HOURS
             </h4>
-            <p className="text-sm text-muted">Open Daily</p>
-            <p className="text-sm text-muted">
+            <p className="mb-1 text-sm text-muted">Open Daily</p>
+            <p className="text-gold-gradient font-semibold">
               {formatTime(BUSINESS.hours.open)} –{" "}
               {formatTime(BUSINESS.hours.close)}
             </p>
           </div>
 
           <div>
-            <h4 className="mb-3 text-sm font-semibold tracking-wide text-foreground">
-              Quick Links
+            <h4 className="mb-4 text-xs font-semibold tracking-widest text-foreground">
+              QUICK LINKS
             </h4>
-            <div className="flex flex-col gap-2">
-              <Link
-                href="/services"
-                className="text-sm text-muted transition-colors hover:text-gold"
-              >
-                Services
-              </Link>
-              <Link
-                href="/about"
-                className="text-sm text-muted transition-colors hover:text-gold"
-              >
-                About
-              </Link>
-              <Link
-                href="/booking"
-                className="text-sm text-muted transition-colors hover:text-gold"
-              >
-                Book Now
-              </Link>
+            <div className="flex flex-col gap-3">
+              {[
+                { href: "/services", label: "Services" },
+                { href: "/about", label: "About" },
+                { href: "/booking", label: "Book Now" },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="group flex items-center gap-2 text-sm text-muted transition-colors duration-300 hover:text-gold"
+                >
+                  <span className="h-px w-0 bg-gold transition-all duration-300 group-hover:w-3" />
+                  {link.label}
+                </Link>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="mt-12 border-t border-charcoal-light pt-6 text-center text-xs text-muted">
-          © {new Date().getFullYear()} {BUSINESS.name}. All rights reserved.
+        <div className="mt-16 border-t border-charcoal-light pt-8">
+          <div className="flex flex-col items-center justify-between gap-4 text-xs text-muted md:flex-row">
+            <p>
+              &copy; {new Date().getFullYear()} {BUSINESS.name}. All rights
+              reserved.
+            </p>
+            <p className="tracking-wider text-muted/40">
+              LUXURY &middot; PRIVACY &middot; EXCELLENCE
+            </p>
+          </div>
         </div>
       </div>
     </footer>
   );
 }
-

@@ -19,18 +19,24 @@ export default async function BookingPage() {
 
   return (
     <>
-      <section className="px-6 pb-12 pt-20 text-center">
-        <p className="mb-2 text-sm tracking-[0.3em] text-gold">RESERVATIONS</p>
-        <h1 className="mb-4 text-4xl font-bold tracking-tight md:text-5xl">
+      <section className="noise-overlay relative overflow-hidden px-6 pb-16 pt-28 text-center">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.06)_0%,transparent_60%)]" />
+        <p className="animate-fade-up relative mb-3 text-sm tracking-[0.4em] text-gold">
+          RESERVATIONS
+        </p>
+        <h1 className="animate-fade-up-delay-1 relative mb-4 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
           Book Your Session
         </h1>
-        <p className="mx-auto max-w-lg text-muted">
+        <div className="gold-divider animate-fade-up-delay-2 relative mx-auto mb-6">
+          <span className="text-xs text-gold/60">&#9670;</span>
+        </div>
+        <p className="animate-fade-up-delay-2 relative mx-auto max-w-lg text-lg text-muted">
           Select a service, choose your therapist, and pick an available time. A
           card on file is required to secure your booking.
         </p>
       </section>
 
-      <section className="border-t border-charcoal-light px-6 py-16">
+      <section className="section-glow relative px-6 py-16">
         <BookingFlow
           services={SERVICES}
           addOns={ADD_ONS}
