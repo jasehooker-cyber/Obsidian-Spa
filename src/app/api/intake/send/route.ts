@@ -1,5 +1,6 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { generateIntakeToken, buildIntakeUrl } from "@/lib/booking/intake";
+import { sendIntakeEmail } from "@/lib/email/server";
 
 export async function POST(request: Request) {
   try {
@@ -36,11 +37,15 @@ export async function POST(request: Request) {
       name: string;
     };
 
-    // TODO: Send email via Resend or similar service
-    // For v1, log the URL and return it so staff can send manually
-    console.log(
-      `[INTAKE] Send to ${client.name} (${client.email}): ${intakeUrl}`
-    );
+    try {
+      await sendIntakeEmail({
+        clientName: client.name,
+        clientEmail: client.email,
+        intakeUrl,
+      });
+    } catch (err) {
+      console.error("Intake email failed:", err);
+    }
 
     return Response.json({ intakeUrl, clientEmail: client.email });
   } catch (err) {

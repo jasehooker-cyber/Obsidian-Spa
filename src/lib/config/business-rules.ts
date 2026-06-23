@@ -25,6 +25,11 @@ export const BUSINESS = {
   },
 
   therapistCount: 5,
+
+  contact: {
+    email: "info@obsidianmensspa.com",
+    phone: "(555) 000-0000",
+  },
 } as const;
 
 export type BookingMode = "instant" | "request";

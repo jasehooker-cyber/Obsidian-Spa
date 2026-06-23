@@ -130,3 +130,62 @@ export async function sendBookingConfirmation(params: BookingConfirmationParams)
     html,
   });
 }
+
+interface IntakeEmailParams {
+  clientName: string;
+  clientEmail: string;
+  intakeUrl: string;
+}
+
+export async function sendIntakeEmail(params: IntakeEmailParams) {
+  const env = getEnv();
+  if (!env.resend.configured) {
+    console.log(`[EMAIL] Resend not configured. Would send intake to ${params.clientEmail}`);
+    return;
+  }
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#0a0a0a;font-family:Arial,Helvetica,sans-serif;">
+  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
+
+    <div style="text-align:center;margin-bottom:32px;">
+      <h1 style="color:#c9a84c;font-size:24px;letter-spacing:6px;margin:0;">OBSIDIAN</h1>
+      <p style="color:#a3a3a3;font-size:12px;letter-spacing:3px;margin:8px 0 0;">MEN'S SPA</p>
+    </div>
+
+    <div style="background:#1a1a1a;border:1px solid #2a2a2a;padding:32px;">
+      <h2 style="color:#f5f5f5;font-size:20px;margin:0 0 8px;">One quick thing, ${params.clientName.split(" ")[0]}.</h2>
+      <p style="color:#a3a3a3;font-size:14px;line-height:1.6;margin:0 0 24px;">
+        Please fill out a short intake form before your appointment. It helps your therapist
+        prepare for your session — pressure preference, focus areas, anything to avoid.
+      </p>
+
+      <div style="text-align:center;margin:24px 0;">
+        <a href="${params.intakeUrl}" style="display:inline-block;background:#c9a84c;color:#0a0a0a;padding:14px 32px;font-size:14px;font-weight:600;letter-spacing:2px;text-decoration:none;">
+          FILL OUT INTAKE FORM
+        </a>
+      </div>
+
+      <p style="color:#a3a3a3;font-size:12px;text-align:center;margin:0;">
+        This link expires in 72 hours.
+      </p>
+    </div>
+
+    <div style="text-align:center;margin-top:32px;">
+      <p style="color:#c9a84c;font-size:11px;letter-spacing:3px;margin:0;">${BUSINESS.name.toUpperCase()}</p>
+    </div>
+
+  </div>
+</body>
+</html>`;
+
+  await resend().emails.send({
+    from: `${BUSINESS.name} <${env.resend.fromEmail}>`,
+    to: params.clientEmail,
+    subject: `Intake form for your upcoming appointment — ${BUSINESS.name}`,
+    html,
+  });
+}

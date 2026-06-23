@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import "./globals.css";
@@ -15,9 +16,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Obsidian Men's Spa",
+  title: {
+    default: "Obsidian Men's Spa",
+    template: "%s | Obsidian Men's Spa",
+  },
   description:
     "Premium men's spa experience. Signature massages, couples sessions, and luxury treatments in a private, refined setting.",
+  openGraph: {
+    title: "Obsidian Men's Spa",
+    description:
+      "A private, refined space designed for men who value discretion, quality, and genuine relaxation.",
+    type: "website",
+    siteName: "Obsidian Men's Spa",
+  },
+  twitter: {
+    card: "summary",
+    title: "Obsidian Men's Spa",
+    description:
+      "Premium men's spa. Signature massages, couples sessions, and luxury treatments.",
+  },
 };
 
 export default function RootLayout({
@@ -34,6 +51,7 @@ export default function RootLayout({
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
+        <Analytics />
       </body>
     </html>
   );

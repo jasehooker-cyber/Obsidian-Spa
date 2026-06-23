@@ -20,12 +20,28 @@ export default function Footer() {
 
           <div>
             <h4 className="mb-4 text-xs font-semibold tracking-widest text-foreground">
-              HOURS
+              HOURS &amp; CONTACT
             </h4>
             <p className="mb-1 text-sm text-muted">Open Daily</p>
-            <p className="text-gold-gradient font-semibold">
+            <p className="text-gold-gradient mb-3 font-semibold">
               {formatTime(BUSINESS.hours.open)} –{" "}
               {formatTime(BUSINESS.hours.close)}
+            </p>
+            <p className="text-sm text-muted">
+              <a
+                href={`tel:${BUSINESS.contact.phone}`}
+                className="transition-colors hover:text-gold"
+              >
+                {BUSINESS.contact.phone}
+              </a>
+            </p>
+            <p className="text-sm text-muted">
+              <a
+                href={`mailto:${BUSINESS.contact.email}`}
+                className="transition-colors hover:text-gold"
+              >
+                {BUSINESS.contact.email}
+              </a>
             </p>
           </div>
 
@@ -38,6 +54,7 @@ export default function Footer() {
                 { href: "/services", label: "Services" },
                 { href: "/about", label: "About" },
                 { href: "/booking", label: "Book Now" },
+                { href: "/privacy", label: "Privacy Policy" },
               ].map((link) => (
                 <Link
                   key={link.href}

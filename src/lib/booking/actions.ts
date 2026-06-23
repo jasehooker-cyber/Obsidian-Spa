@@ -2,7 +2,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { stripe } from "@/lib/stripe/server";
 import { createBooking as calCreateBooking } from "@/lib/cal/server";
 import { createCalendarEvent } from "@/lib/google/server";
-import { sendBookingConfirmation } from "@/lib/email/server";
+import { sendBookingConfirmation, sendIntakeEmail } from "@/lib/email/server";
 import { getEnv } from "@/lib/config/env";
 import { BUSINESS } from "@/lib/config/business-rules";
 import { generateIntakeToken, buildIntakeUrl } from "@/lib/booking/intake";
@@ -249,11 +249,13 @@ export async function confirmBooking(setupIntentId: string) {
   try {
     const token = await generateIntakeToken(booking.id);
     const intakeUrl = buildIntakeUrl(token);
-    console.log(
-      `[INTAKE] Send to ${client.name} (${client.email}): ${intakeUrl}`
-    );
+    await sendIntakeEmail({
+      clientName: client.name,
+      clientEmail: client.email,
+      intakeUrl,
+    });
   } catch (err) {
-    console.error("Intake generation failed:", err);
+    console.error("Intake email failed:", err);
   }
 
   return { bookingId: booking.id };

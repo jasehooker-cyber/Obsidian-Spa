@@ -1,6 +1,7 @@
 import { assertStaffAuth, AuthError } from "@/lib/auth/staff";
 import { supabaseServer } from "@/lib/supabase/server";
 import { generateIntakeToken, buildIntakeUrl } from "@/lib/booking/intake";
+import { sendIntakeEmail } from "@/lib/email/server";
 
 export async function POST(
   request: Request,
@@ -40,10 +41,15 @@ export async function POST(
     const token = await generateIntakeToken(booking.id);
     const intakeUrl = buildIntakeUrl(token);
 
-    // TODO: Send email via Resend or similar service
-    console.log(
-      `[INTAKE RESEND] Send to ${client.name} (${client.email}): ${intakeUrl}`
-    );
+    try {
+      await sendIntakeEmail({
+        clientName: client.name,
+        clientEmail: client.email,
+        intakeUrl,
+      });
+    } catch (err) {
+      console.error("Intake email failed:", err);
+    }
 
     return Response.json({ intakeUrl, clientEmail: client.email });
   } catch (err) {
