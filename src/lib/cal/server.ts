@@ -59,12 +59,12 @@ export async function getAvailableSlots(
 ): Promise<CalSlot[]> {
   const params = new URLSearchParams({
     eventTypeId: String(eventTypeId),
-    startTime: startDate,
-    endTime: endDate,
+    start: startDate,
+    end: endDate,
   });
 
   const data = await calFetch<CalSlotsResponse>(
-    `/slots/available?${params}`,
+    `/slots?${params}`,
     { method: "GET", apiVersion: getEnv().cal.versions.slots }
   );
 

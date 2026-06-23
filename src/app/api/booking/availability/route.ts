@@ -73,10 +73,18 @@ export async function GET(request: NextRequest) {
     now.getTime() + BUSINESS.booking.minNoticeMinutes * 60_000
   );
 
-  const slots = rawSlots.filter((slot) => {
-    const slotStart = new Date(slot.start);
-    return slotStart >= minNotice;
-  });
+  const slots = rawSlots
+    .filter((slot) => {
+      const slotStart = new Date(slot.start);
+      return slotStart >= minNotice;
+    })
+    .map((slot) => {
+      if (slot.end) return slot;
+      const endTime = new Date(
+        new Date(slot.start).getTime() + service.duration * 60_000
+      );
+      return { start: slot.start, end: endTime.toISOString() };
+    });
 
   return Response.json({ slots });
 }
