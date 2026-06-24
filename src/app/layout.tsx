@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Obsidian Men's Spa",
     description:
-      "A private, refined space designed for men who value discretion, quality, and genuine relaxation.",
+      "Premium men's spa experience. Signature massages, couples sessions, and luxury treatments in a private, refined setting.",
     type: "website",
     siteName: "Obsidian Men's Spa",
   },

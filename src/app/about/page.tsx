@@ -5,7 +5,7 @@ import { formatTime } from "@/lib/config/format";
 export const metadata = {
   title: "About | Obsidian Men's Spa",
   description:
-    "A private, refined spa experience built for men who value discretion and quality.",
+    "A premium spa experience built for men who value expertise and genuine relaxation.",
 };
 
 export default function AboutPage() {

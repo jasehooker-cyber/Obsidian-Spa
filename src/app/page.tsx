@@ -18,8 +18,8 @@ export default function Home() {
         </h1>
         <div className="animate-expand-line mx-auto mb-8 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
         <p className="animate-fade-up-delay-2 mb-12 max-w-lg text-lg leading-relaxed text-muted">
-          A private, refined space designed for men who value discretion,
-          quality, and genuine relaxation.
+          A private, refined space designed for men who value quality,
+          comfort, and genuine relaxation.
         </p>
         <div className="animate-fade-up-delay-3 flex gap-4">
           <Link

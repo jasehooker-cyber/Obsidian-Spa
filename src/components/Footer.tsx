@@ -14,7 +14,7 @@ export default function Footer() {
             </h3>
             <p className="text-sm leading-relaxed text-muted">
               {BUSINESS.tagline}. A private, refined space designed for men who
-              value discretion and quality.
+              value professionalism and results.
             </p>
           </div>
 
