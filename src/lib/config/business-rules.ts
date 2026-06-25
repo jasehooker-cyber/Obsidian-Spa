@@ -27,8 +27,8 @@ export const BUSINESS = {
   therapistCount: 1,
 
   contact: {
-    email: "info@obsidianmensspa.com",
-    phone: "(555) 000-0000",
+    email: "info@obsidianspas.com",
+    phone: "(201) 540-8621",
   },
 } as const;
 
