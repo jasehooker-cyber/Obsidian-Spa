@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 const description =
-  "Premium men's spa experience. Signature massages, couples sessions, and luxury treatments in a private, refined setting. Open daily 8 AM – 10 PM. Book online.";
+  "Premium men's spa in Midtown Manhattan. Signature massages, couples sessions, and luxury treatments in a private, refined setting. Open daily 8 AM – 10 PM. Book online.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getEnv().siteUrl),
@@ -28,12 +28,13 @@ export const metadata: Metadata = {
   },
   description,
   keywords: [
-    "men's spa",
-    "massage for men",
-    "deep tissue massage",
-    "couples massage",
+    "men's spa NYC",
+    "men's spa Midtown Manhattan",
+    "massage for men NYC",
+    "deep tissue massage Manhattan",
+    "couples massage NYC",
     "four-handed massage",
-    "luxury spa",
+    "luxury spa New York",
     "men's massage therapy",
   ],
   openGraph: {
@@ -71,11 +72,24 @@ const jsonLd = {
   "@type": "DaySpa",
   name: BUSINESS.name,
   description:
-    "Premium men's spa offering signature massages, couples sessions, and luxury treatments in a private, refined setting.",
+    "Premium men's spa in Midtown Manhattan offering signature massages, couples sessions, and luxury treatments in a private, refined setting.",
   url: getEnv().siteUrl,
   telephone: BUSINESS.contact.phone,
   email: BUSINESS.contact.email,
   priceRange: "$150-$260",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: BUSINESS.address.street,
+    addressLocality: BUSINESS.address.city,
+    addressRegion: BUSINESS.address.state,
+    postalCode: BUSINESS.address.zip,
+    addressCountry: "US",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 40.7643,
+    longitude: -73.9814,
+  },
   openingHoursSpecification: {
     "@type": "OpeningHoursSpecification",
     dayOfWeek: [

@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Book Your Session",
   description:
-    "Book your massage online in minutes. Same-day appointments available, open daily 8 AM – 10 PM. Pick a service, choose a time, and you're set.",
+    "Book your massage online in minutes. Same-day appointments in Midtown Manhattan, open daily 8 AM – 10 PM. Pick a service, choose a time, and you're set.",
   alternates: { canonical: "/booking" },
 };
 

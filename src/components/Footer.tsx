@@ -27,6 +27,21 @@ export default function Footer() {
               {formatTime(BUSINESS.hours.open)} –{" "}
               {formatTime(BUSINESS.hours.close)}
             </p>
+            <p className="mb-3 text-sm text-muted">
+              <a
+                href={`https://maps.google.com/?q=${encodeURIComponent(
+                  `${BUSINESS.address.street}, ${BUSINESS.address.city}, ${BUSINESS.address.state} ${BUSINESS.address.zip}`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-gold"
+              >
+                {BUSINESS.address.street}
+                <br />
+                {BUSINESS.address.city}, {BUSINESS.address.state}{" "}
+                {BUSINESS.address.zip}
+              </a>
+            </p>
             <p className="text-sm text-muted">
               <a
                 href={`tel:${BUSINESS.contact.phone}`}

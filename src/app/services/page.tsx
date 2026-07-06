@@ -9,7 +9,7 @@ import {
 export const metadata = {
   title: "Services & Pricing",
   description:
-    "60 and 90 minute signature massages from $150, couples massage, four-handed massage, and luxury add-ons like CBD, hot stones, and cupping. Book online.",
+    "60 and 90 minute signature massages from $150, couples massage, four-handed massage, and luxury add-ons like CBD, hot stones, and cupping. Midtown Manhattan, book online.",
   alternates: { canonical: "/services" },
 };
 

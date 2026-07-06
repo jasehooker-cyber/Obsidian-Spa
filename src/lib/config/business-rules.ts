@@ -30,6 +30,14 @@ export const BUSINESS = {
     email: "info@obsidianspas.com",
     phone: "(201) 540-8621",
   },
+
+  address: {
+    street: "850 7th Ave, Suite 1105",
+    city: "New York",
+    state: "NY",
+    zip: "10019",
+    neighborhood: "Midtown Manhattan",
+  },
 } as const;
 
 export type BookingMode = "instant" | "request";
