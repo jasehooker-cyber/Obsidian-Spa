@@ -126,7 +126,24 @@ export default function SlotPicker({
         }
       });
 
-    return () => controller.abort();
+    // For today, auto-refresh every 60 s so slots stay current
+    const today = new Date().toISOString().split("T")[0];
+    let interval: ReturnType<typeof setInterval> | undefined;
+    if (selectedDate === today) {
+      interval = setInterval(() => {
+        const ac = new AbortController();
+        fetchAvailability(serviceId, therapistId, selectedDate, ac.signal).then(
+          (result) => {
+            if (!ac.signal.aborted) setState(result);
+          }
+        );
+      }, 60_000);
+    }
+
+    return () => {
+      controller.abort();
+      clearInterval(interval);
+    };
   }, [serviceId, therapistId, selectedDate]);
 
   function handleDateSelect(date: string) {

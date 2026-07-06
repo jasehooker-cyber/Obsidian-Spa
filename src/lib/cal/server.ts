@@ -36,6 +36,7 @@ async function calFetch<T>(
   const { apiVersion, ...fetchOptions } = options;
   const res = await fetch(`${CAL_BASE}${path}`, {
     ...fetchOptions,
+    cache: "no-store",
     headers: {
       Authorization: `Bearer ${getEnv().cal.apiKey}`,
       "Content-Type": "application/json",

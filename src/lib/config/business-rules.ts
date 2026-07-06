@@ -10,7 +10,7 @@ export const BUSINESS = {
 
   booking: {
     bufferMinutes: 20,
-    minNoticeMinutes: 30,
+    minNoticeMinutes: 0,
     maxAdvanceDays: 7,
     allowSelfCancel: false,
     autoConfirm: true,

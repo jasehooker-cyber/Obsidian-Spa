@@ -6,8 +6,8 @@ describe("availability business rules", () => {
     expect(BUSINESS.booking.maxAdvanceDays).toBe(7);
   });
 
-  it("minimum notice is 30 minutes", () => {
-    expect(BUSINESS.booking.minNoticeMinutes).toBe(30);
+  it("minimum notice is 0 minutes (same-hour booking allowed)", () => {
+    expect(BUSINESS.booking.minNoticeMinutes).toBe(0);
   });
 
   it("buffer between appointments is 20 minutes", () => {

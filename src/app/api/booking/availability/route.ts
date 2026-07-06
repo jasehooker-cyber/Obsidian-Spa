@@ -69,7 +69,9 @@ export async function GET(request: NextRequest) {
         return { start: slot.start, end: endTime.toISOString(), therapistId };
       });
 
-    return Response.json({ slots });
+    return Response.json({ slots }, {
+      headers: { "Cache-Control": "no-store" },
+    });
   }
 
   const { data: allTherapists } = await supabase
@@ -109,5 +111,7 @@ export async function GET(request: NextRequest) {
       return { start: slot.start, end: endTime.toISOString(), therapistId: slot.therapistId };
     });
 
-  return Response.json({ slots });
+  return Response.json({ slots }, {
+    headers: { "Cache-Control": "no-store" },
+  });
 }

@@ -14,7 +14,7 @@ describe("business rules", () => {
 
   it("has correct booking constraints", () => {
     expect(BUSINESS.booking.bufferMinutes).toBe(20);
-    expect(BUSINESS.booking.minNoticeMinutes).toBe(30);
+    expect(BUSINESS.booking.minNoticeMinutes).toBe(0);
     expect(BUSINESS.booking.maxAdvanceDays).toBe(7);
     expect(BUSINESS.booking.allowSelfCancel).toBe(false);
     expect(BUSINESS.booking.cardOnFileRequired).toBe(true);
