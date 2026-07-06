@@ -7,9 +7,10 @@ import {
 } from "@/lib/config/business-rules";
 
 export const metadata = {
-  title: "Services | Obsidian Men's Spa",
+  title: "Services & Pricing",
   description:
-    "Signature massages, couples sessions, four-handed massage, and luxury add-ons.",
+    "60 and 90 minute signature massages from $150, couples massage, four-handed massage, and luxury add-ons like CBD, hot stones, and cupping. Book online.",
+  alternates: { canonical: "/services" },
 };
 
 export default function ServicesPage() {

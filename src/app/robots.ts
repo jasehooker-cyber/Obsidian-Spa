@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
+import { getEnv } from "@/lib/config/env-public";
 
 export default function robots(): MetadataRoute.Robots {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://obsidianmensspa.com";
+  const base = getEnv().siteUrl;
 
   return {
     rules: {

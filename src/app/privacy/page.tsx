@@ -3,6 +3,7 @@ import { BUSINESS } from "@/lib/config/business-rules";
 export const metadata = {
   title: "Privacy Policy",
   description: `Privacy policy for ${BUSINESS.name}.`,
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {

@@ -3,9 +3,10 @@ import { BUSINESS } from "@/lib/config/business-rules";
 import { formatTime } from "@/lib/config/format";
 
 export const metadata = {
-  title: "About | Obsidian Men's Spa",
+  title: "About",
   description:
-    "A premium spa experience built for men who value expertise and genuine relaxation.",
+    "A premium spa experience built for men who value expertise and genuine relaxation. Certified therapists, a private setting, and professional results.",
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {

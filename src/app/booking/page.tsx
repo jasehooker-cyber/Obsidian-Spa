@@ -5,8 +5,10 @@ import BookingFlow from "@/components/booking/BookingFlow";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Book Now | Obsidian Men's Spa",
-  description: "Choose your therapist and book your session online.",
+  title: "Book Your Session",
+  description:
+    "Book your massage online in minutes. Same-day appointments available, open daily 8 AM – 10 PM. Pick a service, choose a time, and you're set.",
+  alternates: { canonical: "/booking" },
 };
 
 export default async function BookingPage() {

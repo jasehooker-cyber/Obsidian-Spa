@@ -2,6 +2,10 @@ import Link from "next/link";
 import { SERVICES, formatPrice, BUSINESS } from "@/lib/config/business-rules";
 import { formatTime } from "@/lib/config/format";
 
+export const metadata = {
+  alternates: { canonical: "/" },
+};
+
 export default function Home() {
   return (
     <>
