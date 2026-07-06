@@ -243,6 +243,7 @@ export async function confirmBooking(setupIntentId: string) {
       servicePrice: service.price_cents,
       therapistName: therapist.name,
       startsAt: booking.starts_at,
+      endsAt: booking.ends_at,
       addOns: bookingAddOns.map((ba) => ({
         name: ba.add_ons.name,
         price: ba.add_ons.price_cents,
