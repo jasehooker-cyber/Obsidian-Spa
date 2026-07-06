@@ -3,6 +3,27 @@ import { BUSINESS, SERVICES } from "@/lib/config/business-rules";
 import { getAvailableSlots } from "@/lib/cal/server";
 import { supabaseServer } from "@/lib/supabase/server";
 
+// Convert a local date+time in the given timezone to a UTC ISO string.
+// Without this, Cal.com treats bare strings like "2026-07-06T22:00:00" as UTC,
+// which cuts the day off at 6pm ET instead of 10pm ET.
+function toUtcIso(dateStr: string, timeStr: string, tz: string): string {
+  const [year, month, day] = dateStr.split("-").map(Number);
+  const [hour, minute] = timeStr.split(":").map(Number);
+  // Treat input as UTC to get a reference instant
+  const refMs = Date.UTC(year, month - 1, day, hour, minute, 0);
+  // Find what local time that UTC instant maps to in the target timezone
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: tz,
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", hour12: false,
+  });
+  const parts = formatter.formatToParts(new Date(refMs));
+  const p = Object.fromEntries(parts.map(({ type, value }) => [type, Number(value)]));
+  const localMs = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, 0);
+  // Shift refMs by the difference to get the UTC time that equals the desired local time
+  return new Date(refMs + (refMs - localMs)).toISOString();
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const serviceId = searchParams.get("serviceId");
@@ -35,8 +56,8 @@ export async function GET(request: NextRequest) {
 
   const supabase = supabaseServer();
 
-  const startDate = `${date}T${BUSINESS.hours.open}:00`;
-  const endDate = `${date}T${BUSINESS.hours.close}:00`;
+  const startDate = toUtcIso(date, BUSINESS.hours.open, BUSINESS.timezone);
+  const endDate = toUtcIso(date, BUSINESS.hours.close, BUSINESS.timezone);
 
   const minNotice = new Date(
     now.getTime() + BUSINESS.booking.minNoticeMinutes * 60_000

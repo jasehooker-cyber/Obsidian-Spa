@@ -23,15 +23,20 @@ interface Props {
   onSelectSlot: (slot: Slot) => void;
 }
 
+// Returns today's date string (YYYY-MM-DD) in the spa's timezone, not UTC.
+// Using UTC here would flip to "tomorrow" after 8pm ET (midnight UTC).
+function getEtToday(): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: BUSINESS.timezone,
+  }).format(new Date());
+}
+
 function getNextDays(count: number): string[] {
-  const days: string[] = [];
-  const now = new Date();
-  for (let i = 0; i < count; i++) {
-    const d = new Date(now);
-    d.setDate(d.getDate() + i);
-    days.push(d.toISOString().split("T")[0]);
-  }
-  return days;
+  const [year, month, day] = getEtToday().split("-").map(Number);
+  return Array.from({ length: count }, (_, i) => {
+    const d = new Date(Date.UTC(year, month - 1, day + i));
+    return d.toISOString().split("T")[0];
+  });
 }
 
 function formatSlotTime(iso: string): string {
@@ -45,15 +50,16 @@ function formatSlotTime(iso: string): string {
 }
 
 function formatDayLabel(dateStr: string): string {
-  const d = new Date(dateStr + "T12:00:00");
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
+  const etToday = getEtToday();
+  const [y, m, day] = etToday.split("-").map(Number);
+  const etTomorrow = new Date(Date.UTC(y, m - 1, day + 1))
+    .toISOString()
+    .split("T")[0];
 
-  if (dateStr === today.toISOString().split("T")[0]) return "Today";
-  if (dateStr === tomorrow.toISOString().split("T")[0]) return "Tomorrow";
+  if (dateStr === etToday) return "Today";
+  if (dateStr === etTomorrow) return "Tomorrow";
 
-  return d.toLocaleDateString("en-US", {
+  return new Date(dateStr + "T12:00:00").toLocaleDateString("en-US", {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -127,7 +133,7 @@ export default function SlotPicker({
       });
 
     // For today, auto-refresh every 60 s so slots stay current
-    const today = new Date().toISOString().split("T")[0];
+    const today = getEtToday();
     let interval: ReturnType<typeof setInterval> | undefined;
     if (selectedDate === today) {
       interval = setInterval(() => {
