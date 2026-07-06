@@ -9,9 +9,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 function toUtcIso(dateStr: string, timeStr: string, tz: string): string {
   const [year, month, day] = dateStr.split("-").map(Number);
   const [hour, minute] = timeStr.split(":").map(Number);
-  // Treat input as UTC to get a reference instant
   const refMs = Date.UTC(year, month - 1, day, hour, minute, 0);
-  // Find what local time that UTC instant maps to in the target timezone
   const formatter = new Intl.DateTimeFormat("en-US", {
     timeZone: tz,
     year: "numeric", month: "2-digit", day: "2-digit",
@@ -20,8 +18,29 @@ function toUtcIso(dateStr: string, timeStr: string, tz: string): string {
   const parts = formatter.formatToParts(new Date(refMs));
   const p = Object.fromEntries(parts.map(({ type, value }) => [type, Number(value)]));
   const localMs = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, 0);
-  // Shift refMs by the difference to get the UTC time that equals the desired local time
   return new Date(refMs + (refMs - localMs)).toISOString();
+}
+
+// Generate one UTC ISO string per hour from open through the last possible
+// start time (close minus session duration). Cal.com's 30-min slot intervals
+// would otherwise produce gaps like 8am, 9:30am, 11am instead of every hour.
+function generateHourlySlots(
+  dateStr: string,
+  openTime: string,
+  closeTime: string,
+  durationMinutes: number,
+  tz: string
+): string[] {
+  const [openHour] = openTime.split(":").map(Number);
+  const [closeHour, closeMin] = closeTime.split(":").map(Number);
+  const lastStartHour = Math.floor(
+    (closeHour * 60 + closeMin - durationMinutes) / 60
+  );
+  const slots: string[] = [];
+  for (let h = openHour; h <= lastStartHour; h++) {
+    slots.push(toUtcIso(dateStr, `${String(h).padStart(2, "0")}:00`, tz));
+  }
+  return slots;
 }
 
 export async function GET(request: NextRequest) {
@@ -81,14 +100,29 @@ export async function GET(request: NextRequest) {
       endDate
     );
 
-    const slots = rawSlots
-      .filter((slot) => new Date(slot.start) >= minNotice)
-      .map((slot) => {
-        const endTime = new Date(
-          new Date(slot.start).getTime() + service.duration * 60_000
-        );
-        return { start: slot.start, end: endTime.toISOString(), therapistId };
-      });
+    // Cal.com tells us which times are free; we normalise to hourly boundaries.
+    const calAvailable = new Set(
+      rawSlots.map((s) => Math.floor(new Date(s.start).getTime() / 60_000))
+    );
+
+    const slots = generateHourlySlots(
+      date,
+      BUSINESS.hours.open,
+      BUSINESS.hours.close,
+      service.duration,
+      BUSINESS.timezone
+    )
+      .filter((start) => new Date(start) >= minNotice)
+      .filter((start) =>
+        calAvailable.has(Math.floor(new Date(start).getTime() / 60_000))
+      )
+      .map((start) => ({
+        start,
+        end: new Date(
+          new Date(start).getTime() + service.duration * 60_000
+        ).toISOString(),
+        therapistId,
+      }));
 
     return Response.json({ slots }, {
       headers: { "Cache-Control": "no-store" },
@@ -115,21 +149,33 @@ export async function GET(request: NextRequest) {
     })
   );
 
-  const seen = new Set<string>();
-  const slots = slotResults
-    .flat()
-    .filter((slot) => new Date(slot.start) >= minNotice)
-    .filter((slot) => {
-      if (seen.has(slot.start)) return false;
-      seen.add(slot.start);
-      return true;
-    })
-    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
-    .map((slot) => {
-      const endTime = new Date(
-        new Date(slot.start).getTime() + service.duration * 60_000
-      );
-      return { start: slot.start, end: endTime.toISOString(), therapistId: slot.therapistId };
+  // Build a map of UTC-minute → therapistId from all available Cal.com slots
+  const calAvailable = new Map<number, string>();
+  for (const slot of slotResults.flat()) {
+    const minute = Math.floor(new Date(slot.start).getTime() / 60_000);
+    if (!calAvailable.has(minute)) calAvailable.set(minute, slot.therapistId);
+  }
+
+  const slots = generateHourlySlots(
+    date,
+    BUSINESS.hours.open,
+    BUSINESS.hours.close,
+    service.duration,
+    BUSINESS.timezone
+  )
+    .filter((start) => new Date(start) >= minNotice)
+    .filter((start) =>
+      calAvailable.has(Math.floor(new Date(start).getTime() / 60_000))
+    )
+    .map((start) => {
+      const minute = Math.floor(new Date(start).getTime() / 60_000);
+      return {
+        start,
+        end: new Date(
+          new Date(start).getTime() + service.duration * 60_000
+        ).toISOString(),
+        therapistId: calAvailable.get(minute)!,
+      };
     });
 
   return Response.json({ slots }, {
