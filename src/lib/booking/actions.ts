@@ -4,7 +4,7 @@ import { createBooking as calCreateBooking } from "@/lib/cal/server";
 import { createCalendarEvent } from "@/lib/google/server";
 import { sendBookingConfirmation, sendIntakeEmail } from "@/lib/email/server";
 import { getEnv } from "@/lib/config/env";
-import { BUSINESS } from "@/lib/config/business-rules";
+import { BUSINESS, SERVICES } from "@/lib/config/business-rules";
 import { generateIntakeToken, buildIntakeUrl } from "@/lib/booking/intake";
 import type { BookingDraftInput, CreateSetupSessionInput } from "@/lib/schemas/booking";
 
@@ -161,7 +161,7 @@ export async function confirmBooking(setupIntentId: string) {
       therapist_id, service_id,
       clients!inner(id, name, email),
       therapists!inner(name, cal_event_type_id),
-      services!inner(name, duration_minutes, price_cents),
+      services!inner(service_key, name, duration_minutes, price_cents),
       booking_add_ons(add_ons(name, price_cents))
     `)
     .eq("stripe_setup_intent_id", setupIntentId)
@@ -183,13 +183,19 @@ export async function confirmBooking(setupIntentId: string) {
 
   const client = booking.clients as unknown as { id: string; name: string; email: string };
   const therapist = booking.therapists as unknown as { name: string; cal_event_type_id: number };
-  const service = booking.services as unknown as { name: string; duration_minutes: number; price_cents: number };
+  const service = booking.services as unknown as { service_key: string; name: string; duration_minutes: number; price_cents: number };
   const bookingAddOns = (booking.booking_add_ons as unknown as { add_ons: { name: string; price_cents: number } }[]) ?? [];
+
+  // Each service has its own Cal.com event type; fall back to the therapist's
+  // default so a config gap can't block a confirmed booking.
+  const calEventTypeId =
+    SERVICES.find((s) => s.id === service.service_key)?.calEventTypeId ??
+    therapist.cal_event_type_id;
 
   let calBookingUid: string | null = null;
   try {
     const calResult = await calCreateBooking({
-      eventTypeId: therapist.cal_event_type_id,
+      eventTypeId: calEventTypeId,
       start: booking.starts_at,
       attendee: {
         name: client.name,

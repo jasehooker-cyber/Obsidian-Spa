@@ -27,7 +27,7 @@ export const BUSINESS = {
   therapistCount: 1,
 
   contact: {
-    email: "info@obsidianspas.com",
+    email: "booking@obsidianspas.com",
     phone: "(201) 540-8621",
   },
 
@@ -58,6 +58,8 @@ export interface Service {
   description: string;
   bookingMode: BookingMode;
   requiresMultipleTherapists: boolean;
+  /** Cal.com event type this service books, so the calendar shows the right session */
+  calEventTypeId: number;
 }
 
 export interface AddOn {
@@ -76,6 +78,7 @@ export const SERVICES: Service[] = [
       "A focused, full-body massage tailored to your needs. Deep tissue, Swedish, or a custom blend.",
     bookingMode: "instant",
     requiresMultipleTherapists: false,
+    calEventTypeId: 6071949,
   },
   {
     id: "signature-90",
@@ -86,6 +89,7 @@ export const SERVICES: Service[] = [
       "An extended session for complete relaxation. More time for targeted work on problem areas.",
     bookingMode: "instant",
     requiresMultipleTherapists: false,
+    calEventTypeId: 6071948,
   },
   {
     id: "couples",
@@ -96,6 +100,7 @@ export const SERVICES: Service[] = [
       "A shared experience in our couples suite. Two therapists, side by side.",
     bookingMode: "instant",
     requiresMultipleTherapists: true,
+    calEventTypeId: 6071950,
   },
   {
     id: "four-handed",
@@ -106,6 +111,7 @@ export const SERVICES: Service[] = [
       "Two therapists work in synchronized harmony for a deeply immersive experience.",
     bookingMode: "instant",
     requiresMultipleTherapists: true,
+    calEventTypeId: 6101697,
   },
 ];
 
