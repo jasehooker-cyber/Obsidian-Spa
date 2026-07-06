@@ -1,11 +1,8 @@
 import { type NextRequest } from "next/server";
 import { BUSINESS, SERVICES } from "@/lib/config/business-rules";
-import { getAvailableSlots } from "@/lib/cal/server";
 import { supabaseServer } from "@/lib/supabase/server";
 
 // Convert a local date+time in the given timezone to a UTC ISO string.
-// Without this, Cal.com treats bare strings like "2026-07-06T22:00:00" as UTC,
-// which cuts the day off at 6pm ET instead of 10pm ET.
 function toUtcIso(dateStr: string, timeStr: string, tz: string): string {
   const [year, month, day] = dateStr.split("-").map(Number);
   const [hour, minute] = timeStr.split(":").map(Number);
@@ -21,9 +18,7 @@ function toUtcIso(dateStr: string, timeStr: string, tz: string): string {
   return new Date(refMs + (refMs - localMs)).toISOString();
 }
 
-// Generate one UTC ISO string per hour from open through the last possible
-// start time (close minus session duration). Cal.com's 30-min slot intervals
-// would otherwise produce gaps like 8am, 9:30am, 11am instead of every hour.
+// Generate one UTC ISO string per hour from open through the last valid start time.
 function generateHourlySlots(
   dateStr: string,
   openTime: string,
@@ -41,6 +36,26 @@ function generateHourlySlots(
     slots.push(toUtcIso(dateStr, `${String(h).padStart(2, "0")}:00`, tz));
   }
   return slots;
+}
+
+interface Booking {
+  therapist_id: string;
+  starts_at: string;
+  ends_at: string;
+}
+
+function hasConflict(
+  slotStartMs: number,
+  durationMs: number,
+  bufferMs: number,
+  bookings: Booking[]
+): boolean {
+  const slotEnd = slotStartMs + durationMs + bufferMs;
+  return bookings.some((b) => {
+    const bStart = new Date(b.starts_at).getTime();
+    const bEnd = new Date(b.ends_at).getTime() + bufferMs;
+    return bStart < slotEnd && bEnd > slotStartMs;
+  });
 }
 
 export async function GET(request: NextRequest) {
@@ -61,12 +76,11 @@ export async function GET(request: NextRequest) {
     return Response.json({ error: "Invalid serviceId" }, { status: 400 });
   }
 
-  const requestedDate = new Date(`${date}T00:00:00`);
   const now = new Date();
   const maxDate = new Date();
   maxDate.setDate(maxDate.getDate() + BUSINESS.booking.maxAdvanceDays);
 
-  if (requestedDate > maxDate) {
+  if (new Date(`${date}T00:00:00`) > maxDate) {
     return Response.json(
       { error: `Cannot book more than ${BUSINESS.booking.maxAdvanceDays} days ahead` },
       { status: 400 }
@@ -74,18 +88,40 @@ export async function GET(request: NextRequest) {
   }
 
   const supabase = supabaseServer();
+  const durationMs = service.duration * 60_000;
+  const bufferMs = BUSINESS.booking.bufferMinutes * 60_000;
+  const minNotice = new Date(now.getTime() + BUSINESS.booking.minNoticeMinutes * 60_000);
 
-  const startDate = toUtcIso(date, BUSINESS.hours.open, BUSINESS.timezone);
-  const endDate = toUtcIso(date, BUSINESS.hours.close, BUSINESS.timezone);
+  // Widen the query window by one buffer on each side to catch edge-case overlaps.
+  const windowStart = new Date(
+    new Date(toUtcIso(date, BUSINESS.hours.open, BUSINESS.timezone)).getTime() - bufferMs
+  ).toISOString();
+  const windowEnd = new Date(
+    new Date(toUtcIso(date, BUSINESS.hours.close, BUSINESS.timezone)).getTime() + bufferMs
+  ).toISOString();
 
-  const minNotice = new Date(
-    now.getTime() + BUSINESS.booking.minNoticeMinutes * 60_000
+  // Only confirmed bookings block slots; drafts are ephemeral.
+  const { data: existingBookings } = await supabase
+    .from("bookings")
+    .select("therapist_id, starts_at, ends_at")
+    .in("status", ["confirmed", "completed"])
+    .gte("ends_at", windowStart)
+    .lte("starts_at", windowEnd);
+
+  const allBookings: Booking[] = existingBookings ?? [];
+
+  const hourlySlots = generateHourlySlots(
+    date,
+    BUSINESS.hours.open,
+    BUSINESS.hours.close,
+    service.duration,
+    BUSINESS.timezone
   );
 
   if (therapistId) {
     const { data: therapist } = await supabase
       .from("therapists")
-      .select("cal_event_type_id")
+      .select("id")
       .eq("id", therapistId)
       .eq("active", true)
       .single();
@@ -94,91 +130,53 @@ export async function GET(request: NextRequest) {
       return Response.json({ error: "Therapist not found" }, { status: 404 });
     }
 
-    const rawSlots = await getAvailableSlots(
-      therapist.cal_event_type_id,
-      startDate,
-      endDate
+    const therapistBookings = allBookings.filter(
+      (b) => b.therapist_id === therapistId
     );
 
-    // Cal.com tells us which times are free; we normalise to hourly boundaries.
-    const calAvailable = new Set(
-      rawSlots.map((s) => Math.floor(new Date(s.start).getTime() / 60_000))
-    );
-
-    const slots = generateHourlySlots(
-      date,
-      BUSINESS.hours.open,
-      BUSINESS.hours.close,
-      service.duration,
-      BUSINESS.timezone
-    )
+    const slots = hourlySlots
       .filter((start) => new Date(start) >= minNotice)
-      .filter((start) =>
-        calAvailable.has(Math.floor(new Date(start).getTime() / 60_000))
+      .filter(
+        (start) =>
+          !hasConflict(new Date(start).getTime(), durationMs, bufferMs, therapistBookings)
       )
       .map((start) => ({
         start,
-        end: new Date(
-          new Date(start).getTime() + service.duration * 60_000
-        ).toISOString(),
+        end: new Date(new Date(start).getTime() + durationMs).toISOString(),
         therapistId,
       }));
 
-    return Response.json({ slots }, {
-      headers: { "Cache-Control": "no-store" },
-    });
+    return Response.json({ slots }, { headers: { "Cache-Control": "no-store" } });
   }
 
   const { data: allTherapists } = await supabase
     .from("therapists")
-    .select("id, cal_event_type_id")
+    .select("id")
     .eq("active", true);
 
   if (!allTherapists?.length) {
     return Response.json({ error: "No therapists available" }, { status: 404 });
   }
 
-  const slotResults = await Promise.all(
-    allTherapists.map(async (t) => {
-      const rawSlots = await getAvailableSlots(
-        t.cal_event_type_id,
-        startDate,
-        endDate
-      );
-      return rawSlots.map((slot) => ({ ...slot, therapistId: t.id }));
-    })
-  );
-
-  // Build a map of UTC-minute → therapistId from all available Cal.com slots
-  const calAvailable = new Map<number, string>();
-  for (const slot of slotResults.flat()) {
-    const minute = Math.floor(new Date(slot.start).getTime() / 60_000);
-    if (!calAvailable.has(minute)) calAvailable.set(minute, slot.therapistId);
-  }
-
-  const slots = generateHourlySlots(
-    date,
-    BUSINESS.hours.open,
-    BUSINESS.hours.close,
-    service.duration,
-    BUSINESS.timezone
-  )
+  // For each hourly slot, pick the first therapist with no conflict.
+  const slots = hourlySlots
     .filter((start) => new Date(start) >= minNotice)
-    .filter((start) =>
-      calAvailable.has(Math.floor(new Date(start).getTime() / 60_000))
-    )
-    .map((start) => {
-      const minute = Math.floor(new Date(start).getTime() / 60_000);
-      return {
-        start,
-        end: new Date(
-          new Date(start).getTime() + service.duration * 60_000
-        ).toISOString(),
-        therapistId: calAvailable.get(minute)!,
-      };
+    .flatMap((start) => {
+      const slotStartMs = new Date(start).getTime();
+      for (const t of allTherapists) {
+        const bookings = allBookings.filter((b) => b.therapist_id === t.id);
+        if (!hasConflict(slotStartMs, durationMs, bufferMs, bookings)) {
+          return [
+            {
+              start,
+              end: new Date(slotStartMs + durationMs).toISOString(),
+              therapistId: t.id,
+            },
+          ];
+        }
+      }
+      return [];
     });
 
-  return Response.json({ slots }, {
-    headers: { "Cache-Control": "no-store" },
-  });
+  return Response.json({ slots }, { headers: { "Cache-Control": "no-store" } });
 }
