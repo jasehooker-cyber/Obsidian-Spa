@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { SERVICES, formatPrice, BUSINESS } from "@/lib/config/business-rules";
+import { formatPrice, BUSINESS } from "@/lib/config/business-rules";
+import { CAL_SERVICES, basePrice } from "@/lib/config/cal-events";
 import { formatTime } from "@/lib/config/format";
 
 export const metadata = {
@@ -59,30 +60,40 @@ export default function Home() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
-            {SERVICES.map((service, i) => (
-              <div
+            {CAL_SERVICES.map((service, i) => (
+              <Link
                 key={service.id}
-                className="luxury-card group p-8"
+                href="/booking"
+                className="luxury-card group block p-8"
                 style={{ animationDelay: `${i * 0.1}s` }}
               >
-                <div className="mb-4 flex items-start justify-between">
+                <div className="mb-4 flex items-start justify-between gap-4">
                   <div>
                     <h3 className="text-lg font-semibold tracking-wide transition-colors duration-300 group-hover:text-gold">
                       {service.name}
                     </h3>
                     <p className="mt-1 text-xs tracking-wider text-muted">
-                      {service.duration} MINUTES
+                      {service.durations
+                        .map((duration) => `${duration.minutes} MIN`)
+                        .join(" · ")}
                     </p>
                   </div>
-                  <span className="text-gold-gradient text-xl font-bold">
-                    {formatPrice(service.price)}
-                  </span>
+                  <p className="shrink-0 text-right">
+                    {service.durations.length > 1 && (
+                      <span className="mr-1.5 text-[10px] tracking-[0.2em] text-muted/60">
+                        FROM
+                      </span>
+                    )}
+                    <span className="text-gold-gradient text-xl font-bold">
+                      {formatPrice(basePrice(service))}
+                    </span>
+                  </p>
                 </div>
                 <p className="mb-5 text-sm leading-relaxed text-muted">
                   {service.description}
                 </p>
                 <div className="h-px w-full bg-gradient-to-r from-charcoal-light via-gold/20 to-charcoal-light transition-all duration-500 group-hover:via-gold/40" />
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -129,8 +140,8 @@ export default function Home() {
             Ready to Unwind?
           </h2>
           <p className="mb-10 text-lg leading-relaxed text-muted">
-            Choose your therapist, pick your time, and let us handle the rest.
-            Your card is kept securely on file — payment is collected only after
+            Pick your session, choose a time that works, and let us handle the
+            rest. Booking places a hold on your card — payment is taken after
             your session.
           </p>
           <Link

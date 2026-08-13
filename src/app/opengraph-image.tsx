@@ -59,7 +59,7 @@ export default function Image() {
             display: "flex",
           }}
         >
-          Signature Massages · Couples Sessions · Open Daily 8 AM – 10 PM
+          Signature · Deep Tissue · Full Body · Open Daily 8 AM – 10 PM
         </div>
       </div>
     ),

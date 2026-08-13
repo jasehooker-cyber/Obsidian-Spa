@@ -4,7 +4,7 @@ import { createBooking as calCreateBooking } from "@/lib/cal/server";
 import { createCalendarEvent } from "@/lib/google/server";
 import { sendBookingConfirmation, sendIntakeEmail } from "@/lib/email/server";
 import { getEnv } from "@/lib/config/env";
-import { BUSINESS, SERVICES } from "@/lib/config/business-rules";
+import { BUSINESS } from "@/lib/config/business-rules";
 import { generateIntakeToken, buildIntakeUrl } from "@/lib/booking/intake";
 import type { BookingDraftInput, CreateSetupSessionInput } from "@/lib/schemas/booking";
 
@@ -186,11 +186,9 @@ export async function confirmBooking(setupIntentId: string) {
   const service = booking.services as unknown as { service_key: string; name: string; duration_minutes: number; price_cents: number };
   const bookingAddOns = (booking.booking_add_ons as unknown as { add_ons: { name: string; price_cents: number } }[]) ?? [];
 
-  // Each service has its own Cal.com event type; fall back to the therapist's
-  // default so a config gap can't block a confirmed booking.
-  const calEventTypeId =
-    SERVICES.find((s) => s.id === service.service_key)?.calEventTypeId ??
-    therapist.cal_event_type_id;
+  // Public booking runs through the Cal.com embed now, so this path only ever
+  // sees legacy bookings; the therapist's default event type is the right one.
+  const calEventTypeId = therapist.cal_event_type_id;
 
   let calBookingUid: string | null = null;
   try {

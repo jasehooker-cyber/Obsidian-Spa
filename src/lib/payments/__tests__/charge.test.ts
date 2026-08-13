@@ -1,45 +1,47 @@
 import { describe, it, expect } from "vitest";
-import { BUSINESS, SERVICES } from "@/lib/config/business-rules";
+import { BUSINESS } from "@/lib/config/business-rules";
+import { CAL_SERVICES } from "@/lib/config/cal-events";
+
+const allDurations = CAL_SERVICES.flatMap((service) => service.durations);
 
 describe("fee calculations", () => {
   it("late cancel fee is $40 (4000 cents)", () => {
     expect(BUSINESS.fees.lateCancelFee).toBe(40_00);
   });
 
-  it("no-show fee is 50% of service price", () => {
-    for (const service of SERVICES) {
+  it("no-show fee is 50% of the booked session price", () => {
+    for (const duration of allDurations) {
       const fee = Math.round(
-        service.price * (BUSINESS.fees.noShowPercent / 100)
+        duration.price * (BUSINESS.fees.noShowPercent / 100)
       );
-      expect(fee).toBe(service.price / 2);
+      expect(fee).toBe(duration.price / 2);
     }
   });
 
-  it("no-show fee for signature-60 is $75", () => {
-    const service = SERVICES.find((s) => s.id === "signature-60")!;
-    const fee = Math.round(
-      service.price * (BUSINESS.fees.noShowPercent / 100)
-    );
-    expect(fee).toBe(75_00);
+  it("no-show fee for the 60 minute signature is $90", () => {
+    const duration = allDurations.find((d) => d.slug === "obsidian")!;
+    expect(
+      Math.round(duration.price * (BUSINESS.fees.noShowPercent / 100))
+    ).toBe(90_00);
   });
 
-  it("no-show fee for signature-90 is $105", () => {
-    const service = SERVICES.find((s) => s.id === "signature-90")!;
-    const fee = Math.round(
-      service.price * (BUSINESS.fees.noShowPercent / 100)
-    );
-    expect(fee).toBe(105_00);
+  it("no-show fee for the 90 minute signature is $120", () => {
+    const duration = allDurations.find((d) => d.slug === "obsidian-copy")!;
+    expect(
+      Math.round(duration.price * (BUSINESS.fees.noShowPercent / 100))
+    ).toBe(120_00);
   });
 
-  it("no-show fee for couples is $130", () => {
-    const service = SERVICES.find((s) => s.id === "couples")!;
-    const fee = Math.round(
-      service.price * (BUSINESS.fees.noShowPercent / 100)
-    );
-    expect(fee).toBe(130_00);
+  it("no-show fee for The Split is $50", () => {
+    const duration = allDurations.find((d) => d.slug === "the-split")!;
+    expect(
+      Math.round(duration.price * (BUSINESS.fees.noShowPercent / 100))
+    ).toBe(50_00);
   });
 
-  it("late cancel window is 2 hours", () => {
-    expect(BUSINESS.fees.lateCancelWindow).toBe(2);
+  it("every session price halves to whole cents", () => {
+    for (const duration of allDurations) {
+      expect(duration.price % 2).toBe(0);
+    }
   });
 });

@@ -35,10 +35,11 @@ export default function PrivacyPage() {
             <p>
               Your card details are handled entirely by{" "}
               <strong className="text-foreground">Stripe</strong>. We never
-              see, store, or have access to your full card number. Stripe saves
-              your payment method securely so we can process charges for
-              services rendered and policy fees (late cancellation or no-show).
-              No charge is made at the time of booking.
+              see, store, or have access to your full card number. Booking
+              places a hold on your card rather than charging it, so your
+              payment method is on file for services rendered and policy fees
+              (late cancellation or no-show). No payment is taken at the time of
+              booking.
             </p>
           </div>
 

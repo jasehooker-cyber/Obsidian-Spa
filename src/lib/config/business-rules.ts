@@ -40,80 +40,13 @@ export const BUSINESS = {
   },
 } as const;
 
-export type BookingMode = "instant" | "request";
-
-export type ServiceId =
-  | "signature-60"
-  | "signature-90"
-  | "couples"
-  | "four-handed";
-
 export type AddOnId = "cbd" | "hot-stones" | "cupping";
-
-export interface Service {
-  id: ServiceId;
-  name: string;
-  duration: number;
-  price: number;
-  description: string;
-  bookingMode: BookingMode;
-  requiresMultipleTherapists: boolean;
-  /** Cal.com event type this service books, so the calendar shows the right session */
-  calEventTypeId: number;
-}
 
 export interface AddOn {
   id: AddOnId;
   name: string;
   price: number;
 }
-
-export const SERVICES: Service[] = [
-  {
-    id: "signature-60",
-    name: "60 Min Signature Massage",
-    duration: 60,
-    price: 150_00,
-    description:
-      "A focused, full-body massage tailored to your needs. Deep tissue, Swedish, or a custom blend.",
-    bookingMode: "instant",
-    requiresMultipleTherapists: false,
-    calEventTypeId: 6071949,
-  },
-  {
-    id: "signature-90",
-    name: "90 Min Signature Massage",
-    duration: 90,
-    price: 210_00,
-    description:
-      "An extended session for complete relaxation. More time for targeted work on problem areas.",
-    bookingMode: "instant",
-    requiresMultipleTherapists: false,
-    calEventTypeId: 6071948,
-  },
-  {
-    id: "couples",
-    name: "Couples Massage",
-    duration: 60,
-    price: 260_00,
-    description:
-      "A shared experience in our couples suite. Two therapists, side by side.",
-    bookingMode: "instant",
-    requiresMultipleTherapists: true,
-    calEventTypeId: 6071950,
-  },
-  {
-    id: "four-handed",
-    name: "Four-Handed Massage",
-    duration: 60,
-    price: 260_00,
-    description:
-      "Two therapists work in synchronized harmony for a deeply immersive experience.",
-    bookingMode: "instant",
-    requiresMultipleTherapists: true,
-    calEventTypeId: 6101697,
-  },
-];
 
 export const ADD_ONS: AddOn[] = [
   { id: "cbd", name: "CBD", price: 30_00 },

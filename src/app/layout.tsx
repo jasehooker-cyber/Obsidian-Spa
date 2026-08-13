@@ -3,7 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { BUSINESS, SERVICES } from "@/lib/config/business-rules";
+import { BUSINESS } from "@/lib/config/business-rules";
+import { CAL_SERVICES, basePrice } from "@/lib/config/cal-events";
 import { getEnv } from "@/lib/config/env-public";
 import "./globals.css";
 
@@ -18,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 const description =
-  "Premium men's spa in Midtown Manhattan. Signature massages, couples sessions, and luxury treatments in a private, refined setting. Open daily 8 AM – 10 PM. Book online.";
+  "Premium men's spa in Midtown Manhattan. Signature, deep tissue, full body, and express massages in a private, refined setting. Open daily 8 AM – 10 PM. Book online.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getEnv().siteUrl),
@@ -32,8 +33,8 @@ export const metadata: Metadata = {
     "men's spa Midtown Manhattan",
     "massage for men NYC",
     "deep tissue massage Manhattan",
-    "couples massage NYC",
-    "four-handed massage",
+    "sports massage Midtown",
+    "express massage NYC",
     "luxury spa New York",
     "men's massage therapy",
   ],
@@ -48,7 +49,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Obsidian Men's Spa",
     description:
-      "Premium men's spa. Signature massages, couples sessions, and luxury treatments. Open daily 8 AM – 10 PM.",
+      "Premium men's spa. Signature, deep tissue, full body, and express massages. Open daily 8 AM – 10 PM.",
   },
   robots: {
     index: true,
@@ -72,11 +73,11 @@ const jsonLd = {
   "@type": "DaySpa",
   name: BUSINESS.name,
   description:
-    "Premium men's spa in Midtown Manhattan offering signature massages, couples sessions, and luxury treatments in a private, refined setting.",
+    "Premium men's spa in Midtown Manhattan offering signature, deep tissue, full body, and express massages in a private, refined setting.",
   url: getEnv().siteUrl,
   telephone: BUSINESS.contact.phone,
   email: BUSINESS.contact.email,
-  priceRange: "$150-$260",
+  priceRange: "$100-$240",
   address: {
     "@type": "PostalAddress",
     streetAddress: BUSINESS.address.street,
@@ -107,14 +108,14 @@ const jsonLd = {
   hasOfferCatalog: {
     "@type": "OfferCatalog",
     name: "Spa Services",
-    itemListElement: SERVICES.map((service) => ({
+    itemListElement: CAL_SERVICES.map((service) => ({
       "@type": "Offer",
       itemOffered: {
         "@type": "Service",
         name: service.name,
         description: service.description,
       },
-      price: (service.price / 100).toFixed(0),
+      price: (basePrice(service) / 100).toFixed(0),
       priceCurrency: "USD",
     })),
   },

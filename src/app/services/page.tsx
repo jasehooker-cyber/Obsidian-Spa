@@ -1,15 +1,10 @@
-import Link from "next/link";
-import {
-  SERVICES,
-  ADD_ONS,
-  BUSINESS,
-  formatPrice,
-} from "@/lib/config/business-rules";
+import { ADD_ONS, BUSINESS, formatPrice } from "@/lib/config/business-rules";
+import CalBookingMenu from "@/components/booking/CalBookingMenu";
 
 export const metadata = {
   title: "Services & Pricing",
   description:
-    "60 and 90 minute signature massages from $150, couples massage, four-handed massage, and luxury add-ons like CBD, hot stones, and cupping. Midtown Manhattan, book online.",
+    "Signature, deep tissue, full body, and express massages for men, from $100. 45, 60, and 90 minute sessions in Midtown Manhattan. Book online.",
   alternates: { canonical: "/services" },
 };
 
@@ -29,65 +24,32 @@ export default function ServicesPage() {
           <span className="text-xs text-gold/60">&#9670;</span>
         </div>
         <p className="animate-fade-up-delay-2 relative mx-auto max-w-lg text-lg text-muted">
-          Every session is tailored to you. Choose your service, select your
-          therapist, and add enhancements to create your ideal experience.
+          Four sessions, each at the length that suits you. Pick one to see live
+          availability and book on the spot.
         </p>
       </section>
 
-      {/* Services */}
+      {/* Services — same live menu as the booking page */}
       <section className="section-glow relative px-6 py-16">
-        <div className="mx-auto max-w-4xl">
-          <div className="flex flex-col gap-6">
-            {SERVICES.map((service, i) => (
-              <div
-                key={service.id}
-                className="luxury-card group flex flex-col justify-between gap-6 p-8 md:flex-row md:items-center"
-                style={{ animationDelay: `${i * 0.1}s` }}
-              >
-                <div className="flex-1">
-                  <h2 className="mb-2 text-xl font-semibold tracking-wide transition-colors duration-300 group-hover:text-gold">
-                    {service.name}
-                  </h2>
-                  <p className="mb-3 text-sm leading-relaxed text-muted">
-                    {service.description}
-                  </p>
-                  <p className="text-xs tracking-wider text-muted/60">
-                    {service.duration} MINUTES
-                  </p>
-                </div>
-                <div className="flex items-center gap-6">
-                  <span className="text-gold-gradient text-2xl font-bold">
-                    {formatPrice(service.price)}
-                  </span>
-                  <Link
-                    href="/booking"
-                    className="whitespace-nowrap border border-gold px-6 py-2.5 text-xs font-semibold tracking-widest text-gold transition-all duration-300 hover:bg-gold hover:text-background hover:shadow-[0_0_16px_rgba(201,168,76,0.2)]"
-                  >
-                    BOOK
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <CalBookingMenu />
       </section>
 
       {/* Add-ons */}
       <section className="relative px-6 py-16">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-5xl">
           <p className="mb-3 text-sm tracking-[0.4em] text-gold">
             ENHANCEMENTS
           </p>
           <h2 className="mb-2 text-3xl font-bold tracking-tight">Add-Ons</h2>
-          <div className="gold-divider mb-10 justify-start">
+          <div className="gold-divider mb-4 justify-start">
             <span className="text-xs text-gold/60">&#9670;</span>
           </div>
+          <p className="mb-10 max-w-xl text-sm leading-relaxed text-muted">
+            Added to any session — just ask your therapist when you arrive.
+          </p>
           <div className="grid gap-4 sm:grid-cols-3">
             {ADD_ONS.map((addon) => (
-              <div
-                key={addon.id}
-                className="luxury-card group p-8 text-center"
-              >
+              <div key={addon.id} className="luxury-card group p-8 text-center">
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-gold/20 transition-all duration-300 group-hover:border-gold/50 group-hover:shadow-[0_0_16px_rgba(201,168,76,0.1)]">
                   <span className="text-lg text-gold">+</span>
                 </div>
@@ -105,27 +67,27 @@ export default function ServicesPage() {
 
       {/* Policies */}
       <section className="relative px-6 py-16">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-5xl">
           <h2 className="mb-8 text-2xl font-bold tracking-tight">
             Booking Policies
           </h2>
           <div className="grid gap-6 sm:grid-cols-2">
             {[
               {
-                title: "Card on File",
-                text: "A valid card is required to book. Payment is collected after your session.",
+                title: "Card Hold",
+                text: "Booking places a hold on your card. You are not charged online — payment is taken after your session.",
               },
               {
                 title: "Cancellation",
-                text: `Cancellations within ${BUSINESS.fees.lateCancelWindow} hours of your appointment incur a ${formatPrice(BUSINESS.fees.lateCancelFee)} fee.`,
+                text: `Cancellations within ${BUSINESS.fees.lateCancelWindow} hours of your appointment are charged to the card on file.`,
               },
               {
                 title: "No-Show",
-                text: `Missed appointments without notice are charged ${BUSINESS.fees.noShowPercent}% of the booked service price.`,
+                text: "Missed appointments without notice are charged to the card on file.",
               },
               {
                 title: "Changes",
-                text: "To cancel or reschedule, please contact us directly.",
+                text: "To cancel or reschedule, use the link in your confirmation email or contact us directly.",
               },
             ].map((policy) => (
               <div

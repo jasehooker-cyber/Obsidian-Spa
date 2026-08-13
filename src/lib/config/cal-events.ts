@@ -105,9 +105,11 @@ export const CAL_SERVICES: CalService[] = [
     eyebrow: "EXPRESS",
     name: "The Split",
     description:
-      "A focused session for when time is short. Targeted work on the areas that need it most.",
+      "Our shortest session. Focused, targeted work on the areas that need it most, for when time is tight.",
     durations: [
-      { minutes: 45, slug: "the-split", namespace: "the-split", price: 150_00 },
+      // Cal.com still has this event type priced at $150. The site price is the
+      // correct one — update the event type in Cal.com so the card hold matches.
+      { minutes: 45, slug: "the-split", namespace: "the-split", price: 100_00 },
     ],
   },
 ];

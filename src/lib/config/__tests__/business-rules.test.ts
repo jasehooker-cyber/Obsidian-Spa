@@ -1,10 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  BUSINESS,
-  SERVICES,
-  ADD_ONS,
-  formatPrice,
-} from "@/lib/config/business-rules";
+import { BUSINESS, ADD_ONS, formatPrice } from "@/lib/config/business-rules";
 
 describe("business rules", () => {
   it("has correct operating hours", () => {
@@ -28,31 +23,6 @@ describe("business rules", () => {
 
   it("uses America/New_York timezone", () => {
     expect(BUSINESS.timezone).toBe("America/New_York");
-  });
-});
-
-describe("services", () => {
-  it("has 4 services", () => {
-    expect(SERVICES).toHaveLength(4);
-  });
-
-  it("all services are instant-book", () => {
-    const instant = SERVICES.filter((s) => s.bookingMode === "instant");
-    expect(instant).toHaveLength(4);
-  });
-
-  it("multi-therapist services are instant-book", () => {
-    const multi = SERVICES.filter((s) => s.requiresMultipleTherapists);
-    expect(multi).toHaveLength(2);
-    expect(multi.every((s) => s.bookingMode === "instant")).toBe(true);
-  });
-
-  it("has correct prices in cents", () => {
-    const byId = Object.fromEntries(SERVICES.map((s) => [s.id, s]));
-    expect(byId["signature-60"].price).toBe(150_00);
-    expect(byId["signature-90"].price).toBe(210_00);
-    expect(byId["couples"].price).toBe(260_00);
-    expect(byId["four-handed"].price).toBe(260_00);
   });
 });
 
