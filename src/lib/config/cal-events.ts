@@ -26,6 +26,12 @@ export interface CalDuration {
   slug: string;
   /** Embed namespace — one per event type, matching Cal's generated snippets. */
   namespace: string;
+  /**
+   * Base price in cents, mirroring the event type's price in Cal.com. Shown so
+   * clients see the cost before opening the booker. Cal.com holds this amount
+   * on the card rather than charging it — see CARD_HOLD_NOTICE.
+   */
+  price: number;
 }
 
 export interface CalService {
@@ -53,8 +59,13 @@ export const CAL_SERVICES: CalService[] = [
     description:
       "Our signature. Built around wherever you're sore. Swedish, deep tissue, and stretch blended to the body on the table that day.",
     durations: [
-      { minutes: 60, slug: "obsidian", namespace: "obsidian" },
-      { minutes: 90, slug: "obsidian-copy", namespace: "obsidian-copy" },
+      { minutes: 60, slug: "obsidian", namespace: "obsidian", price: 180_00 },
+      {
+        minutes: 90,
+        slug: "obsidian-copy",
+        namespace: "obsidian-copy",
+        price: 240_00,
+      },
     ],
   },
   {
@@ -64,8 +75,13 @@ export const CAL_SERVICES: CalService[] = [
     description:
       "Slow, heavy, deliberate pressure. For men who lift, sit, or carry stress in their back.",
     durations: [
-      { minutes: 60, slug: "the-forge", namespace: "the-forge" },
-      { minutes: 90, slug: "the-forge-copy", namespace: "the-forge-copy" },
+      { minutes: 60, slug: "the-forge", namespace: "the-forge", price: 165_00 },
+      {
+        minutes: 90,
+        slug: "the-forge-copy",
+        namespace: "the-forge-copy",
+        price: 225_00,
+      },
     ],
   },
   {
@@ -75,8 +91,13 @@ export const CAL_SERVICES: CalService[] = [
     description:
       "Long strokes, full body, prepare to fall asleep and experience true relaxation.",
     durations: [
-      { minutes: 60, slug: "blackout-copy", namespace: "blackout-copy" },
-      { minutes: 90, slug: "blackout", namespace: "blackout" },
+      {
+        minutes: 60,
+        slug: "blackout-copy",
+        namespace: "blackout-copy",
+        price: 150_00,
+      },
+      { minutes: 90, slug: "blackout", namespace: "blackout", price: 210_00 },
     ],
   },
   {
@@ -85,9 +106,24 @@ export const CAL_SERVICES: CalService[] = [
     name: "The Split",
     description:
       "A focused session for when time is short. Targeted work on the areas that need it most.",
-    durations: [{ minutes: 45, slug: "the-split", namespace: "the-split" }],
+    durations: [
+      { minutes: 45, slug: "the-split", namespace: "the-split", price: 150_00 },
+    ],
   },
 ];
+
+/**
+ * Every event type is configured in Cal.com with Stripe `paymentOption: "HOLD"`,
+ * so booking places a hold on the card instead of taking payment. Stated up
+ * front so the card step in the booker is not a surprise.
+ */
+export const CARD_HOLD_NOTICE =
+  "Booking places a hold on your card — you are not charged online. Payment is taken after your session; the card is only charged for last-minute cancellations or no-shows.";
+
+/** Lowest price across a service's lengths, for the “from” price on its card. */
+export function basePrice(service: CalService): number {
+  return Math.min(...service.durations.map((duration) => duration.price));
+}
 
 /** Every embed namespace on the page, for one-time UI theming on mount. */
 export const CAL_NAMESPACES: string[] = CAL_SERVICES.flatMap((service) =>
