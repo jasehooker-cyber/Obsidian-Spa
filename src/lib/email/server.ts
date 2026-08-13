@@ -234,6 +234,124 @@ export async function sendBookingConfirmation(params: BookingConfirmationParams)
   });
 }
 
+interface PayLinkEmailParams {
+  clientName: string;
+  clientEmail: string;
+  payUrl: string;
+  startsAt: string;
+}
+
+/**
+ * Sent right after a client schedules in Cal.com. Their time is held, but the
+ * booking is not secured until a card is on file, so this is the nudge.
+ */
+export async function sendPayLinkEmail(params: PayLinkEmailParams) {
+  const env = getEnv();
+  if (!env.resend.configured) {
+    console.log(`[EMAIL] Resend not configured. Would send pay link to ${params.clientEmail}`);
+    return;
+  }
+
+  const firstName = params.clientName.split(" ")[0];
+  const start = new Date(params.startsAt);
+  const date = start.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    timeZone: BUSINESS.timezone,
+  });
+  const time = start.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: BUSINESS.timezone,
+  });
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#0a0a0a;font-family:Arial,Helvetica,sans-serif;">
+  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
+
+    <div style="text-align:center;margin-bottom:32px;">
+      <h1 style="color:#c9a84c;font-size:24px;letter-spacing:6px;margin:0;">OBSIDIAN</h1>
+      <p style="color:#a3a3a3;font-size:12px;letter-spacing:3px;margin:8px 0 0;">MEN'S SPA</p>
+    </div>
+
+    <div style="background:#1a1a1a;border:1px solid #2a2a2a;padding:32px;">
+      <h2 style="color:#f5f5f5;font-size:20px;margin:0 0 8px;">Almost there, ${firstName}.</h2>
+      <p style="color:#a3a3a3;font-size:14px;line-height:1.6;margin:0 0 20px;">
+        We're holding <strong style="color:#f5f5f5;">${date} at ${time} ET</strong> for you.
+        To secure it, add a card to your file — you will
+        <strong style="color:#f5f5f5;">not be charged now</strong>.
+      </p>
+
+      <div style="text-align:center;margin:28px 0;">
+        <a href="${params.payUrl}" style="display:inline-block;background:#c9a84c;color:#0a0a0a;padding:14px 32px;font-size:14px;font-weight:600;letter-spacing:2px;text-decoration:none;">
+          SECURE MY BOOKING
+        </a>
+      </div>
+
+      <p style="color:#a3a3a3;font-size:12px;text-align:center;margin:0;">
+        This link expires in 72 hours.
+      </p>
+    </div>
+
+    <div style="background:#141414;border:1px solid #2a2a2a;border-top:none;padding:24px 32px;">
+      <h3 style="color:#c9a84c;font-size:13px;letter-spacing:2px;margin:0 0 12px;">WHY WE NEED A CARD</h3>
+      <p style="color:#a3a3a3;font-size:13px;line-height:1.6;margin:0 0 8px;">
+        Payment is collected after your session. Your card on file is only charged if:
+      </p>
+      <ul style="color:#a3a3a3;font-size:13px;line-height:1.8;margin:0;padding-left:20px;">
+        <li><strong style="color:#f5f5f5;">Late cancellation</strong> (within ${BUSINESS.fees.lateCancelWindow} hours): ${formatPrice(BUSINESS.fees.lateCancelFee)} fee</li>
+        <li><strong style="color:#f5f5f5;">No-show</strong>: ${BUSINESS.fees.noShowPercent}% of your service price</li>
+      </ul>
+    </div>
+
+    <div style="text-align:center;margin-top:32px;">
+      <p style="color:#c9a84c;font-size:11px;letter-spacing:3px;margin:0;">${BUSINESS.name.toUpperCase()}</p>
+      <p style="color:#666666;font-size:11px;line-height:1.6;margin:12px 0 0;">
+        ${FULL_ADDRESS}<br>
+        ${BUSINESS.contact.phone} · ${BUSINESS.contact.email}
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>`;
+
+  const text = [
+    `${BUSINESS.name} — Secure Your Booking`,
+    ``,
+    `Almost there, ${firstName}.`,
+    ``,
+    `We're holding ${date} at ${time} ET for you. To secure it, add a card to`,
+    `your file. You will not be charged now.`,
+    ``,
+    `Secure your booking here (link expires in 72 hours):`,
+    params.payUrl,
+    ``,
+    `WHY WE NEED A CARD`,
+    `Payment is collected after your session. Your card is only charged if:`,
+    `- Late cancellation (within ${BUSINESS.fees.lateCancelWindow} hours): ${formatPrice(BUSINESS.fees.lateCancelFee)} fee`,
+    `- No-show: ${BUSINESS.fees.noShowPercent}% of your service price`,
+    ``,
+    `${BUSINESS.name}`,
+    FULL_ADDRESS,
+    `${BUSINESS.contact.phone} · ${BUSINESS.contact.email}`,
+  ].join("\n");
+
+  await resend().emails.send({
+    from: `${BUSINESS.name} <${env.resend.fromEmail}>`,
+    to: params.clientEmail,
+    replyTo: BUSINESS.contact.email,
+    subject: `Secure your ${date} appointment — ${BUSINESS.name}`,
+    html,
+    text,
+  });
+}
+
 interface IntakeEmailParams {
   clientName: string;
   clientEmail: string;
