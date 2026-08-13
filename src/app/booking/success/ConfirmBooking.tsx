@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { BUSINESS } from "@/lib/config/business-rules";
 
 type Status = "confirming" | "confirmed" | "error";
 
@@ -16,7 +17,8 @@ function getInitialState(): { status: Status; errorMsg: string | null } {
   if (!setupIntentId || redirectStatus !== "succeeded") {
     return {
       status: "error",
-      errorMsg: "Card setup did not complete. Please try booking again.",
+      errorMsg:
+        "Your card was not saved. Your appointment time is still held — reopen the payment link from your email to finish.",
     };
   }
   return { status: "confirming", errorMsg: null };
@@ -36,7 +38,7 @@ export function ConfirmBooking() {
 
     const controller = new AbortController();
 
-    fetch("/api/booking/confirm", {
+    fetch("/api/pay/confirm", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ setupIntentId }),
@@ -85,14 +87,23 @@ export function ConfirmBooking() {
           ✕
         </div>
         <h1 className="mb-4 text-3xl font-bold tracking-tight">
-          Something Went Wrong
+          Card Not Saved
         </h1>
-        <p className="mb-8 text-muted">{errorMsg}</p>
+        <p className="mb-4 text-muted">{errorMsg}</p>
+        <p className="mb-8 text-sm text-muted">
+          Need a hand?{" "}
+          <a
+            href={`tel:${BUSINESS.contact.phone}`}
+            className="text-gold transition-colors hover:text-gold-dark"
+          >
+            {BUSINESS.contact.phone}
+          </a>
+        </p>
         <Link
-          href="/booking"
+          href="/"
           className="inline-block border border-gold px-8 py-3 text-sm tracking-wide text-gold transition-colors hover:bg-gold hover:text-background"
         >
-          Try Again
+          Back to Home
         </Link>
       </>
     );

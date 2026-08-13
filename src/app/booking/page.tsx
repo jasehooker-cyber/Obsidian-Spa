@@ -1,8 +1,5 @@
 import { SERVICES, ADD_ONS } from "@/lib/config/business-rules";
-import { supabaseServer } from "@/lib/supabase/server";
 import BookingFlow from "@/components/booking/BookingFlow";
-
-export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Book Your Session",
@@ -11,14 +8,7 @@ export const metadata = {
   alternates: { canonical: "/booking" },
 };
 
-export default async function BookingPage() {
-  const supabase = supabaseServer();
-  const { data: therapists } = await supabase
-    .from("therapists")
-    .select("id, name")
-    .eq("active", true)
-    .order("name");
-
+export default function BookingPage() {
   return (
     <>
       <section className="noise-overlay relative overflow-hidden px-6 pb-16 pt-28 text-center">
@@ -39,11 +29,7 @@ export default async function BookingPage() {
       </section>
 
       <section className="section-glow relative px-6 py-16">
-        <BookingFlow
-          services={SERVICES}
-          addOns={ADD_ONS}
-          therapists={therapists ?? []}
-        />
+        <BookingFlow services={SERVICES} addOns={ADD_ONS} />
       </section>
     </>
   );
