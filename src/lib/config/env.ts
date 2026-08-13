@@ -26,6 +26,10 @@ function lazyEnv() {
 
     cal: {
       apiKey: required("CALCOM_API_KEY"),
+      // Cal.com signs webhooks with the secret set on the webhook itself, which
+      // is not the API key. Falls back to the API key so an existing setup that
+      // reused it keeps verifying.
+      webhookSecret: optional("CALCOM_WEBHOOK_SECRET", required("CALCOM_API_KEY")),
       versions: {
         bookings: optional("CALCOM_API_VERSION_BOOKINGS", "2024-08-13"),
         slots: optional("CALCOM_API_VERSION_SLOTS", "2024-09-04"),
