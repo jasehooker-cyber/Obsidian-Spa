@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Cal, { getCalApi } from "@calcom/embed-react";
-import { calLinkFor, type AddOnId, type Service } from "@/lib/config/business-rules";
+import { calLinkFor, type Service } from "@/lib/config/business-rules";
 
 interface Props {
   service: Service;
-  addOnIds: AddOnId[];
 }
 
 /** Namespace keeps this embed's config isolated from any other Cal instance. */
@@ -34,7 +33,7 @@ function extractBookingUid(detail: unknown): string | null {
   return null;
 }
 
-export default function CalScheduler({ service, addOnIds }: Props) {
+export default function CalScheduler({ service }: Props) {
   const [failed, setFailed] = useState(false);
   const calLink = calLinkFor(service);
 
@@ -49,8 +48,8 @@ export default function CalScheduler({ service, addOnIds }: Props) {
         cal("ui", {
           theme: "dark",
           cssVarsPerTheme: {
-            light: { "cal-brand": "#c9a84c" },
-            dark: { "cal-brand": "#c9a84c" },
+            light: { "cal-brand": "#bb9159" },
+            dark: { "cal-brand": "#bb9159" },
           },
           hideEventTypeDetails: false,
           layout: "month_view",
@@ -107,9 +106,6 @@ export default function CalScheduler({ service, addOnIds }: Props) {
         config={{
           layout: "month_view",
           theme: "dark",
-          // Carried through Cal.com onto the booking so the pay page and the
-          // final invoice know which add-ons were chosen.
-          "metadata[addOns]": addOnIds.join(","),
           "metadata[serviceId]": service.id,
         }}
       />

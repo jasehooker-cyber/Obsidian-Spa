@@ -72,9 +72,9 @@ export default function CardForm({ clientSecret }: Props) {
         appearance: {
           theme: "night",
           variables: {
-            colorPrimary: "#c9a84c",
-            colorBackground: "#1a1a1a",
-            colorText: "#f5f5f5",
+            colorPrimary: "#bb9159",
+            colorBackground: "#1d1710",
+            colorText: "#f2ede3",
             colorDanger: "#ef4444",
             borderRadius: "0px",
           },

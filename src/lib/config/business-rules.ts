@@ -19,7 +19,9 @@ export const BUSINESS = {
   },
 
   fees: {
-    lateCancelWindow: 2,
+    // A charge only happens for a no-show, or a cancellation inside this
+    // window before the appointment. Outside it, cancelling is free.
+    lateCancelWindowMinutes: 30,
     lateCancelFee: 40_00,
     noShowPercent: 50,
   },
@@ -68,6 +70,8 @@ export interface Service {
   calEventTypeId: number;
   /** Slug half of the public Cal.com link: cal.com/<CAL_USERNAME>/<calEventSlug> */
   calEventSlug: string;
+  /** Quiet visual emphasis on service cards (bronze border, badge) */
+  featured: boolean;
 }
 
 export interface AddOn {
@@ -83,11 +87,12 @@ export const SERVICES: Service[] = [
     duration: 60,
     price: 150_00,
     description:
-      "A focused, full-body massage tailored to your needs. Deep tissue, Swedish, or a custom blend.",
+      "A deeply restorative hour built around one goal: letting go. Steady, unhurried work that melts tension and quiets the mind.",
     bookingMode: "instant",
     requiresMultipleTherapists: false,
     calEventTypeId: 6071949,
     calEventSlug: "60-min-signature-massage",
+    featured: true,
   },
   {
     id: "signature-90",
@@ -95,11 +100,12 @@ export const SERVICES: Service[] = [
     duration: 90,
     price: 210_00,
     description:
-      "An extended session for complete relaxation. More time for targeted work on problem areas.",
+      "Our most complete reset. Ninety unhurried minutes of restorative work — time to release what the week left behind.",
     bookingMode: "instant",
     requiresMultipleTherapists: false,
     calEventTypeId: 6071948,
     calEventSlug: "90-min-signature-massage",
+    featured: true,
   },
   {
     id: "couples",
@@ -107,11 +113,12 @@ export const SERVICES: Service[] = [
     duration: 60,
     price: 260_00,
     description:
-      "A shared experience in our couples suite. Two therapists, side by side.",
+      "A shared escape in our couples suite. Two therapists, side by side, one deeply relaxing hour together.",
     bookingMode: "instant",
     requiresMultipleTherapists: true,
     calEventTypeId: 6071950,
     calEventSlug: "couples-massage",
+    featured: false,
   },
   {
     id: "four-handed",
@@ -119,14 +126,20 @@ export const SERVICES: Service[] = [
     duration: 60,
     price: 260_00,
     description:
-      "Two therapists work in synchronized harmony for a deeply immersive experience.",
+      "Two therapists working in synchronized rhythm — when the mind can't follow four hands, it finally lets go.",
     bookingMode: "instant",
     requiresMultipleTherapists: true,
     calEventTypeId: 6101697,
     calEventSlug: "four-handed-massage",
+    featured: false,
   },
 ];
 
+/**
+ * No longer offered — removed from the site and the booking flow. Kept only so
+ * bookings recorded before the change still render their add-ons correctly on
+ * the pay page, in emails, and in Cal.com metadata parsing.
+ */
 export const ADD_ONS: AddOn[] = [
   { id: "cbd", name: "CBD", price: 30_00 },
   { id: "hot-stones", name: "Hot Stones", price: 30_00 },

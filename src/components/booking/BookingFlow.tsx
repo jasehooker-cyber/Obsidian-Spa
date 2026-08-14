@@ -1,42 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import type { Service, AddOn, AddOnId } from "@/lib/config/business-rules";
+import type { Service } from "@/lib/config/business-rules";
 import { formatPrice, BUSINESS } from "@/lib/config/business-rules";
 import ServiceSelector from "./ServiceSelector";
-import AddOnSelector from "./AddOnSelector";
 import CalScheduler from "./CalScheduler";
 
 interface Props {
   services: Service[];
-  addOns: AddOn[];
 }
 
-type Step = "service" | "addons" | "time";
+type Step = "service" | "time";
 
-const STEPS: Step[] = ["service", "addons", "time"];
+const STEPS: Step[] = ["service", "time"];
 
-export default function BookingFlow({ services, addOns }: Props) {
+export default function BookingFlow({ services }: Props) {
   const [step, setStep] = useState<Step>("service");
   const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const [selectedAddOns, setSelectedAddOns] = useState<AddOnId[]>([]);
 
   function handleServiceSelect(service: Service) {
     setSelectedService(service);
-    setSelectedAddOns([]);
-    setStep("addons");
+    setStep("time");
   }
-
-  function handleAddOnToggle(id: AddOnId) {
-    setSelectedAddOns((prev) =>
-      prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]
-    );
-  }
-
-  const selectedAddOnItems = addOns.filter((a) => selectedAddOns.includes(a.id));
-  const total =
-    (selectedService?.price ?? 0) +
-    selectedAddOnItems.reduce((sum, a) => sum + a.price, 0);
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -75,38 +60,11 @@ export default function BookingFlow({ services, addOns }: Props) {
         />
       )}
 
-      {/* Step 2: Add-ons */}
-      {step === "addons" && (
-        <>
-          <AddOnSelector
-            addOns={addOns}
-            selected={selectedAddOns}
-            onToggle={handleAddOnToggle}
-          />
-          <div className="mt-6 flex justify-between">
-            <button
-              type="button"
-              onClick={() => setStep("service")}
-              className="text-sm text-muted transition-colors hover:text-foreground"
-            >
-              ← Back
-            </button>
-            <button
-              type="button"
-              onClick={() => setStep("time")}
-              className="border border-gold px-6 py-2 text-sm text-gold transition-colors hover:bg-gold hover:text-background"
-            >
-              Continue
-            </button>
-          </div>
-        </>
-      )}
-
-      {/* Step 3: Time — handled inside the Cal.com embed */}
+      {/* Step 2: Time — handled inside the Cal.com embed */}
       {step === "time" && selectedService && (
         <>
-          <h2 className="mb-6 text-sm font-semibold tracking-[0.2em] text-gold">
-            STEP 3 — PICK A TIME
+          <h2 className="font-display mb-6 text-sm tracking-[0.2em] text-gold">
+            STEP 2 — PICK A TIME
           </h2>
 
           <div className="mb-6 border border-charcoal-light bg-charcoal p-5">
@@ -116,32 +74,22 @@ export default function BookingFlow({ services, addOns }: Props) {
             <div className="space-y-1 text-sm text-muted">
               <div className="flex justify-between">
                 <span>{selectedService.name}</span>
-                <span>{formatPrice(selectedService.price)}</span>
-              </div>
-              {selectedAddOnItems.map((a) => (
-                <div key={a.id} className="flex justify-between">
-                  <span>+ {a.name}</span>
-                  <span>{formatPrice(a.price)}</span>
-                </div>
-              ))}
-              <div className="mt-2 flex justify-between border-t border-charcoal-light pt-2 text-foreground">
-                <span className="font-semibold">Total</span>
                 <span className="font-semibold text-gold">
-                  {formatPrice(total)}
+                  {formatPrice(selectedService.price)}
                 </span>
               </div>
+              <p className="pt-1 text-xs">
+                {selectedService.duration} minutes
+              </p>
             </div>
           </div>
 
-          <CalScheduler
-            service={selectedService}
-            addOnIds={selectedAddOns}
-          />
+          <CalScheduler service={selectedService} />
 
           <div className="mt-6">
             <button
               type="button"
-              onClick={() => setStep("addons")}
+              onClick={() => setStep("service")}
               className="text-sm text-muted transition-colors hover:text-foreground"
             >
               ← Back
@@ -158,9 +106,10 @@ export default function BookingFlow({ services, addOns }: Props) {
           card is saved securely via Stripe and you are not charged at booking.
         </p>
         <p className="mb-2">
-          <strong className="text-foreground">Late cancellation:</strong>{" "}
-          {formatPrice(BUSINESS.fees.lateCancelFee)} fee within{" "}
-          {BUSINESS.fees.lateCancelWindow} hours of your appointment.
+          <strong className="text-foreground">Cancellation:</strong> Free up to{" "}
+          {BUSINESS.fees.lateCancelWindowMinutes} minutes before your session.
+          Within {BUSINESS.fees.lateCancelWindowMinutes} minutes, a{" "}
+          {formatPrice(BUSINESS.fees.lateCancelFee)} fee applies.
         </p>
         <p>
           <strong className="text-foreground">No-show:</strong>{" "}
