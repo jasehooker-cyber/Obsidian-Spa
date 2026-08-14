@@ -41,6 +41,8 @@ export interface CalService {
   name: string;
   description: string;
   durations: CalDuration[];
+  /** Quiet bronze emphasis on the service card — border, glow, and badge. */
+  featured?: boolean;
 }
 
 /**
@@ -54,6 +56,7 @@ export interface CalService {
 export const CAL_SERVICES: CalService[] = [
   {
     id: "obsidian-signature",
+    featured: true,
     eyebrow: "THE SIGNATURE",
     name: "Obsidian Signature Massage",
     description:
@@ -86,10 +89,10 @@ export const CAL_SERVICES: CalService[] = [
   },
   {
     id: "blackout",
-    eyebrow: "FULL BODY",
+    eyebrow: "RESTORATIVE",
     name: "Blackout",
     description:
-      "Long strokes, full body, prepare to fall asleep and experience true relaxation.",
+      "Slow, enveloping, and completely unhurried. Built to quiet everything down — most men are asleep long before the halfway mark.",
     durations: [
       {
         minutes: 60,

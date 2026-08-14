@@ -53,10 +53,12 @@ export default function CalBookingMenu() {
         {CAL_SERVICES.map((service, i) => (
           <article
             key={service.id}
-            className="luxury-card animate-fade-up group flex flex-col p-8"
+            className={`luxury-card animate-fade-up group flex flex-col p-8 ${
+              service.featured ? "signature-card" : ""
+            }`}
             style={{ animationDelay: `${i * 0.1}s` }}
           >
-            <p className="mb-3 text-[11px] tracking-[0.3em] text-gold/70">
+            <p className="font-display mb-3 text-[11px] tracking-[0.3em] text-gold/70">
               {service.eyebrow}
             </p>
             <div className="mb-3 flex items-baseline justify-between gap-4">

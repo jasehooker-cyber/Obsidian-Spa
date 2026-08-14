@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Julius_Sans_One } from "next/font/google";
+import { Geist, Geist_Mono, Josefin_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -20,8 +20,8 @@ const geistMono = Geist_Mono({
 
 // Display face for the wordmark and headings — thin, wide, geometric,
 // matching the lettering in the Obsidian Spa logo. Body text stays Geist.
-const julius = Julius_Sans_One({
-  weight: "400",
+const display = Josefin_Sans({
+  weight: "300",
   variable: "--font-display",
   subsets: ["latin"],
 });
@@ -137,7 +137,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${julius.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${display.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <script
