@@ -79,11 +79,11 @@ export default async function PayPage({
   return (
     <>
       <section className="noise-overlay relative overflow-hidden px-6 pb-12 pt-28 text-center">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.06)_0%,transparent_60%)]" />
-        <p className="relative mb-3 text-sm tracking-[0.4em] text-gold">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(187,145,89,0.06)_0%,transparent_60%)]" />
+        <p className="font-display relative mb-3 text-sm tracking-[0.4em] text-gold">
           FINAL STEP
         </p>
-        <h1 className="relative mb-4 text-4xl font-bold tracking-tight md:text-5xl">
+        <h1 className="font-display relative mb-4 text-3xl uppercase tracking-[0.12em] md:text-5xl">
           Secure Your Booking
         </h1>
         <div className="gold-divider relative mx-auto mb-6">
@@ -133,9 +133,10 @@ export default async function PayPage({
               Payment for your service is collected after your session.
             </p>
             <p className="mb-2">
-              <strong className="text-foreground">Late cancellation:</strong>{" "}
-              {formatPrice(BUSINESS.fees.lateCancelFee)} fee within{" "}
-              {BUSINESS.fees.lateCancelWindow} hours of your appointment.
+              <strong className="text-foreground">Cancellation:</strong> Free
+              up to {BUSINESS.fees.lateCancelWindowMinutes} minutes before your
+              session. Within {BUSINESS.fees.lateCancelWindowMinutes} minutes,
+              a {formatPrice(BUSINESS.fees.lateCancelFee)} fee applies.
             </p>
             <p>
               <strong className="text-foreground">No-show:</strong>{" "}

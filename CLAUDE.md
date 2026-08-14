@@ -27,7 +27,7 @@ Obsidian Men's Spa — a high-end, discreet, masculine luxury spa website with t
 - `npm run start` — serve production build
 - `npm run lint` — run ESLint
 - `npm run typecheck` — TypeScript type checking
-- `npm run test` — run Vitest (32 tests)
+- `npm run test` — run Vitest (33 tests)
 
 After any major change, run: `npm run lint && npm run typecheck && npm run test && npm run build`
 
@@ -43,10 +43,10 @@ After any major change, run: `npm run lint && npm run typecheck && npm run test 
 - **Server Component → Client Component prop passing:** Booking page passes static config to the `BookingFlow` client component. Avoids client-side data fetching for initial load.
 - **Lazy env validation:** `getEnv()` in `src/lib/config/env.ts` validates at first call, not at import time, so builds don't fail without env vars.
 - **Lazy Stripe instance:** `stripe()` function in `src/lib/stripe/server.ts` returns a cached instance.
-- **Schedule-then-secure booking pattern:** Client picks service + add-ons on our site → schedules inside the Cal.com embed → booking mirrored into Supabase as `draft` → client saves a card at `/pay/<token>` → booking promoted to `confirmed`. Cal.com is the scheduling system of record and owns the calendar sync; we never create Cal.com bookings ourselves.
+- **Schedule-then-secure booking pattern:** Client picks a service on our site → schedules inside the Cal.com embed → booking mirrored into Supabase as `draft` → client saves a card at `/pay/<token>` → booking promoted to `confirmed`. Cal.com is the scheduling system of record and owns the calendar sync; we never create Cal.com bookings ourselves.
 - **Two triggers, one idempotent sync:** `syncCalBooking()` in `src/lib/booking/cal-sync.ts` is called both by the `BOOKING_CREATED` webhook and by the client's redirect to `/pay/resolve`. Whichever arrives first wins; `bookings.cal_booking_uid` is unique, so the loser re-reads the winner's row.
 - **Cal.com is re-read, never trusted:** Webhooks and redirects only supply a booking uid. Booking details are always fetched from the Cal.com API via `getBooking()`, so payload shape changes can't corrupt our records.
-- **Add-ons travel as Cal.com metadata:** Selected add-on ids are passed into the embed as `metadata[addOns]` and validated against `ADD_ONS` on the way back in.
+- **Add-ons are legacy-only:** No longer offered or selectable. `ADD_ONS` and `parseAddOnIds()` remain so bookings recorded before the change still render correctly on the pay page and in emails.
 - **Webhook idempotency:** Events logged to `webhook_events` table; duplicate event IDs are skipped.
 
 ## Code Organization
@@ -72,7 +72,7 @@ After any major change, run: `npm run lint && npm run typecheck && npm run test 
 ## API Routes
 
 ### Public
-- `GET /api/public/site-config` — services, add-ons, hours, fees
+- `GET /api/public/site-config` — services, hours, fees
 
 ### Booking flow
 Scheduling is handled entirely by the Cal.com embed — there is no availability or
@@ -114,7 +114,7 @@ draft endpoint. Availability comes from Cal.com; the client never hits our API t
 - Operating hours: 8:00 AM – 10:00 PM daily
 - Buffer time, minimum notice, and how far ahead clients can book are configured per event type in Cal.com. The values in `BUSINESS.booking` are the intended policy and are no longer enforced by this codebase — change them in Cal.com
 - No self-cancellation online
-- Late cancellation (within 2 hours): $40 fee
+- Cancellation is free up to 30 minutes before the appointment; within 30 minutes it's a $40 fee
 - No-call/no-show: 50% of booked service price
 - Payment collected after service; card saved on file for policy fees only
 - Every service has its own Cal.com event type; availability and host assignment are managed in Cal.com, not in this codebase
@@ -131,8 +131,9 @@ draft endpoint. Availability comes from Cal.com; the client never hits our API t
 
 ## Design
 
-- Dark & luxurious: `#0a0a0a` background, `#c9a84c` gold accents, `#1a1a1a`/`#2a2a2a` charcoal cards/borders
-- Fonts: Geist Sans / Geist Mono via next/font
+- Dark & luxurious, matched to the brushed-bronze logo: `#131009` warm near-black background, `#bb9159` bronze accents, `#1d1710`/`#2e261a` warm charcoal cards/borders
+- Fonts: Julius Sans One (display — wordmark, page titles, eyebrow labels; wide tracking to echo the logo) + Geist Sans / Geist Mono for body, via next/font
 - Pages: Home, Services, About, Booking, Pay (card on file), Booking Success, Intake Form
-- The Cal.com embed is themed to match via `cal-brand: #c9a84c` and `theme: "dark"`
+- The Cal.com embed is themed to match via `cal-brand: #bb9159` and `theme: "dark"`
+- Signature massages (60/90) carry `featured: true` → quiet bronze emphasis (`signature-card` + `signature-badge` in globals.css)
 - Error boundaries and loading skeletons for booking and intake flows

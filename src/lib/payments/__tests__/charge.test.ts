@@ -39,7 +39,7 @@ describe("fee calculations", () => {
     expect(fee).toBe(130_00);
   });
 
-  it("late cancel window is 2 hours", () => {
-    expect(BUSINESS.fees.lateCancelWindow).toBe(2);
+  it("late cancel window is 30 minutes", () => {
+    expect(BUSINESS.fees.lateCancelWindowMinutes).toBe(30);
   });
 });

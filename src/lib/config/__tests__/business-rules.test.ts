@@ -22,7 +22,7 @@ describe("business rules", () => {
 
   it("has correct fee structure", () => {
     expect(BUSINESS.fees.lateCancelFee).toBe(40_00);
-    expect(BUSINESS.fees.lateCancelWindow).toBe(2);
+    expect(BUSINESS.fees.lateCancelWindowMinutes).toBe(30);
     expect(BUSINESS.fees.noShowPercent).toBe(50);
   });
 
@@ -56,10 +56,20 @@ describe("services", () => {
   });
 });
 
-describe("add-ons", () => {
+describe("add-ons (legacy — no longer offered, kept for old bookings)", () => {
   it("has 3 add-ons all at $30", () => {
     expect(ADD_ONS).toHaveLength(3);
     expect(ADD_ONS.every((a) => a.price === 30_00)).toBe(true);
+  });
+});
+
+describe("featured services", () => {
+  it("both Signature massages are featured, others are not", () => {
+    const byId = Object.fromEntries(SERVICES.map((s) => [s.id, s.featured]));
+    expect(byId["signature-60"]).toBe(true);
+    expect(byId["signature-90"]).toBe(true);
+    expect(byId["couples"]).toBe(false);
+    expect(byId["four-handed"]).toBe(false);
   });
 });
 
