@@ -1,13 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-  <!--
-    The enso ring from the Obsidian Spa mark, redrawn as strokes. The full logo
-    is a brush-textured raster whose wordmark turns to mush below ~64px, so the
-    favicon keeps the ring alone — the part that still reads at 16px.
-  -->
   <rect width="32" height="32" rx="6" fill="#131009"/>
-  <g fill="none" stroke-linecap="round" transform="rotate(-24 16 16)">
-    <circle cx="16" cy="16" r="10" stroke="#936f40" stroke-width="3.4" opacity="0.55"/>
-    <path d="M16 6 a10 10 0 1 1 -7.07 2.93" stroke="#bb9159" stroke-width="3"/>
-    <path d="M9.5 8.2 a10 10 0 0 1 12.6 0.6" stroke="#dcbc8a" stroke-width="2.2"/>
-  </g>
+  <path d="M16 4 L28 16 L16 28 L4 16 Z" fill="none" stroke="#bb9159" stroke-width="2"/>
+  <path d="M16 8 L24 16 L16 24 L8 16 Z" fill="#bb9159" opacity="0.3"/>
+  <path d="M16 12 L20 16 L16 20 L12 16 Z" fill="#bb9159"/>
 </svg>

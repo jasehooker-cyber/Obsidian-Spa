@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Obsidian Spa — Premium Men's Massage in Midtown Manhattan";
+export const alt = "Obsidian Men's Spa — Premium Massage & Luxury Treatments";
 export const size = {
   width: 1200,
   height: 630,
@@ -34,14 +34,14 @@ export default function Image() {
         </div>
         <div
           style={{
-            fontSize: 92,
-            fontWeight: 400,
-            letterSpacing: "0.14em",
+            fontSize: 130,
+            fontWeight: 700,
+            letterSpacing: "0.08em",
             color: "#dcbc8a",
             marginBottom: 28,
           }}
         >
-          OBSIDIAN SPA
+          OBSIDIAN
         </div>
         <div
           style={{

@@ -32,8 +32,8 @@ const description =
 export const metadata: Metadata = {
   metadataBase: new URL(getEnv().siteUrl),
   title: {
-    default: "Obsidian Spa — Premium Men's Massage in Midtown Manhattan",
-    template: "%s | Obsidian Spa",
+    default: "Obsidian Men's Spa — Premium Massage & Luxury Treatments",
+    template: "%s | Obsidian Men's Spa",
   },
   description,
   keywords: [
@@ -47,15 +47,15 @@ export const metadata: Metadata = {
     "men's massage therapy",
   ],
   openGraph: {
-    title: "Obsidian Spa — Premium Men's Massage",
+    title: "Obsidian Men's Spa",
     description,
     type: "website",
-    siteName: "Obsidian Spa",
+    siteName: "Obsidian Men's Spa",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Obsidian Spa — Premium Men's Massage",
+    title: "Obsidian Men's Spa",
     description:
       "Premium men's spa. Signature, deep tissue, restorative, and express massages. Open daily 8 AM – 10 PM.",
   },
@@ -80,7 +80,6 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "DaySpa",
   name: BUSINESS.name,
-  alternateName: ["Obsidian Men's Spa", "Obsidian"],
   description:
     "Premium men's spa in Midtown Manhattan offering signature, deep tissue, restorative, and express massages in a private, refined setting.",
   url: getEnv().siteUrl,

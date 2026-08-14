@@ -1,6 +1,4 @@
 import Link from "next/link";
-import EnsoMark from "@/components/EnsoMark";
-import Image from "next/image";
 import { formatPrice, BUSINESS } from "@/lib/config/business-rules";
 import { CAL_SERVICES, basePrice } from "@/lib/config/cal-events";
 import { formatTime } from "@/lib/config/format";
@@ -17,22 +15,12 @@ export default function Home() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(187,145,89,0.08)_0%,transparent_60%)]" />
         <div className="pointer-events-none absolute top-1/4 left-1/2 h-[500px] w-[800px] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse,rgba(187,145,89,0.05)_0%,transparent_70%)] blur-3xl" />
 
-        {/* The lockup carries the name, so the h1 is here for screen readers
-            and search engines rather than shown twice. */}
-        <h1 className="sr-only">
-          Obsidian Spa — premium men&apos;s massage in Midtown Manhattan
-        </h1>
-        <Image
-          src="/logo.webp"
-          alt="Obsidian Spa"
-          width={480}
-          height={480}
-          priority
-          className="animate-fade-up mb-2 h-auto w-[260px] sm:w-[320px] md:w-[380px]"
-        />
-        <p className="font-display animate-fade-up-delay-1 mb-6 text-xs tracking-[0.45em] text-gold/80 sm:text-sm">
+        <p className="font-display animate-fade-up mb-6 text-sm tracking-[0.4em] text-gold">
           PREMIUM MEN&apos;S SPA
         </p>
+        <h1 className="font-display text-gold-gradient animate-fade-up-delay-1 mb-2 text-5xl tracking-[0.18em] md:text-7xl lg:text-8xl">
+          OBSIDIAN
+        </h1>
         <div className="animate-expand-line mx-auto mb-8 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
         <p className="animate-fade-up-delay-2 mb-12 max-w-lg text-lg leading-relaxed text-muted">
           A private, refined space designed for men who value quality,
@@ -41,13 +29,13 @@ export default function Home() {
         <div className="animate-fade-up-delay-3 flex gap-4">
           <Link
             href="/booking"
-            className="btn-glow relative whitespace-nowrap border border-gold bg-gold px-8 py-3.5 text-sm font-semibold tracking-widest text-background transition-all duration-300 hover:bg-gold-dark hover:shadow-[0_0_24px_rgba(187,145,89,0.25)] sm:px-10"
+            className="btn-glow relative border border-gold bg-gold px-10 py-3.5 text-sm font-semibold tracking-widest text-background transition-all duration-300 hover:bg-gold-dark hover:shadow-[0_0_24px_rgba(187,145,89,0.25)]"
           >
             BOOK NOW
           </Link>
           <Link
             href="/services"
-            className="whitespace-nowrap border border-charcoal-light px-8 py-3.5 text-sm tracking-widest text-muted transition-all duration-300 hover:border-gold/50 hover:text-gold sm:px-10"
+            className="border border-charcoal-light px-10 py-3.5 text-sm tracking-widest text-muted transition-all duration-300 hover:border-gold/50 hover:text-gold"
           >
             SERVICES
           </Link>
@@ -67,7 +55,7 @@ export default function Home() {
               Tailored Experiences
             </h2>
             <div className="gold-divider mx-auto mb-12">
-              <EnsoMark size={15} className="opacity-70" />
+              <span className="text-xs text-gold/60">&#9670;</span>
             </div>
           </div>
 
@@ -146,7 +134,7 @@ export default function Home() {
       <section className="section-glow relative px-6 py-24">
         <div className="mx-auto max-w-2xl text-center">
           <div className="gold-divider mx-auto mb-8">
-            <EnsoMark size={15} className="opacity-70" />
+            <span className="text-xs text-gold/60">&#9670;</span>
           </div>
           <h2 className="font-display mb-4 text-2xl uppercase tracking-[0.12em] md:text-3xl">
             Ready to Unwind?

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import EnsoMark from "@/components/EnsoMark";
 import { BUSINESS } from "@/lib/config/business-rules";
 import { formatTime } from "@/lib/config/format";
 
@@ -23,7 +22,7 @@ export default function AboutPage() {
           About Obsidian
         </h1>
         <div className="gold-divider animate-fade-up-delay-2 relative mx-auto">
-          <EnsoMark size={15} className="opacity-70" />
+          <span className="text-xs text-gold/60">&#9670;</span>
         </div>
       </section>
 
@@ -55,7 +54,7 @@ export default function AboutPage() {
       <section className="relative px-6 py-20">
         <div className="mx-auto max-w-4xl">
           <div className="gold-divider mx-auto mb-4">
-            <EnsoMark size={15} className="opacity-70" />
+            <span className="text-xs text-gold/60">&#9670;</span>
           </div>
           <h2 className="font-display mb-14 text-center text-2xl uppercase tracking-[0.12em] md:text-3xl">
             The Obsidian Standard

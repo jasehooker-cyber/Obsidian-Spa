@@ -1,7 +1,5 @@
 export const BUSINESS = {
-  name: "Obsidian Spa",
-  /** Qualifier shown under the wordmark — the name alone doesn't say who we serve. */
-  descriptor: "Men's Spa",
+  name: "Obsidian Men's Spa",
   tagline: "Premium Men's Spa Experience",
   timezone: "America/New_York",
 

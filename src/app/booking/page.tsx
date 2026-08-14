@@ -1,6 +1,4 @@
 import { BUSINESS } from "@/lib/config/business-rules";
-import Image from "next/image";
-import EnsoMark from "@/components/EnsoMark";
 import { formatTime } from "@/lib/config/format";
 import CalBookingMenu from "@/components/booking/CalBookingMenu";
 
@@ -23,7 +21,7 @@ export default function BookingPage() {
           Book Your Session
         </h1>
         <div className="gold-divider animate-fade-up-delay-2 relative mx-auto mb-6">
-          <EnsoMark size={15} className="opacity-70" />
+          <span className="text-xs text-gold/60">&#9670;</span>
         </div>
         <p className="animate-fade-up-delay-2 relative mx-auto max-w-lg text-lg text-muted">
           Choose your service and the length that suits you. Live availability
@@ -31,19 +29,8 @@ export default function BookingPage() {
         </p>
       </section>
 
-      <section className="section-glow relative overflow-hidden px-6 pb-20">
-        {/* The mark, barely there, sitting behind the menu. */}
-        <Image
-          src="/logo.webp"
-          alt=""
-          aria-hidden="true"
-          width={480}
-          height={480}
-          className="pointer-events-none absolute left-1/2 top-1/2 w-[560px] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-[0.035] select-none"
-        />
-        <div className="relative">
-          <CalBookingMenu />
-        </div>
+      <section className="section-glow relative px-6 pb-20">
+        <CalBookingMenu />
       </section>
 
       {/* Visit details */}

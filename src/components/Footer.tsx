@@ -1,5 +1,4 @@
 import Link from "next/link";
-import EnsoMark from "@/components/EnsoMark";
 import { BUSINESS } from "@/lib/config/business-rules";
 import { formatTime } from "@/lib/config/format";
 
@@ -10,15 +9,9 @@ export default function Footer() {
       <div className="relative mx-auto max-w-6xl px-6 py-16">
         <div className="grid gap-12 md:grid-cols-3">
           <div>
-            <h3 className="mb-4 flex items-center gap-3 leading-none">
-              <EnsoMark size={30} className="shrink-0" />
-              <span className="font-display text-gold-gradient block text-xl tracking-[0.3em]">
-                OBSIDIAN SPA
-              </span>
+            <h3 className="font-display text-gold-gradient mb-4 text-xl tracking-[0.3em]">
+              OBSIDIAN
             </h3>
-            <p className="font-display mb-4 pl-[42px] text-[9px] tracking-[0.45em] text-muted/70">
-              MEN&apos;S SPA
-            </p>
             <p className="text-sm leading-relaxed text-muted">
               {BUSINESS.tagline}. A private, refined space designed for men who
               value professionalism and results.
