@@ -11,11 +11,18 @@
 export const CAL_TEAM_SLUG = "obsidian-spa";
 
 /**
- * Config handed to each click-to-open trigger. Matches the embed snippet Cal
- * generates: month grid on desktop, slot list on small screens.
+ * Booker layout. `column_view` lists every open time for a day at once rather
+ * than hiding them beside a month grid, so the whole day reads at a glance.
+ * Swap to "month_view" or "week_view" here and the embed follows everywhere.
+ */
+export const CAL_LAYOUT = "column_view" as const;
+
+/**
+ * Config handed to each click-to-open trigger. `useSlotsViewOnSmallScreen`
+ * keeps phones on a plain list of times.
  */
 export const CAL_TRIGGER_CONFIG = JSON.stringify({
-  layout: "month_view",
+  layout: CAL_LAYOUT,
   useSlotsViewOnSmallScreen: "true",
 });
 

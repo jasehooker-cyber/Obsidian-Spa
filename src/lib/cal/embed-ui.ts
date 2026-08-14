@@ -1,3 +1,5 @@
+import { CAL_LAYOUT } from "@/lib/config/cal-events";
+
 /**
  * Theming for the Cal.com booking popup.
  *
@@ -88,7 +90,7 @@ const LIGHT_VARS = {
  */
 export const CAL_UI_CONFIG = {
   theme: "dark",
-  layout: "month_view",
+  layout: CAL_LAYOUT,
   hideEventTypeDetails: false,
   cssVarsPerTheme: {
     dark: DARK_VARS,

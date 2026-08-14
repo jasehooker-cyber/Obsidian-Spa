@@ -3,6 +3,7 @@ import {
   CAL_NAMESPACES,
   CAL_SERVICES,
   CAL_TEAM_SLUG,
+  CAL_LAYOUT,
   CAL_TRIGGER_CONFIG,
   basePrice,
   calLink,
@@ -72,8 +73,12 @@ describe("cal.com service menu", () => {
 
   it("tells the embed to use the slot view on small screens", () => {
     expect(JSON.parse(CAL_TRIGGER_CONFIG)).toEqual({
-      layout: "month_view",
+      layout: CAL_LAYOUT,
       useSlotsViewOnSmallScreen: "true",
     });
+  });
+
+  it("shows the whole day's times rather than a month grid", () => {
+    expect(CAL_LAYOUT).toBe("column_view");
   });
 });
