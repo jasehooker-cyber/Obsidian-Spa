@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 
 const NAV_LINKS = [
@@ -31,11 +32,20 @@ export default function Navbar() {
       }`}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-        <Link
-          href="/"
-          className="font-display text-gold-gradient text-xl tracking-[0.3em]"
-        >
-          OBSIDIAN
+        <Link href="/" className="flex items-center gap-2.5">
+          {/* The enso sits beside the wordmark, small and quiet — the name still
+              carries the header. */}
+          <Image
+            src="/enso.webp"
+            alt=""
+            aria-hidden="true"
+            width={96}
+            height={96}
+            className="h-[26px] w-[26px] shrink-0 opacity-80"
+          />
+          <span className="font-display text-gold-gradient text-xl tracking-[0.3em]">
+            OBSIDIAN
+          </span>
         </Link>
 
         {/* Desktop */}
