@@ -78,7 +78,7 @@ describe("cal.com service menu", () => {
     });
   });
 
-  it("shows the whole day's times rather than a month grid", () => {
-    expect(CAL_LAYOUT).toBe("column_view");
+  it("shows a week of availability rather than a month grid", () => {
+    expect(CAL_LAYOUT).toBe("week_view");
   });
 });

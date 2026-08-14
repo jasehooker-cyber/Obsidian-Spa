@@ -1,4 +1,6 @@
 import Link from "next/link";
+import EnsoMark from "@/components/EnsoMark";
+import Image from "next/image";
 import { formatPrice, BUSINESS } from "@/lib/config/business-rules";
 import { CAL_SERVICES, basePrice } from "@/lib/config/cal-events";
 import { formatTime } from "@/lib/config/format";
@@ -15,12 +17,22 @@ export default function Home() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(187,145,89,0.08)_0%,transparent_60%)]" />
         <div className="pointer-events-none absolute top-1/4 left-1/2 h-[500px] w-[800px] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse,rgba(187,145,89,0.05)_0%,transparent_70%)] blur-3xl" />
 
-        <p className="font-display animate-fade-up mb-6 text-sm tracking-[0.4em] text-gold">
+        {/* The lockup carries the name, so the h1 is here for screen readers
+            and search engines rather than shown twice. */}
+        <h1 className="sr-only">
+          Obsidian Spa — premium men&apos;s massage in Midtown Manhattan
+        </h1>
+        <Image
+          src="/logo.webp"
+          alt="Obsidian Spa"
+          width={480}
+          height={480}
+          priority
+          className="animate-fade-up mb-2 h-auto w-[260px] sm:w-[320px] md:w-[380px]"
+        />
+        <p className="font-display animate-fade-up-delay-1 mb-6 text-xs tracking-[0.45em] text-gold/80 sm:text-sm">
           PREMIUM MEN&apos;S SPA
         </p>
-        <h1 className="font-display text-gold-gradient animate-fade-up-delay-1 mb-2 text-4xl tracking-[0.16em] sm:text-5xl md:text-6xl lg:text-7xl">
-          OBSIDIAN SPA
-        </h1>
         <div className="animate-expand-line mx-auto mb-8 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
         <p className="animate-fade-up-delay-2 mb-12 max-w-lg text-lg leading-relaxed text-muted">
           A private, refined space designed for men who value quality,
@@ -55,7 +67,7 @@ export default function Home() {
               Tailored Experiences
             </h2>
             <div className="gold-divider mx-auto mb-12">
-              <span className="text-xs text-gold/60">&#9670;</span>
+              <EnsoMark size={15} className="opacity-70" />
             </div>
           </div>
 
@@ -134,7 +146,7 @@ export default function Home() {
       <section className="section-glow relative px-6 py-24">
         <div className="mx-auto max-w-2xl text-center">
           <div className="gold-divider mx-auto mb-8">
-            <span className="text-xs text-gold/60">&#9670;</span>
+            <EnsoMark size={15} className="opacity-70" />
           </div>
           <h2 className="font-display mb-4 text-2xl uppercase tracking-[0.12em] md:text-3xl">
             Ready to Unwind?

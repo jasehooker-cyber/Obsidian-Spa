@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import EnsoMark from "@/components/EnsoMark";
 import { useState, useEffect } from "react";
 
 const NAV_LINKS = [
@@ -31,12 +32,15 @@ export default function Navbar() {
       }`}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-        <Link href="/" className="block leading-none">
-          <span className="font-display text-gold-gradient block text-xl tracking-[0.3em]">
-            OBSIDIAN SPA
-          </span>
-          <span className="font-display mt-1 block text-[9px] tracking-[0.45em] text-muted/70">
-            MEN&apos;S SPA
+        <Link href="/" className="flex items-center gap-3 leading-none">
+          <EnsoMark size={34} className="shrink-0" />
+          <span className="block">
+            <span className="font-display text-gold-gradient block text-lg tracking-[0.3em] sm:text-xl">
+              OBSIDIAN SPA
+            </span>
+            <span className="font-display mt-1 block text-[9px] tracking-[0.45em] text-muted/70">
+              MEN&apos;S SPA
+            </span>
           </span>
         </Link>
 

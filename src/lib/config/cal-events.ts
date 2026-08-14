@@ -11,11 +11,12 @@
 export const CAL_TEAM_SLUG = "obsidian-spa";
 
 /**
- * Booker layout. `column_view` lists every open time for a day at once rather
- * than hiding them beside a month grid, so the whole day reads at a glance.
- * Swap to "month_view" or "week_view" here and the embed follows everywhere.
+ * Booker layout. `week_view` shows a week of days side by side with each day's
+ * open times under it — more of the schedule visible than a month grid, and
+ * more context than a single day. Swap to "month_view" or "column_view" here
+ * and the embed follows everywhere.
  */
-export const CAL_LAYOUT = "column_view" as const;
+export const CAL_LAYOUT = "week_view" as const;
 
 /**
  * Config handed to each click-to-open trigger. `useSlotsViewOnSmallScreen`

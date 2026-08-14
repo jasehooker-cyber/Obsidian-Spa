@@ -1,4 +1,5 @@
 import { BUSINESS } from "@/lib/config/business-rules";
+import EnsoMark from "@/components/EnsoMark";
 import CalBookingMenu from "@/components/booking/CalBookingMenu";
 
 export const metadata = {
@@ -21,7 +22,7 @@ export default function ServicesPage() {
           Services
         </h1>
         <div className="gold-divider animate-fade-up-delay-2 relative mx-auto mb-6">
-          <span className="text-xs text-gold/60">&#9670;</span>
+          <EnsoMark size={15} className="opacity-70" />
         </div>
         <p className="animate-fade-up-delay-2 relative mx-auto max-w-lg text-lg text-muted">
           Four sessions, each at the length that suits you. Pick one to see live
