@@ -14,11 +14,11 @@ export default function AboutPage() {
     <>
       {/* Header */}
       <section className="noise-overlay relative overflow-hidden px-6 pb-16 pt-24 text-center">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.06)_0%,transparent_60%)]" />
-        <p className="animate-fade-up relative mb-3 text-sm tracking-[0.4em] text-gold">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(187,145,89,0.06)_0%,transparent_60%)]" />
+        <p className="font-display animate-fade-up relative mb-3 text-sm tracking-[0.4em] text-gold">
           WHO WE ARE
         </p>
-        <h1 className="animate-fade-up-delay-1 relative mb-4 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+        <h1 className="font-display animate-fade-up-delay-1 relative mb-4 text-3xl uppercase tracking-[0.12em] md:text-5xl">
           About Obsidian
         </h1>
         <div className="gold-divider animate-fade-up-delay-2 relative mx-auto">
@@ -56,13 +56,13 @@ export default function AboutPage() {
           <div className="gold-divider mx-auto mb-4">
             <span className="text-xs text-gold/60">&#9670;</span>
           </div>
-          <h2 className="mb-14 text-center text-3xl font-bold tracking-tight md:text-4xl">
+          <h2 className="font-display mb-14 text-center text-2xl uppercase tracking-[0.12em] md:text-3xl">
             The Obsidian Standard
           </h2>
           <div className="grid gap-10 md:grid-cols-3">
             {VALUES.map((v) => (
               <div key={v.title} className="group text-center">
-                <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-gold/20 transition-all duration-500 group-hover:border-gold/50 group-hover:shadow-[0_0_24px_rgba(201,168,76,0.1)]">
+                <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-gold/20 transition-all duration-500 group-hover:border-gold/50 group-hover:shadow-[0_0_24px_rgba(187,145,89,0.1)]">
                   <svg
                     className="h-7 w-7 text-gold transition-transform duration-500 group-hover:scale-110"
                     fill="none"
@@ -91,7 +91,7 @@ export default function AboutPage() {
 
       {/* Hours + CTA */}
       <section className="noise-overlay relative overflow-hidden px-6 py-20">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(201,168,76,0.06)_0%,transparent_60%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(187,145,89,0.06)_0%,transparent_60%)]" />
         <div className="relative mx-auto max-w-2xl text-center">
           <h2 className="mb-4 text-3xl font-bold tracking-tight">
             Schedule Your Visit
@@ -103,7 +103,7 @@ export default function AboutPage() {
           </p>
           <Link
             href="/booking"
-            className="btn-glow relative inline-block border border-gold bg-gold px-12 py-4 text-sm font-semibold tracking-widest text-background transition-all duration-300 hover:bg-gold-dark hover:shadow-[0_0_24px_rgba(201,168,76,0.25)]"
+            className="btn-glow relative inline-block border border-gold bg-gold px-12 py-4 text-sm font-semibold tracking-widest text-background transition-all duration-300 hover:bg-gold-dark hover:shadow-[0_0_24px_rgba(187,145,89,0.25)]"
           >
             BOOK YOUR SESSION
           </Link>
