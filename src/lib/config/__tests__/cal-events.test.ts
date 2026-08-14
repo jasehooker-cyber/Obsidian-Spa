@@ -78,7 +78,7 @@ describe("cal.com service menu", () => {
     });
   });
 
-  it("shows a week of availability rather than a month grid", () => {
-    expect(CAL_LAYOUT).toBe("week_view");
+  it("uses a layout every event type has enabled", () => {
+    expect(CAL_LAYOUT).toBe("month_view");
   });
 });

@@ -11,12 +11,13 @@
 export const CAL_TEAM_SLUG = "obsidian-spa";
 
 /**
- * Booker layout. `week_view` shows a week of days side by side with each day's
- * open times under it — more of the schedule visible than a month grid, and
- * more context than a single day. Swap to "month_view" or "column_view" here
- * and the embed follows everywhere.
+ * Booker layout. Kept at `month_view`: it is Cal's default and the layout the
+ * generated embed snippets specify, so it is the one guaranteed to be enabled
+ * on every event type. week_view and column_view have to be turned on per
+ * event type in Cal.com under Event Type → Advanced → Layout; picking one that
+ * is not enabled there leaves the booker with nothing to show.
  */
-export const CAL_LAYOUT = "week_view" as const;
+export const CAL_LAYOUT = "month_view" as const;
 
 /**
  * Config handed to each click-to-open trigger. `useSlotsViewOnSmallScreen`
