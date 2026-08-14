@@ -1,4 +1,4 @@
-import { ADD_ONS, BUSINESS } from "@/lib/config/business-rules";
+import { BUSINESS } from "@/lib/config/business-rules";
 import { CAL_SERVICES, CAL_TEAM_SLUG, calLink } from "@/lib/config/cal-events";
 
 export async function GET() {
@@ -13,7 +13,6 @@ export async function GET() {
         calLink: calLink(duration.slug),
       })),
     })),
-    addOns: ADD_ONS,
     hours: BUSINESS.hours,
     booking: {
       provider: "cal.com",

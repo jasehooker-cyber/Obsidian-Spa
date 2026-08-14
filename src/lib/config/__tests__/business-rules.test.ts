@@ -17,7 +17,7 @@ describe("business rules", () => {
 
   it("has correct fee structure", () => {
     expect(BUSINESS.fees.lateCancelFee).toBe(40_00);
-    expect(BUSINESS.fees.lateCancelWindow).toBe(2);
+    expect(BUSINESS.fees.lateCancelWindowMinutes).toBe(30);
     expect(BUSINESS.fees.noShowPercent).toBe(50);
   });
 
@@ -27,7 +27,7 @@ describe("business rules", () => {
 });
 
 describe("add-ons", () => {
-  it("has 3 add-ons all at $30", () => {
+  it("keeps the retired add-on config for legacy bookings", () => {
     expect(ADD_ONS).toHaveLength(3);
     expect(ADD_ONS.every((a) => a.price === 30_00)).toBe(true);
   });

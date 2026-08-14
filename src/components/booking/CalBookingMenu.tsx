@@ -88,7 +88,7 @@ export default function CalBookingMenu() {
                   data-cal-origin={CAL_ORIGIN}
                   data-cal-config={CAL_TRIGGER_CONFIG}
                   aria-label={`Book ${service.name}, ${duration.minutes} minutes, ${formatPrice(duration.price)}`}
-                  className="btn-glow group/btn relative cursor-pointer border border-gold/40 px-6 py-3 text-center transition-all duration-300 hover:border-gold hover:bg-gold hover:shadow-[0_0_16px_rgba(201,168,76,0.2)]"
+                  className="btn-glow group/btn relative cursor-pointer border border-gold/40 px-6 py-3 text-center transition-all duration-300 hover:border-gold hover:bg-gold hover:shadow-[0_0_16px_rgba(187,145,89,0.2)]"
                 >
                   <span className="block text-xs font-semibold tracking-widest text-gold transition-colors duration-300 group-hover/btn:text-background">
                     {duration.minutes} MIN

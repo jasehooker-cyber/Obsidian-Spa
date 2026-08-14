@@ -13,11 +13,11 @@ export default function BookingPage() {
   return (
     <>
       <section className="noise-overlay relative overflow-hidden px-6 pb-16 pt-28 text-center">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.06)_0%,transparent_60%)]" />
-        <p className="animate-fade-up relative mb-3 text-sm tracking-[0.4em] text-gold">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(187,145,89,0.06)_0%,transparent_60%)]" />
+        <p className="font-display animate-fade-up relative mb-3 text-sm tracking-[0.4em] text-gold">
           RESERVATIONS
         </p>
-        <h1 className="animate-fade-up-delay-1 relative mb-4 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+        <h1 className="font-display animate-fade-up-delay-1 relative mb-4 text-3xl uppercase tracking-[0.15em] md:text-4xl lg:text-5xl">
           Book Your Session
         </h1>
         <div className="gold-divider animate-fade-up-delay-2 relative mx-auto mb-6">

@@ -90,7 +90,7 @@ export async function sendBookingConfirmation(params: BookingConfirmationParams)
   const addOnLines = params.addOns
     .map(
       (a) =>
-        `<tr><td style="padding:6px 0;color:#a3a3a3;">+ ${a.name}</td><td style="padding:6px 0;text-align:right;color:#a3a3a3;">${formatPrice(a.price)}</td></tr>`
+        `<tr><td style="padding:6px 0;color:#a89c8a;">+ ${a.name}</td><td style="padding:6px 0;text-align:right;color:#a89c8a;">${formatPrice(a.price)}</td></tr>`
     )
     .join("");
 
@@ -98,85 +98,85 @@ export async function sendBookingConfirmation(params: BookingConfirmationParams)
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"></head>
-<body style="margin:0;padding:0;background:#0a0a0a;font-family:Arial,Helvetica,sans-serif;">
+<body style="margin:0;padding:0;background:#131009;font-family:Arial,Helvetica,sans-serif;">
   <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
 
     <div style="text-align:center;margin-bottom:32px;">
-      <h1 style="color:#c9a84c;font-size:24px;letter-spacing:6px;margin:0;">OBSIDIAN</h1>
-      <p style="color:#a3a3a3;font-size:12px;letter-spacing:3px;margin:8px 0 0;">MEN'S SPA</p>
+      <h1 style="color:#bb9159;font-size:24px;letter-spacing:6px;margin:0;">OBSIDIAN</h1>
+      <p style="color:#a89c8a;font-size:12px;letter-spacing:3px;margin:8px 0 0;">MEN'S SPA</p>
     </div>
 
-    <div style="background:#1a1a1a;border:1px solid #2a2a2a;padding:32px;">
-      <h2 style="color:#f5f5f5;font-size:20px;margin:0 0 8px;">You're booked, ${firstName}.</h2>
-      <p style="color:#a3a3a3;font-size:14px;margin:0 0 24px;">Here are your appointment details. A calendar invite is attached.</p>
+    <div style="background:#1d1710;border:1px solid #2e261a;padding:32px;">
+      <h2 style="color:#f2ede3;font-size:20px;margin:0 0 8px;">You're booked, ${firstName}.</h2>
+      <p style="color:#a89c8a;font-size:14px;margin:0 0 24px;">Here are your appointment details. A calendar invite is attached.</p>
 
-      <div style="border-top:1px solid #2a2a2a;padding-top:20px;margin-bottom:20px;">
+      <div style="border-top:1px solid #2e261a;padding-top:20px;margin-bottom:20px;">
         <table style="width:100%;border-collapse:collapse;font-size:14px;">
           <tr>
-            <td style="padding:8px 0;color:#a3a3a3;">Date</td>
-            <td style="padding:8px 0;text-align:right;color:#f5f5f5;font-weight:600;">${date}</td>
+            <td style="padding:8px 0;color:#a89c8a;">Date</td>
+            <td style="padding:8px 0;text-align:right;color:#f2ede3;font-weight:600;">${date}</td>
           </tr>
           <tr>
-            <td style="padding:8px 0;color:#a3a3a3;">Time</td>
-            <td style="padding:8px 0;text-align:right;color:#f5f5f5;font-weight:600;">${startTime} – ${endTime} ET</td>
+            <td style="padding:8px 0;color:#a89c8a;">Time</td>
+            <td style="padding:8px 0;text-align:right;color:#f2ede3;font-weight:600;">${startTime} – ${endTime} ET</td>
           </tr>
           <tr>
-            <td style="padding:8px 0;color:#a3a3a3;">Duration</td>
-            <td style="padding:8px 0;text-align:right;color:#f5f5f5;font-weight:600;">${durationMin} minutes</td>
+            <td style="padding:8px 0;color:#a89c8a;">Duration</td>
+            <td style="padding:8px 0;text-align:right;color:#f2ede3;font-weight:600;">${durationMin} minutes</td>
           </tr>
           <tr>
-            <td style="padding:8px 0;color:#a3a3a3;">Therapist</td>
-            <td style="padding:8px 0;text-align:right;color:#f5f5f5;font-weight:600;">${params.therapistName}</td>
+            <td style="padding:8px 0;color:#a89c8a;">Therapist</td>
+            <td style="padding:8px 0;text-align:right;color:#f2ede3;font-weight:600;">${params.therapistName}</td>
           </tr>
           <tr>
-            <td style="padding:8px 0;color:#a3a3a3;">Location</td>
+            <td style="padding:8px 0;color:#a89c8a;">Location</td>
             <td style="padding:8px 0;text-align:right;">
-              <a href="${MAPS_URL}" style="color:#c9a84c;font-weight:600;text-decoration:none;">${BUSINESS.address.street}<br>${BUSINESS.address.city}, ${BUSINESS.address.state} ${BUSINESS.address.zip}</a>
+              <a href="${MAPS_URL}" style="color:#bb9159;font-weight:600;text-decoration:none;">${BUSINESS.address.street}<br>${BUSINESS.address.city}, ${BUSINESS.address.state} ${BUSINESS.address.zip}</a>
             </td>
           </tr>
         </table>
       </div>
 
-      <div style="border-top:1px solid #2a2a2a;padding-top:20px;margin-bottom:20px;">
+      <div style="border-top:1px solid #2e261a;padding-top:20px;margin-bottom:20px;">
         <table style="width:100%;border-collapse:collapse;font-size:14px;">
           <tr>
-            <td style="padding:6px 0;color:#f5f5f5;">${params.serviceName}</td>
-            <td style="padding:6px 0;text-align:right;color:#f5f5f5;">${formatPrice(params.servicePrice)}</td>
+            <td style="padding:6px 0;color:#f2ede3;">${params.serviceName}</td>
+            <td style="padding:6px 0;text-align:right;color:#f2ede3;">${formatPrice(params.servicePrice)}</td>
           </tr>
           ${addOnLines}
           <tr>
-            <td style="padding:12px 0 6px;border-top:1px solid #2a2a2a;color:#f5f5f5;font-weight:600;">Total</td>
-            <td style="padding:12px 0 6px;border-top:1px solid #2a2a2a;text-align:right;color:#c9a84c;font-weight:600;font-size:16px;">${formatPrice(total)}</td>
+            <td style="padding:12px 0 6px;border-top:1px solid #2e261a;color:#f2ede3;font-weight:600;">Total</td>
+            <td style="padding:12px 0 6px;border-top:1px solid #2e261a;text-align:right;color:#bb9159;font-weight:600;font-size:16px;">${formatPrice(total)}</td>
           </tr>
         </table>
       </div>
 
-      <p style="color:#a3a3a3;font-size:13px;line-height:1.6;margin:0;">
+      <p style="color:#a89c8a;font-size:13px;line-height:1.6;margin:0;">
         Please arrive 10 minutes early so we can start on time.
       </p>
     </div>
 
-    <div style="background:#141414;border:1px solid #2a2a2a;border-top:none;padding:24px 32px;">
-      <h3 style="color:#c9a84c;font-size:13px;letter-spacing:2px;margin:0 0 12px;">CARD ON FILE POLICY</h3>
-      <p style="color:#a3a3a3;font-size:13px;line-height:1.6;margin:0 0 8px;">
-        Your card is <strong style="color:#f5f5f5;">not charged at booking</strong>. Payment is collected after your session.
+    <div style="background:#17120c;border:1px solid #2e261a;border-top:none;padding:24px 32px;">
+      <h3 style="color:#bb9159;font-size:13px;letter-spacing:2px;margin:0 0 12px;">CARD ON FILE POLICY</h3>
+      <p style="color:#a89c8a;font-size:13px;line-height:1.6;margin:0 0 8px;">
+        Your card is <strong style="color:#f2ede3;">not charged at booking</strong>. Payment is collected after your session.
       </p>
-      <p style="color:#a3a3a3;font-size:13px;line-height:1.6;margin:0 0 8px;">
+      <p style="color:#a89c8a;font-size:13px;line-height:1.6;margin:0 0 8px;">
         Your card on file is only used in the following cases:
       </p>
-      <ul style="color:#a3a3a3;font-size:13px;line-height:1.8;margin:0;padding-left:20px;">
-        <li><strong style="color:#f5f5f5;">Late cancellation</strong> (within ${BUSINESS.fees.lateCancelWindow} hours): ${formatPrice(BUSINESS.fees.lateCancelFee)} fee</li>
-        <li><strong style="color:#f5f5f5;">No-show</strong>: ${BUSINESS.fees.noShowPercent}% of your service price</li>
+      <ul style="color:#a89c8a;font-size:13px;line-height:1.8;margin:0;padding-left:20px;">
+        <li><strong style="color:#f2ede3;">Late cancellation</strong> (within ${BUSINESS.fees.lateCancelWindowMinutes} minutes): ${formatPrice(BUSINESS.fees.lateCancelFee)} fee</li>
+        <li><strong style="color:#f2ede3;">No-show</strong>: ${BUSINESS.fees.noShowPercent}% of your service price</li>
       </ul>
-      <p style="color:#a3a3a3;font-size:13px;line-height:1.6;margin:12px 0 0;">
+      <p style="color:#a89c8a;font-size:13px;line-height:1.6;margin:12px 0 0;">
         Need to cancel or reschedule? Reply to this email or call
-        <a href="tel:${BUSINESS.contact.phone}" style="color:#c9a84c;text-decoration:none;">${BUSINESS.contact.phone}</a>.
+        <a href="tel:${BUSINESS.contact.phone}" style="color:#bb9159;text-decoration:none;">${BUSINESS.contact.phone}</a>.
       </p>
     </div>
 
     <div style="text-align:center;margin-top:32px;">
-      <p style="color:#a3a3a3;font-size:12px;margin:0;">We look forward to seeing you.</p>
-      <p style="color:#c9a84c;font-size:11px;letter-spacing:3px;margin:16px 0 0;">${BUSINESS.name.toUpperCase()}</p>
+      <p style="color:#a89c8a;font-size:12px;margin:0;">We look forward to seeing you.</p>
+      <p style="color:#bb9159;font-size:11px;letter-spacing:3px;margin:16px 0 0;">${BUSINESS.name.toUpperCase()}</p>
       <p style="color:#666666;font-size:11px;line-height:1.6;margin:12px 0 0;">
         ${FULL_ADDRESS}<br>
         ${BUSINESS.contact.phone} · ${BUSINESS.contact.email}
@@ -207,7 +207,7 @@ export async function sendBookingConfirmation(params: BookingConfirmationParams)
     ``,
     `CARD ON FILE POLICY`,
     `Your card is not charged at booking. Payment is collected after your session.`,
-    `Late cancellation (within ${BUSINESS.fees.lateCancelWindow} hours): ${formatPrice(BUSINESS.fees.lateCancelFee)} fee.`,
+    `Late cancellation (within ${BUSINESS.fees.lateCancelWindowMinutes} minutes): ${formatPrice(BUSINESS.fees.lateCancelFee)} fee.`,
     `No-show: ${BUSINESS.fees.noShowPercent}% of your service price.`,
     ``,
     `Need to cancel or reschedule? Reply to this email or call ${BUSINESS.contact.phone}.`,
@@ -253,34 +253,34 @@ export async function sendIntakeEmail(params: IntakeEmailParams) {
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"></head>
-<body style="margin:0;padding:0;background:#0a0a0a;font-family:Arial,Helvetica,sans-serif;">
+<body style="margin:0;padding:0;background:#131009;font-family:Arial,Helvetica,sans-serif;">
   <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
 
     <div style="text-align:center;margin-bottom:32px;">
-      <h1 style="color:#c9a84c;font-size:24px;letter-spacing:6px;margin:0;">OBSIDIAN</h1>
-      <p style="color:#a3a3a3;font-size:12px;letter-spacing:3px;margin:8px 0 0;">MEN'S SPA</p>
+      <h1 style="color:#bb9159;font-size:24px;letter-spacing:6px;margin:0;">OBSIDIAN</h1>
+      <p style="color:#a89c8a;font-size:12px;letter-spacing:3px;margin:8px 0 0;">MEN'S SPA</p>
     </div>
 
-    <div style="background:#1a1a1a;border:1px solid #2a2a2a;padding:32px;">
-      <h2 style="color:#f5f5f5;font-size:20px;margin:0 0 8px;">One quick thing, ${firstName}.</h2>
-      <p style="color:#a3a3a3;font-size:14px;line-height:1.6;margin:0 0 24px;">
+    <div style="background:#1d1710;border:1px solid #2e261a;padding:32px;">
+      <h2 style="color:#f2ede3;font-size:20px;margin:0 0 8px;">One quick thing, ${firstName}.</h2>
+      <p style="color:#a89c8a;font-size:14px;line-height:1.6;margin:0 0 24px;">
         Please fill out a short intake form before your appointment. It helps your therapist
         prepare for your session — pressure preference, focus areas, anything to avoid.
       </p>
 
       <div style="text-align:center;margin:24px 0;">
-        <a href="${params.intakeUrl}" style="display:inline-block;background:#c9a84c;color:#0a0a0a;padding:14px 32px;font-size:14px;font-weight:600;letter-spacing:2px;text-decoration:none;">
+        <a href="${params.intakeUrl}" style="display:inline-block;background:#bb9159;color:#131009;padding:14px 32px;font-size:14px;font-weight:600;letter-spacing:2px;text-decoration:none;">
           FILL OUT INTAKE FORM
         </a>
       </div>
 
-      <p style="color:#a3a3a3;font-size:12px;text-align:center;margin:0;">
+      <p style="color:#a89c8a;font-size:12px;text-align:center;margin:0;">
         This link expires in 72 hours.
       </p>
     </div>
 
     <div style="text-align:center;margin-top:32px;">
-      <p style="color:#c9a84c;font-size:11px;letter-spacing:3px;margin:0;">${BUSINESS.name.toUpperCase()}</p>
+      <p style="color:#bb9159;font-size:11px;letter-spacing:3px;margin:0;">${BUSINESS.name.toUpperCase()}</p>
       <p style="color:#666666;font-size:11px;line-height:1.6;margin:12px 0 0;">
         ${FULL_ADDRESS}<br>
         ${BUSINESS.contact.phone} · ${BUSINESS.contact.email}

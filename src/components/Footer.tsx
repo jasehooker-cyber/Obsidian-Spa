@@ -5,11 +5,11 @@ import { formatTime } from "@/lib/config/format";
 export default function Footer() {
   return (
     <footer className="relative border-t border-charcoal-light bg-background">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(201,168,76,0.03)_0%,transparent_60%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(187,145,89,0.03)_0%,transparent_60%)]" />
       <div className="relative mx-auto max-w-6xl px-6 py-16">
         <div className="grid gap-12 md:grid-cols-3">
           <div>
-            <h3 className="text-gold-gradient mb-4 text-xl font-bold tracking-[0.25em]">
+            <h3 className="font-display text-gold-gradient mb-4 text-xl tracking-[0.3em]">
               OBSIDIAN
             </h3>
             <p className="text-sm leading-relaxed text-muted">

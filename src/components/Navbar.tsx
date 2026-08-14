@@ -33,7 +33,7 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <Link
           href="/"
-          className="text-gold-gradient text-xl font-bold tracking-[0.25em]"
+          className="font-display text-gold-gradient text-xl tracking-[0.3em]"
         >
           OBSIDIAN
         </Link>
@@ -45,7 +45,7 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="border border-gold px-5 py-2 text-xs font-semibold tracking-widest text-gold transition-all duration-300 hover:bg-gold hover:text-background hover:shadow-[0_0_16px_rgba(201,168,76,0.2)]"
+                className="border border-gold px-5 py-2 text-xs font-semibold tracking-widest text-gold transition-all duration-300 hover:bg-gold hover:text-background hover:shadow-[0_0_16px_rgba(187,145,89,0.2)]"
               >
                 BOOK NOW
               </Link>

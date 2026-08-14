@@ -19,14 +19,14 @@ export default function Image() {
           alignItems: "center",
           justifyContent: "center",
           background:
-            "radial-gradient(ellipse at center, #1a1408 0%, #0a0a0a 65%)",
+            "radial-gradient(ellipse at center, #1a1408 0%, #131009 65%)",
         }}
       >
         <div
           style={{
             fontSize: 28,
             letterSpacing: "0.5em",
-            color: "#c9a84c",
+            color: "#bb9159",
             marginBottom: 24,
           }}
         >
@@ -48,7 +48,7 @@ export default function Image() {
             width: 480,
             height: 2,
             background:
-              "linear-gradient(to right, transparent, #c9a84c, transparent)",
+              "linear-gradient(to right, transparent, #bb9159, transparent)",
             marginBottom: 32,
           }}
         />

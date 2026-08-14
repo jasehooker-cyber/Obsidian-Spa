@@ -19,7 +19,9 @@ export const BUSINESS = {
   },
 
   fees: {
-    lateCancelWindow: 2,
+    // A charge only happens for a no-show, or a cancellation inside this
+    // window before the appointment. Outside it, cancelling is free.
+    lateCancelWindowMinutes: 30,
     lateCancelFee: 40_00,
     noShowPercent: 50,
   },
@@ -48,6 +50,10 @@ export interface AddOn {
   price: number;
 }
 
+/**
+ * No longer offered — removed from the site. Kept only so bookings recorded
+ * before the change still render their add-ons correctly in emails.
+ */
 export const ADD_ONS: AddOn[] = [
   { id: "cbd", name: "CBD", price: 30_00 },
   { id: "hot-stones", name: "Hot Stones", price: 30_00 },

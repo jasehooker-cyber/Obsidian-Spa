@@ -5,18 +5,18 @@
  * design tokens as CSS variables. Mapping those to the site palette makes the
  * booking screen read as part of Obsidian rather than a third-party widget.
  *
- * Palette mirrors `globals.css`: #0a0a0a background, #c9a84c gold,
- * #1a1a1a/#2a2a2a charcoal. Radii are zeroed to match the site's square edges.
+ * Palette mirrors `globals.css`: #131009 background, #bb9159 bronze,
+ * #1d1710/#2e261a charcoal. Radii are zeroed to match the site's square edges.
  */
 
-const GOLD = "#c9a84c";
-const GOLD_LIGHT = "#e2c97e";
-const GOLD_DARK = "#a68a3e";
-const BACKGROUND = "#0a0a0a";
-const FOREGROUND = "#f5f5f5";
-const CHARCOAL = "#1a1a1a";
-const CHARCOAL_LIGHT = "#2a2a2a";
-const MUTED = "#a3a3a3";
+const GOLD = "#bb9159";
+const GOLD_LIGHT = "#dcbc8a";
+const GOLD_DARK = "#936f40";
+const BACKGROUND = "#131009";
+const FOREGROUND = "#f2ede3";
+const CHARCOAL = "#1d1710";
+const CHARCOAL_LIGHT = "#2e261a";
+const MUTED = "#a89c8a";
 
 const SQUARE_RADII = {
   "cal-radius": "0px",
@@ -35,11 +35,11 @@ const DARK_VARS = {
   "cal-brand-text": BACKGROUND,
   "cal-bg-brand": GOLD,
   "cal-bg-brand-emphasis": GOLD_DARK,
-  "cal-bg-brand-muted": "rgba(201, 168, 76, 0.15)",
+  "cal-bg-brand-muted": "rgba(187, 145, 89, 0.15)",
 
   // Surfaces
-  "cal-bg": "#101010",
-  "cal-bg-muted": "#141414",
+  "cal-bg": "#16110a",
+  "cal-bg-muted": "#17120c",
   "cal-bg-subtle": CHARCOAL,
   "cal-bg-emphasis": CHARCOAL_LIGHT,
   "cal-bg-inverted": FOREGROUND,
@@ -47,20 +47,20 @@ const DARK_VARS = {
   // Primary action (booking confirm button)
   "cal-bg-primary": GOLD,
   "cal-bg-primary-emphasis": GOLD_DARK,
-  "cal-bg-primary-muted": "rgba(201, 168, 76, 0.15)",
+  "cal-bg-primary-muted": "rgba(187, 145, 89, 0.15)",
 
   // Borders — gold only on emphasis, matching the luxury-card hover treatment.
   "cal-border": CHARCOAL_LIGHT,
-  "cal-border-subtle": "#1f1f1f",
-  "cal-border-muted": "#161616",
+  "cal-border-subtle": "#241d14",
+  "cal-border-muted": "#1a150e",
   "cal-border-booker": CHARCOAL_LIGHT,
-  "cal-border-emphasis": "rgba(201, 168, 76, 0.4)",
+  "cal-border-emphasis": "rgba(187, 145, 89, 0.4)",
 
   // Text
   "cal-text": FOREGROUND,
   "cal-text-emphasis": "#ffffff",
   "cal-text-subtle": MUTED,
-  "cal-text-muted": "#6b6b6b",
+  "cal-text-muted": "#7a7060",
   "cal-text-inverted": BACKGROUND,
 } as const;
 
