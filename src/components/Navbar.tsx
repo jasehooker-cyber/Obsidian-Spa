@@ -31,11 +31,13 @@ export default function Navbar() {
       }`}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-        <Link
-          href="/"
-          className="font-display text-gold-gradient text-xl tracking-[0.3em]"
-        >
-          OBSIDIAN
+        <Link href="/" className="block leading-none">
+          <span className="font-display text-gold-gradient block text-xl tracking-[0.3em]">
+            OBSIDIAN SPA
+          </span>
+          <span className="font-display mt-1 block text-[9px] tracking-[0.45em] text-muted/70">
+            MEN&apos;S SPA
+          </span>
         </Link>
 
         {/* Desktop */}

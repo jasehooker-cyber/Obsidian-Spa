@@ -60,7 +60,7 @@ export async function POST(
       paymentMethodId: booking.stripe_payment_method_id,
       amountCents: feeCents,
       type: "no_show",
-      description: "Obsidian Men's Spa — No-show fee",
+      description: `${BUSINESS.name} — No-show fee`,
     });
 
     await supabase

@@ -27,13 +27,13 @@ const display = Josefin_Sans({
 });
 
 const description =
-  "Premium men's spa in Midtown Manhattan. Signature, deep tissue, full body, and express massages in a private, refined setting. Open daily 8 AM – 10 PM. Book online.";
+  "Premium men's spa in Midtown Manhattan. Signature, deep tissue, restorative, and express massages in a private, refined setting. Open daily 8 AM – 10 PM. Book online.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getEnv().siteUrl),
   title: {
-    default: "Obsidian Men's Spa — Premium Massage & Luxury Treatments",
-    template: "%s | Obsidian Men's Spa",
+    default: "Obsidian Spa — Premium Men's Massage in Midtown Manhattan",
+    template: "%s | Obsidian Spa",
   },
   description,
   keywords: [
@@ -47,17 +47,17 @@ export const metadata: Metadata = {
     "men's massage therapy",
   ],
   openGraph: {
-    title: "Obsidian Men's Spa",
+    title: "Obsidian Spa — Premium Men's Massage",
     description,
     type: "website",
-    siteName: "Obsidian Men's Spa",
+    siteName: "Obsidian Spa",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Obsidian Men's Spa",
+    title: "Obsidian Spa — Premium Men's Massage",
     description:
-      "Premium men's spa. Signature, deep tissue, full body, and express massages. Open daily 8 AM – 10 PM.",
+      "Premium men's spa. Signature, deep tissue, restorative, and express massages. Open daily 8 AM – 10 PM.",
   },
   robots: {
     index: true,
@@ -80,8 +80,9 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "DaySpa",
   name: BUSINESS.name,
+  alternateName: ["Obsidian Men's Spa", "Obsidian"],
   description:
-    "Premium men's spa in Midtown Manhattan offering signature, deep tissue, full body, and express massages in a private, refined setting.",
+    "Premium men's spa in Midtown Manhattan offering signature, deep tissue, restorative, and express massages in a private, refined setting.",
   url: getEnv().siteUrl,
   telephone: BUSINESS.contact.phone,
   email: BUSINESS.contact.email,

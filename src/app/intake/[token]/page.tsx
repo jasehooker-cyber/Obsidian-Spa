@@ -4,7 +4,7 @@ import IntakeForm from "@/components/intake/IntakeForm";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Intake Form | Obsidian Men's Spa",
+  title: "Intake Form | Obsidian Spa",
   description: "Complete your intake form before your visit.",
 };
 

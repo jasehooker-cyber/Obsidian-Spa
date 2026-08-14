@@ -18,8 +18,8 @@ export default function Home() {
         <p className="font-display animate-fade-up mb-6 text-sm tracking-[0.4em] text-gold">
           PREMIUM MEN&apos;S SPA
         </p>
-        <h1 className="font-display text-gold-gradient animate-fade-up-delay-1 mb-2 text-5xl tracking-[0.18em] md:text-7xl lg:text-8xl">
-          OBSIDIAN
+        <h1 className="font-display text-gold-gradient animate-fade-up-delay-1 mb-2 text-4xl tracking-[0.16em] sm:text-5xl md:text-6xl lg:text-7xl">
+          OBSIDIAN SPA
         </h1>
         <div className="animate-expand-line mx-auto mb-8 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
         <p className="animate-fade-up-delay-2 mb-12 max-w-lg text-lg leading-relaxed text-muted">
@@ -29,13 +29,13 @@ export default function Home() {
         <div className="animate-fade-up-delay-3 flex gap-4">
           <Link
             href="/booking"
-            className="btn-glow relative border border-gold bg-gold px-10 py-3.5 text-sm font-semibold tracking-widest text-background transition-all duration-300 hover:bg-gold-dark hover:shadow-[0_0_24px_rgba(187,145,89,0.25)]"
+            className="btn-glow relative whitespace-nowrap border border-gold bg-gold px-8 py-3.5 text-sm font-semibold tracking-widest text-background transition-all duration-300 hover:bg-gold-dark hover:shadow-[0_0_24px_rgba(187,145,89,0.25)] sm:px-10"
           >
             BOOK NOW
           </Link>
           <Link
             href="/services"
-            className="border border-charcoal-light px-10 py-3.5 text-sm tracking-widest text-muted transition-all duration-300 hover:border-gold/50 hover:text-gold"
+            className="whitespace-nowrap border border-charcoal-light px-8 py-3.5 text-sm tracking-widest text-muted transition-all duration-300 hover:border-gold/50 hover:text-gold sm:px-10"
           >
             SERVICES
           </Link>

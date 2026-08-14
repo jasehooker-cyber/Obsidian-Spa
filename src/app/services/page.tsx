@@ -4,7 +4,7 @@ import CalBookingMenu from "@/components/booking/CalBookingMenu";
 export const metadata = {
   title: "Services & Pricing",
   description:
-    "Signature, deep tissue, full body, and express massages for men, from $100. 45, 60, and 90 minute sessions in Midtown Manhattan. Book online.",
+    "Signature, deep tissue, restorative, and express massages for men, from $100. 45, 60, and 90 minute sessions in Midtown Manhattan. Book online.",
   alternates: { canonical: "/services" },
 };
 

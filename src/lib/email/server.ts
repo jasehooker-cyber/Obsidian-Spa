@@ -56,7 +56,7 @@ function buildIcs(params: BookingConfirmationParams): string {
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Obsidian Men's Spa//Booking//EN",
+    `PRODID:-//${BUSINESS.name}//Booking//EN`,
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",
     `UID:${icsTimestamp(params.startsAt)}-${params.clientEmail}`,

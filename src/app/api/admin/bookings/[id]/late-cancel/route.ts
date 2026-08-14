@@ -58,7 +58,7 @@ export async function POST(
       paymentMethodId: booking.stripe_payment_method_id,
       amountCents: BUSINESS.fees.lateCancelFee,
       type: "late_cancel",
-      description: "Obsidian Men's Spa — Late cancellation fee",
+      description: `${BUSINESS.name} — Late cancellation fee`,
     });
 
     if (booking.cal_booking_uid) {

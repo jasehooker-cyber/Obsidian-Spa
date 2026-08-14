@@ -1,5 +1,5 @@
 /**
- * Cal.com team event types for Obsidian Men's Spa.
+ * Cal.com team event types for Obsidian Spa.
  *
  * Source of truth for the booking menu. Slugs, durations, and descriptions
  * mirror the event types configured on the Cal.com team `obsidian-spa`.

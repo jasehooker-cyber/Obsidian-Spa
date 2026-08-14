@@ -1,3 +1,4 @@
+import { BUSINESS } from "@/lib/config/business-rules";
 import { assertStaffAuth, AuthError } from "@/lib/auth/staff";
 import { supabaseServer } from "@/lib/supabase/server";
 import { chargeOffSession } from "@/lib/payments/charge";
@@ -68,7 +69,7 @@ export async function POST(
       paymentMethodId: booking.stripe_payment_method_id,
       amountCents: totalCents,
       type: "service",
-      description: `Obsidian Men's Spa — ${service.name}`,
+      description: `${BUSINESS.name} — ${service.name}`,
     });
 
     await supabase
