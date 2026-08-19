@@ -96,8 +96,7 @@ export const CAL_UI_CONFIG = {
     dark: DARK_VARS,
     light: LIGHT_VARS,
   },
-  styles: {
-    branding: { brandColor: GOLD },
-    body: { background: BACKGROUND },
-  },
+  // `styles` (branding.brandColor / body.background) is Cal's legacy theming
+  // API, superseded by cssVarsPerTheme above. Dropped while chasing a crash
+  // inside Cal's booker, to keep what we send it close to the stock snippet.
 } as const;

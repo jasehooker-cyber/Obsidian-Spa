@@ -36,8 +36,10 @@ export default function CalBookingMenu() {
         const cal = await getCalApi({ namespace });
         if (!active) return;
 
-        // Carries UTM and prefill params (?name=, ?email=) into the booking.
-        cal.config = { ...cal.config, forwardQueryParams: true };
+        // forwardQueryParams is deliberately left off. It copies the visiting
+        // page's query string into the booker, so an ad or campaign link
+        // (?fbclid=, ?utm_=) hands Cal params it then has to parse — a
+        // plausible source of the crash reported in its booker.
         cal("ui", CAL_UI_CONFIG);
       }
     })();
