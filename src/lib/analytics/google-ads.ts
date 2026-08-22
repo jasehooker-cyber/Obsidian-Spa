@@ -13,12 +13,23 @@ import { CAL_SERVICES } from "@/lib/config/cal-events";
 export const GOOGLE_ADS_ID = "AW-18369793323";
 
 /**
- * The conversion action's label, from Google Ads → Goals → Conversions. Its
- * snippet reads `send_to: 'AW-18369793323/AbC-D_efGh12_34-567'`; the half after
- * the slash is the label. Set NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL in Vercel
- * so rotating it never needs a deploy. Until it is set, bookings still reach
- * dataLayer but no conversion is reported — sending one without a label would
- * be attributed to nothing.
+ * The event name the Google Ads conversion action listens for. Newer Ads
+ * conversion actions are keyed to a named event rather than the older
+ * `send_to: 'AW-xxx/<label>'` form, so no label is required — the event is
+ * attributed through the gtag config in the root layout.
+ *
+ * Override with NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_EVENT if the action is
+ * renamed in Ads; the name must match there exactly or the conversion is
+ * silently ignored.
+ */
+export const CONVERSION_EVENT =
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_EVENT ??
+  "ads_conversion_Book_appointment_1";
+
+/**
+ * Optional. Only for a legacy conversion action that still uses a label; when
+ * set, the event is scoped to that action instead of every configured
+ * destination. Leave unset for the named-event action above.
  */
 export const CONVERSION_LABEL =
   process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL ?? "";
@@ -84,12 +95,14 @@ export function reportBookingConversion(booking: BookingConversion): void {
     payment_required: booking.paymentRequired ?? null,
   });
 
-  if (!CONVERSION_LABEL || typeof window.gtag !== "function") return;
+  if (typeof window.gtag !== "function") return;
 
-  window.gtag("event", "conversion", {
-    send_to: `${GOOGLE_ADS_ID}/${CONVERSION_LABEL}`,
+  window.gtag("event", CONVERSION_EVENT, {
     value,
     currency: "USD",
     transaction_id: uid,
+    ...(CONVERSION_LABEL
+      ? { send_to: `${GOOGLE_ADS_ID}/${CONVERSION_LABEL}` }
+      : {}),
   });
 }
