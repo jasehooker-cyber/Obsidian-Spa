@@ -36,6 +36,11 @@ export interface CalDuration {
   /** Embed namespace — one per event type, matching Cal's generated snippets. */
   namespace: string;
   /**
+   * Cal.com's numeric id for the event type. Cal reports this — not the slug —
+   * when a booking completes, so it is how a conversion gets priced.
+   */
+  eventTypeId: number;
+  /**
    * Base price in cents, mirroring the event type's price in Cal.com. Shown so
    * clients see the cost before opening the booker. Cal.com holds this amount
    * on the card rather than charging it — see CARD_HOLD_NOTICE.
@@ -71,11 +76,18 @@ export const CAL_SERVICES: CalService[] = [
     description:
       "Our signature. Built around wherever you're sore. Swedish, deep tissue, and stretch blended to the body on the table that day.",
     durations: [
-      { minutes: 60, slug: "obsidian", namespace: "obsidian", price: 180_00 },
+      {
+        minutes: 60,
+        slug: "obsidian",
+        namespace: "obsidian",
+        eventTypeId: 6637250,
+        price: 180_00,
+      },
       {
         minutes: 90,
         slug: "obsidian-copy",
         namespace: "obsidian-copy",
+        eventTypeId: 6640200,
         price: 240_00,
       },
     ],
@@ -87,11 +99,18 @@ export const CAL_SERVICES: CalService[] = [
     description:
       "Slow, heavy, deliberate pressure. For men who lift, sit, or carry stress in their back.",
     durations: [
-      { minutes: 60, slug: "the-forge", namespace: "the-forge", price: 165_00 },
+      {
+        minutes: 60,
+        slug: "the-forge",
+        namespace: "the-forge",
+        eventTypeId: 6640251,
+        price: 165_00,
+      },
       {
         minutes: 90,
         slug: "the-forge-copy",
         namespace: "the-forge-copy",
+        eventTypeId: 6640308,
         price: 225_00,
       },
     ],
@@ -107,9 +126,16 @@ export const CAL_SERVICES: CalService[] = [
         minutes: 60,
         slug: "blackout-copy",
         namespace: "blackout-copy",
+        eventTypeId: 6640690,
         price: 150_00,
       },
-      { minutes: 90, slug: "blackout", namespace: "blackout", price: 210_00 },
+      {
+        minutes: 90,
+        slug: "blackout",
+        namespace: "blackout",
+        eventTypeId: 6640453,
+        price: 210_00,
+      },
     ],
   },
   {
@@ -121,7 +147,13 @@ export const CAL_SERVICES: CalService[] = [
     durations: [
       // Cal.com still has this event type priced at $150. The site price is the
       // correct one — update the event type in Cal.com so the card hold matches.
-      { minutes: 45, slug: "the-split", namespace: "the-split", price: 100_00 },
+      {
+        minutes: 45,
+        slug: "the-split",
+        namespace: "the-split",
+        eventTypeId: 6640747,
+        price: 100_00,
+      },
     ],
   },
 ];
