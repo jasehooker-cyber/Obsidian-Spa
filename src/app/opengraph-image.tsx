@@ -34,14 +34,14 @@ export default function Image() {
         </div>
         <div
           style={{
-            fontSize: 130,
-            fontWeight: 700,
-            letterSpacing: "0.08em",
+            fontSize: 58,
+            fontWeight: 400,
+            letterSpacing: "0.12em",
             color: "#dcbc8a",
             marginBottom: 28,
           }}
         >
-          OBSIDIAN
+          OBSIDIAN MEN&apos;S SPA
         </div>
         <div
           style={{

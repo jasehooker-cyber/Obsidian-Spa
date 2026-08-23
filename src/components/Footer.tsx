@@ -9,8 +9,8 @@ export default function Footer() {
       <div className="relative mx-auto max-w-6xl px-6 py-16">
         <div className="grid gap-12 md:grid-cols-3">
           <div>
-            <h3 className="font-display text-gold-gradient mb-4 text-xl tracking-[0.3em]">
-              OBSIDIAN
+            <h3 className="font-display text-gold-gradient mb-4 text-lg tracking-[0.22em]">
+              OBSIDIAN MEN&apos;S SPA
             </h3>
             <p className="text-sm leading-relaxed text-muted">
               {BUSINESS.tagline}. A private, refined space designed for men who

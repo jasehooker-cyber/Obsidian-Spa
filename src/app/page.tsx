@@ -13,13 +13,13 @@ export default function Home() {
       {/* Hero */}
       <section className="noise-overlay relative flex min-h-[90vh] flex-col items-center justify-center overflow-hidden px-6 text-center">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(187,145,89,0.08)_0%,transparent_60%)]" />
-        <div className="pointer-events-none absolute top-1/4 left-1/2 h-[500px] w-[800px] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse,rgba(187,145,89,0.05)_0%,transparent_70%)] blur-3xl" />
+        <div className="pointer-events-none absolute top-1/4 left-1/2 h-[500px] w-screen sm:w-[800px] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse,rgba(187,145,89,0.05)_0%,transparent_70%)] blur-3xl" />
 
         <p className="font-display animate-fade-up mb-6 text-sm tracking-[0.4em] text-gold">
           PREMIUM MEN&apos;S SPA
         </p>
-        <h1 className="font-display text-gold-gradient animate-fade-up-delay-1 mb-2 text-5xl tracking-[0.18em] md:text-7xl lg:text-8xl">
-          OBSIDIAN
+        <h1 className="font-display text-gold-gradient animate-fade-up-delay-1 mb-2 text-2xl tracking-[0.1em] sm:text-4xl sm:tracking-[0.12em] md:text-6xl lg:text-7xl">
+          OBSIDIAN MEN&apos;S SPA
         </h1>
         <div className="animate-expand-line mx-auto mb-8 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
         <p className="animate-fade-up-delay-2 mb-12 max-w-lg text-lg leading-relaxed text-muted">
