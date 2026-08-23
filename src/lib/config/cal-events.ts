@@ -61,7 +61,7 @@ export interface CalService {
 
 /**
  * The seven Cal.com event types, grouped into the four services they represent.
- * Three services are offered at two lengths; The Split is a single 45-minute
+ * Three services are offered at two lengths; The Split is a single 30-minute
  * session.
  *
  * Note the Blackout slugs: `blackout` is the 90-minute event and
@@ -145,10 +145,8 @@ export const CAL_SERVICES: CalService[] = [
     description:
       "Our shortest session. Focused, targeted work on the areas that need it most, for when time is tight.",
     durations: [
-      // Cal.com still has this event type priced at $150. The site price is the
-      // correct one — update the event type in Cal.com so the card hold matches.
       {
-        minutes: 45,
+        minutes: 30,
         slug: "the-split",
         namespace: "the-split",
         eventTypeId: 6640747,

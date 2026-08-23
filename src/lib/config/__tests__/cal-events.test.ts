@@ -50,6 +50,21 @@ describe("cal.com service menu", () => {
     expect(bySlug["the-split"].price).toBe(100_00);
   });
 
+  it("matches the session lengths configured in Cal.com", () => {
+    // Verified against cal.com/team/obsidian-spa. The Split was shortened from
+    // 45 to 30 minutes there; the site advertised the old length until caught.
+    const bySlug = Object.fromEntries(
+      allDurations.map((duration) => [duration.slug, duration.minutes])
+    );
+    expect(bySlug["obsidian"]).toBe(60);
+    expect(bySlug["obsidian-copy"]).toBe(90);
+    expect(bySlug["the-forge"]).toBe(60);
+    expect(bySlug["the-forge-copy"]).toBe(90);
+    expect(bySlug["blackout-copy"]).toBe(60);
+    expect(bySlug["blackout"]).toBe(90);
+    expect(bySlug["the-split"]).toBe(30);
+  });
+
   it("keeps the reversed Blackout slugs straight", () => {
     const blackout = CAL_SERVICES.find((s) => s.id === "blackout")!;
     const bySlug = Object.fromEntries(
