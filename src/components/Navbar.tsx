@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/services", label: "Services" },
+  { href: "/events", label: "Events" },
   { href: "/about", label: "About" },
   { href: "/booking", label: "Book Now" },
 ];
@@ -39,7 +40,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop */}
-        <div className="hidden items-center gap-10 md:flex">
+        <div className="hidden items-center gap-6 lg:gap-10 md:flex">
           {NAV_LINKS.map((link) =>
             link.label === "Book Now" ? (
               <Link

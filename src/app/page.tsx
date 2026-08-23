@@ -111,6 +111,35 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Studio teaser — the events page has no other route in from the home page */}
+      <section className="relative px-6 pb-8">
+        <div className="mx-auto max-w-6xl">
+          <Link
+            href="/events"
+            className="luxury-card group flex flex-col items-start justify-between gap-6 p-8 md:flex-row md:items-center"
+          >
+            <div>
+              <p className="font-display mb-2 text-[11px] tracking-[0.3em] text-gold/70">
+                THE STUDIO
+              </p>
+              <h2 className="mb-2 text-lg font-semibold tracking-wide transition-colors duration-300 group-hover:text-gold">
+                Events &amp; Classes
+              </h2>
+              <p className="max-w-xl text-sm leading-relaxed text-muted">
+                Yoga, group acupuncture, and couples massage workshops in our
+                studio room — plus private hire for your own group.
+              </p>
+            </div>
+            <span className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap text-sm tracking-widest text-gold transition-all duration-300 group-hover:text-gold-light">
+              SEE WHAT&apos;S ON
+              <span className="transition-transform duration-300 group-hover:translate-x-1">
+                &rarr;
+              </span>
+            </span>
+          </Link>
+        </div>
+      </section>
+
       {/* Experience strip */}
       <section className="relative overflow-hidden border-y border-charcoal-light px-6 py-16">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(187,145,89,0.04)_0%,transparent_70%)]" />
