@@ -3,9 +3,9 @@ import { formatTime } from "@/lib/config/format";
 import CalBookingMenu from "@/components/booking/CalBookingMenu";
 
 export const metadata = {
-  title: "Book Your Session",
+  title: "Book a Massage — Gay Men's Spa, Midtown Manhattan",
   description:
-    "Book your massage online in minutes. Same-day appointments in Midtown Manhattan, open daily 8 AM – 10 PM. Choose your service and length, then pick a time.",
+    "Book gay male massage in Midtown Manhattan online in minutes. Same-day appointments, open daily 8 AM – 10 PM. Choose your session and length, then pick a time.",
   alternates: { canonical: "/booking" },
 };
 

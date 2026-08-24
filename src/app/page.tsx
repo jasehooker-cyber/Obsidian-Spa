@@ -23,8 +23,8 @@ export default function Home() {
         </h1>
         <div className="animate-expand-line mx-auto mb-8 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
         <p className="animate-fade-up-delay-2 mb-12 max-w-lg text-lg leading-relaxed text-muted">
-          A private, refined space designed for men who value quality,
-          comfort, and genuine relaxation.
+          A gay men&apos;s spa in Midtown Manhattan — private, refined, and
+          welcoming to every queer person.
         </p>
         <div className="animate-fade-up-delay-3 flex gap-4">
           <Link

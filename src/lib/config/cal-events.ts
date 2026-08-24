@@ -54,6 +54,12 @@ export interface CalService {
   eyebrow: string;
   name: string;
   description: string;
+  /**
+   * The one-line answer to "which of these do I want?". The descriptions say
+   * what a session is; this says who it is for, so the four are told apart at
+   * a glance rather than read as four kinds of massage.
+   */
+  bestFor: string;
   durations: CalDuration[];
   /** Quiet bronze emphasis on the service card — border, glow, and badge. */
   featured?: boolean;
@@ -75,6 +81,8 @@ export const CAL_SERVICES: CalService[] = [
     name: "Obsidian Signature Massage",
     description:
       "Our signature. Built around wherever you're sore. Swedish, deep tissue, and stretch blended to the body on the table that day.",
+    bestFor:
+      "When you are not sure what you need, or want a bit of everything.",
     durations: [
       {
         minutes: 60,
@@ -98,6 +106,8 @@ export const CAL_SERVICES: CalService[] = [
     name: "The Forge",
     description:
       "Slow, heavy, deliberate pressure. For men who lift, sit, or carry stress in their back.",
+    bestFor:
+      "When something specific hurts — a locked shoulder, a tight lower back.",
     durations: [
       {
         minutes: 60,
@@ -121,6 +131,8 @@ export const CAL_SERVICES: CalService[] = [
     name: "Blackout",
     description:
       "Slow, enveloping, and completely unhurried. Built to quiet everything down — most men are asleep long before the halfway mark.",
+    bestFor:
+      "When you do not want to be worked on. You want to switch off.",
     durations: [
       {
         minutes: 60,
@@ -144,6 +156,8 @@ export const CAL_SERVICES: CalService[] = [
     name: "The Split",
     description:
       "Our shortest session. Focused, targeted work on the areas that need it most, for when time is tight.",
+    bestFor:
+      "When time is short, or one area needs attention and nothing else does.",
     durations: [
       {
         minutes: 30,

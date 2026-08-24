@@ -1,10 +1,11 @@
 import { BUSINESS } from "@/lib/config/business-rules";
 import CalBookingMenu from "@/components/booking/CalBookingMenu";
+import { CAL_SERVICES } from "@/lib/config/cal-events";
 
 export const metadata = {
-  title: "Services & Pricing",
+  title: "Services & Pricing — Gay Men's Massage NYC",
   description:
-    "Signature, deep tissue, restorative, and express massages for men, from $100. 30, 60, and 90 minute sessions in Midtown Manhattan. Book online.",
+    "Gay men's massage in Midtown Manhattan — signature, deep tissue, restorative, and express sessions from $100. Male therapists, 30, 60, and 90 minutes. Book online.",
   alternates: { canonical: "/services" },
 };
 
@@ -32,6 +33,49 @@ export default function ServicesPage() {
       {/* Services — same live menu as the booking page */}
       <section className="section-glow relative px-6 py-16">
         <CalBookingMenu />
+      </section>
+
+      {/* Choosing between them — the question people actually arrive with */}
+      <section className="relative px-6 py-12">
+        <div className="mx-auto max-w-5xl">
+          <h2 className="font-display mb-3 text-2xl uppercase tracking-[0.12em]">
+            Which One?
+          </h2>
+          <p className="mb-10 max-w-2xl text-sm leading-relaxed text-muted">
+            All four are full-body massage by the same licensed therapists. What
+            changes is the pressure and the intent — how hard we work, and
+            whether the aim is to fix something or to switch you off.
+          </p>
+          <div className="flex flex-col gap-px overflow-hidden border border-charcoal-light bg-charcoal-light">
+            {CAL_SERVICES.map((service) => (
+              <div
+                key={service.id}
+                className="grid gap-2 bg-background/95 p-6 md:grid-cols-[minmax(0,14rem)_1fr] md:items-baseline md:gap-8"
+              >
+                <div>
+                  <p className="font-display text-[10px] tracking-[0.3em] text-gold/70">
+                    {service.eyebrow}
+                  </p>
+                  <p className="mt-1 font-semibold tracking-wide text-foreground">
+                    {service.name}
+                  </p>
+                  <p className="mt-1 text-xs tracking-wider text-muted/60">
+                    {service.durations
+                      .map((duration) => `${duration.minutes} MIN`)
+                      .join(" · ")}
+                  </p>
+                </div>
+                <p className="text-sm leading-relaxed text-muted">
+                  {service.bestFor}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-6 text-sm leading-relaxed text-muted">
+            Still unsure? Book the Signature and tell your therapist what hurts
+            — it is built to adapt.
+          </p>
+        </div>
       </section>
 
       {/* Policies */}

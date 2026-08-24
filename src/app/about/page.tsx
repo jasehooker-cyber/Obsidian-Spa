@@ -3,9 +3,9 @@ import { BUSINESS } from "@/lib/config/business-rules";
 import { formatTime } from "@/lib/config/format";
 
 export const metadata = {
-  title: "About",
+  title: "About — A Gay Men's Spa in Midtown Manhattan",
   description:
-    "A premium spa experience built for men who value expertise and genuine relaxation. Certified therapists, a private setting, and professional results.",
+    "A gay men's spa in Midtown Manhattan, welcoming to every queer person. Licensed therapists, a private setting, and complete discretion.",
   alternates: { canonical: "/about" },
 };
 
@@ -47,6 +47,40 @@ export default function AboutPage() {
             you walked in. No unnecessary paperwork, no pressure to add on
             services, and no charges until after your session is complete.
           </p>
+        </div>
+      </section>
+
+      {/* Who it's for */}
+      <section className="relative px-6 py-16">
+        <div className="mx-auto max-w-3xl">
+          <p className="font-display mb-3 text-sm tracking-[0.4em] text-gold">
+            WHO IT&apos;S FOR
+          </p>
+          <h2 className="font-display mb-4 text-2xl uppercase tracking-[0.12em] md:text-3xl">
+            A Space for Gay Men
+          </h2>
+          <div className="gold-divider mb-8 justify-start">
+            <span className="text-xs text-gold/60">&#9670;</span>
+          </div>
+          <div className="space-y-6 text-lg leading-relaxed text-muted">
+            <p className="text-foreground/90">
+              Obsidian is built around gay men. Not as an afterthought or a
+              policy on a wall — it is who the room is for. Mention your husband
+              or your boyfriend and nothing changes in the therapist&apos;s
+              face. You never have to read the temperature before you speak.
+            </p>
+            <p>
+              Every queer person is welcome here. Bi, trans, nonbinary, still
+              working it out — if you have ever tensed up walking into a spa,
+              wondering how you would be received, that feeling is precisely
+              what this place exists to remove.
+            </p>
+            <p>
+              What does not change is the work. Licensed therapists, real
+              technique, and complete discretion — the same standard on the
+              table for everyone.
+            </p>
+          </div>
         </div>
       </section>
 

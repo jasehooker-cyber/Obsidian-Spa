@@ -96,8 +96,12 @@ export default function CalBookingMenu() {
                 </span>
               </p>
             </div>
-            <p className="mb-8 flex-1 text-sm leading-relaxed text-muted">
+            <p className="mb-4 text-sm leading-relaxed text-muted">
               {service.description}
+            </p>
+            {/* The line that tells the four services apart at a glance. */}
+            <p className="mb-8 flex-1 border-l-2 border-gold/25 py-0.5 pl-4 text-sm leading-relaxed text-foreground/75">
+              {service.bestFor}
             </p>
 
             <div className="flex flex-wrap items-center gap-3">

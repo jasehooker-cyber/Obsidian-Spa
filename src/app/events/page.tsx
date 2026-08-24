@@ -4,9 +4,9 @@ import { SPA_EVENTS, type SpaEvent } from "@/lib/config/events";
 import { calLink, CAL_TRIGGER_CONFIG } from "@/lib/config/cal-events";
 
 export const metadata = {
-  title: "Events & Classes",
+  title: "Events & Classes — LGBTQ+ Wellness in Midtown",
   description:
-    "Yoga, group acupuncture, and couples massage workshops in our Midtown Manhattan studio. Group classes and private hire at Obsidian Men's Spa.",
+    "Yoga, group acupuncture, and couples massage workshops for gay and queer men in Midtown Manhattan. Group classes and private studio hire at Obsidian Men's Spa.",
   alternates: { canonical: "/events" },
 };
 
