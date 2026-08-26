@@ -170,8 +170,8 @@ export default function Home() {
           </h2>
           <p className="mb-10 text-lg leading-relaxed text-muted">
             Pick your session, choose a time that works, and let us handle the
-            rest. Booking places a hold on your card — payment is taken after
-            your session.
+            rest. No card needed to book — pay by card or cash after your
+            session.
           </p>
           <Link
             href="/booking"

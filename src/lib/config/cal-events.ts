@@ -42,8 +42,8 @@ export interface CalDuration {
   eventTypeId: number;
   /**
    * Base price in cents, mirroring the event type's price in Cal.com. Shown so
-   * clients see the cost before opening the booker. Cal.com holds this amount
-   * on the card rather than charging it — see CARD_HOLD_NOTICE.
+   * clients see the cost before opening the booker. Nothing is taken online —
+   * see PAYMENT_NOTICE.
    */
   price: number;
 }
@@ -164,19 +164,19 @@ export const CAL_SERVICES: CalService[] = [
         slug: "the-split",
         namespace: "the-split",
         eventTypeId: 6640747,
-        price: 100_00,
+        price: 95_00,
       },
     ],
   },
 ];
 
 /**
- * Every event type is configured in Cal.com with Stripe `paymentOption: "HOLD"`,
- * so booking places a hold on the card instead of taking payment. Stated up
- * front so the card step in the booker is not a surprise.
+ * Stripe is disabled on every event type in Cal.com, so booking asks for no
+ * card and takes no payment. Said plainly, because "book now" often implies
+ * paying now.
  */
-export const CARD_HOLD_NOTICE =
-  "Booking places a hold on your card — you are not charged online. Payment is taken after your session; the card is only charged for last-minute cancellations or no-shows.";
+export const PAYMENT_NOTICE =
+  "No card is needed to book and nothing is charged online. Pay by card or cash at the spa after your session.";
 
 /** Lowest price across a service's lengths, for the “from” price on its card. */
 export function basePrice(service: CalService): number {

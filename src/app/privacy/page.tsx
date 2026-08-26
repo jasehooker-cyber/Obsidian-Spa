@@ -33,13 +33,11 @@ export default function PrivacyPage() {
               Payment Information
             </h2>
             <p>
-              Your card details are handled entirely by{" "}
-              <strong className="text-foreground">Stripe</strong>. We never
-              see, store, or have access to your full card number. Booking
-              places a hold on your card rather than charging it, so your
-              payment method is on file for services rendered and policy fees
-              (late cancellation or no-show). No payment is taken at the time of
-              booking.
+              Booking takes no payment and asks for no card. We do not collect
+              or store card details through this website. Payment happens in
+              person at the spa after your session, by card or cash, and any
+              card reader we use is handled by our payment provider — we never
+              see or store your full card number.
             </p>
           </div>
 

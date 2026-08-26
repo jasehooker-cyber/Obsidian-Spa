@@ -47,7 +47,7 @@ describe("cal.com service menu", () => {
     expect(bySlug["the-forge-copy"].price).toBe(225_00);
     expect(bySlug["blackout-copy"].price).toBe(150_00);
     expect(bySlug["blackout"].price).toBe(210_00);
-    expect(bySlug["the-split"].price).toBe(100_00);
+    expect(bySlug["the-split"].price).toBe(95_00);
   });
 
   it("matches the session lengths configured in Cal.com", () => {
@@ -76,7 +76,7 @@ describe("cal.com service menu", () => {
 
   it("reports the lowest price as the base price", () => {
     const split = CAL_SERVICES.find((s) => s.id === "the-split")!;
-    expect(basePrice(split)).toBe(100_00);
+    expect(basePrice(split)).toBe(95_00);
 
     const obsidian = CAL_SERVICES.find((s) => s.id === "obsidian-signature")!;
     expect(basePrice(obsidian)).toBe(180_00);

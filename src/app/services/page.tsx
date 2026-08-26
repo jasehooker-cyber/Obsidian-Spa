@@ -5,7 +5,7 @@ import { CAL_SERVICES } from "@/lib/config/cal-events";
 export const metadata = {
   title: "Services & Pricing — Gay Men's Massage NYC",
   description:
-    "Gay men's massage in Midtown Manhattan — signature, deep tissue, restorative, and express sessions from $100. Male therapists, 30, 60, and 90 minutes. Book online.",
+    "Gay men's massage in Midtown Manhattan — signature, deep tissue, restorative, and express sessions from $95. Male therapists, 30, 60, and 90 minutes. Book online.",
   alternates: { canonical: "/services" },
 };
 
@@ -87,16 +87,16 @@ export default function ServicesPage() {
           <div className="grid gap-6 sm:grid-cols-2">
             {[
               {
-                title: "Card Hold",
-                text: "Booking places a hold on your card. You are not charged online — payment is taken after your session.",
+                title: "Payment",
+                text: "No card is needed to book and nothing is charged online. Pay by card or cash at the spa after your session.",
               },
               {
                 title: "Cancellation",
-                text: `Cancel any time up to ${BUSINESS.fees.lateCancelWindowMinutes} minutes before your appointment, free of charge. Inside that window, the card on file is charged.`,
+                text: `Plans change — just let us know at least ${BUSINESS.fees.lateCancelWindowMinutes} minutes before your appointment so we can offer the time to someone else.`,
               },
               {
-                title: "No-Show",
-                text: "Missed appointments without notice are charged to the card on file.",
+                title: "Running Late",
+                text: "Call ahead if you are delayed. We will fit in what we can, though the session may be shortened if the next booking is close behind.",
               },
               {
                 title: "Changes",

@@ -157,17 +157,13 @@ export async function sendBookingConfirmation(params: BookingConfirmationParams)
     </div>
 
     <div style="background:#17120c;border:1px solid #2e261a;border-top:none;padding:24px 32px;">
-      <h3 style="color:#bb9159;font-size:13px;letter-spacing:2px;margin:0 0 12px;">CARD ON FILE POLICY</h3>
+      <h3 style="color:#bb9159;font-size:13px;letter-spacing:2px;margin:0 0 12px;">PAYMENT</h3>
       <p style="color:#a89c8a;font-size:13px;line-height:1.6;margin:0 0 8px;">
-        Your card is <strong style="color:#f2ede3;">not charged at booking</strong>. Payment is collected after your session.
+        Nothing has been charged. Pay by <strong style="color:#f2ede3;">card or cash</strong> at the spa after your session.
       </p>
       <p style="color:#a89c8a;font-size:13px;line-height:1.6;margin:0 0 8px;">
-        Your card on file is only used in the following cases:
+        If your plans change, let us know at least ${BUSINESS.fees.lateCancelWindowMinutes} minutes ahead so we can offer the time to someone else.
       </p>
-      <ul style="color:#a89c8a;font-size:13px;line-height:1.8;margin:0;padding-left:20px;">
-        <li><strong style="color:#f2ede3;">Late cancellation</strong> (within ${BUSINESS.fees.lateCancelWindowMinutes} minutes): ${formatPrice(BUSINESS.fees.lateCancelFee)} fee</li>
-        <li><strong style="color:#f2ede3;">No-show</strong>: ${BUSINESS.fees.noShowPercent}% of your service price</li>
-      </ul>
       <p style="color:#a89c8a;font-size:13px;line-height:1.6;margin:12px 0 0;">
         Need to cancel or reschedule? Reply to this email or call
         <a href="tel:${BUSINESS.contact.phone}" style="color:#bb9159;text-decoration:none;">${BUSINESS.contact.phone}</a>.
@@ -205,10 +201,9 @@ export async function sendBookingConfirmation(params: BookingConfirmationParams)
     ``,
     `Please arrive 10 minutes early so we can start on time.`,
     ``,
-    `CARD ON FILE POLICY`,
-    `Your card is not charged at booking. Payment is collected after your session.`,
-    `Late cancellation (within ${BUSINESS.fees.lateCancelWindowMinutes} minutes): ${formatPrice(BUSINESS.fees.lateCancelFee)} fee.`,
-    `No-show: ${BUSINESS.fees.noShowPercent}% of your service price.`,
+    `PAYMENT`,
+    `Nothing has been charged. Pay by card or cash at the spa after your session.`,
+    `If your plans change, let us know at least ${BUSINESS.fees.lateCancelWindowMinutes} minutes ahead.`,
     ``,
     `Need to cancel or reschedule? Reply to this email or call ${BUSINESS.contact.phone}.`,
     ``,

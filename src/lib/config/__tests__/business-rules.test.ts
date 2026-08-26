@@ -12,7 +12,7 @@ describe("business rules", () => {
     expect(BUSINESS.booking.minNoticeMinutes).toBe(0);
     expect(BUSINESS.booking.maxAdvanceDays).toBe(7);
     expect(BUSINESS.booking.allowSelfCancel).toBe(false);
-    expect(BUSINESS.booking.cardOnFileRequired).toBe(true);
+    expect(BUSINESS.booking.cardOnFileRequired).toBe(false);
   });
 
   it("has correct fee structure", () => {

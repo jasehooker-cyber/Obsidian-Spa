@@ -14,13 +14,14 @@ export const BUSINESS = {
     maxAdvanceDays: 7,
     allowSelfCancel: false,
     autoConfirm: true,
-    cardOnFileRequired: true,
+    cardOnFileRequired: false,
     paymentTiming: "after-service" as const,
   },
 
   fees: {
-    // A charge only happens for a no-show, or a cancellation inside this
-    // window before the appointment. Outside it, cancelling is free.
+    // Notice we ask for before an appointment. No card is held any more, so
+    // nothing here is charged automatically — the fees below remain only for
+    // the admin tools, which act on legacy bookings that do have a card.
     lateCancelWindowMinutes: 30,
     lateCancelFee: 40_00,
     noShowPercent: 50,

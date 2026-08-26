@@ -19,8 +19,9 @@ export async function GET() {
       team: CAL_TEAM_SLUG,
       maxAdvanceDays: BUSINESS.booking.maxAdvanceDays,
       minNoticeMinutes: BUSINESS.booking.minNoticeMinutes,
-      // Cal.com holds the card at booking rather than charging it.
-      cardHoldRequired: true,
+      // No card is collected at booking; payment happens at the spa.
+      cardRequired: false,
+      paymentTiming: "after-service",
     },
     fees: BUSINESS.fees,
   });

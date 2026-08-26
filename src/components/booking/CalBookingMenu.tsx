@@ -6,7 +6,7 @@ import {
   CAL_NAMESPACES,
   CAL_SERVICES,
   CAL_TRIGGER_CONFIG,
-  CARD_HOLD_NOTICE,
+  PAYMENT_NOTICE,
   basePrice,
   calLink,
 } from "@/lib/config/cal-events";
@@ -130,7 +130,7 @@ export default function CalBookingMenu() {
       </div>
 
       <p className="animate-fade-up mx-auto mt-10 max-w-2xl border-l-2 border-gold/20 py-1 pl-5 text-sm leading-relaxed text-muted">
-        {CARD_HOLD_NOTICE}
+        {PAYMENT_NOTICE}
       </p>
     </div>
   );

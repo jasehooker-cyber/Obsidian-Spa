@@ -32,11 +32,11 @@ describe("fee calculations", () => {
     ).toBe(120_00);
   });
 
-  it("no-show fee for The Split is $50", () => {
+  it("no-show fee for The Split is $47.50", () => {
     const duration = allDurations.find((d) => d.slug === "the-split")!;
     expect(
       Math.round(duration.price * (BUSINESS.fees.noShowPercent / 100))
-    ).toBe(50_00);
+    ).toBe(47_50);
   });
 
   it("every session price halves to whole cents", () => {
