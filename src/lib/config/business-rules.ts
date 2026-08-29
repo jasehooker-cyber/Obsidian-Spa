@@ -61,6 +61,16 @@ export const ADD_ONS: AddOn[] = [
   { id: "cupping", name: "Cupping", price: 30_00 },
 ];
 
+const PRICE_FORMAT = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
+
+/**
+ * Whole dollars. Menu prices are round numbers, and the grouping separator
+ * only shows up on four-figure sums such as a client's lifetime value.
+ */
 export function formatPrice(cents: number): string {
-  return `$${(cents / 100).toFixed(0)}`;
+  return PRICE_FORMAT.format(cents / 100);
 }

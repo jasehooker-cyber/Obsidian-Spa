@@ -39,4 +39,9 @@ describe("formatPrice", () => {
     expect(formatPrice(30_00)).toBe("$30");
     expect(formatPrice(40_00)).toBe("$40");
   });
+
+  it("groups thousands, for sums like a client's lifetime value", () => {
+    expect(formatPrice(1_240_00)).toBe("$1,240");
+    expect(formatPrice(0)).toBe("$0");
+  });
 });
