@@ -1,5 +1,5 @@
-import { createHmac } from "crypto";
 import { getEnv } from "@/lib/config/env";
+import { verifyCalWebhookSignature } from "@/lib/cal/webhook";
 import { supabaseServer } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
@@ -10,15 +10,11 @@ export async function POST(request: Request) {
     return Response.json({ error: "Missing signature" }, { status: 400 });
   }
 
-  const expected = createHmac("sha256", getEnv().cal.apiKey)
-    .update(body)
-    .digest("hex");
-
-  if (signature !== expected) {
+  if (!verifyCalWebhookSignature(body, signature, getEnv().cal.webhookSecret)) {
     return Response.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  const event = JSON.parse(body) as {
+  let event: {
     triggerEvent: string;
     payload: {
       uid?: string;
@@ -29,26 +25,36 @@ export async function POST(request: Request) {
     };
   };
 
-  const supabase = supabaseServer();
+  try {
+    event = JSON.parse(body);
+  } catch {
+    return Response.json({ error: "Invalid JSON" }, { status: 400 });
+  }
 
+  const supabase = supabaseServer();
   const eventId = `cal_${event.triggerEvent}_${event.payload.uid ?? Date.now()}`;
 
   const { data: existing } = await supabase
     .from("webhook_events")
     .select("id")
     .eq("event_id", eventId)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     return Response.json({ received: true, duplicate: true });
   }
 
-  await supabase.from("webhook_events").insert({
+  const { error: insertError } = await supabase.from("webhook_events").insert({
     source: "cal",
     event_id: eventId,
     event_type: event.triggerEvent,
     payload: event.payload as Record<string, unknown>,
   });
+
+  if (insertError) {
+    console.error("Cal webhook log error:", insertError);
+    return Response.json({ error: "Could not log webhook" }, { status: 500 });
+  }
 
   try {
     switch (event.triggerEvent) {
@@ -82,10 +88,7 @@ export async function POST(request: Request) {
       .eq("event_id", eventId);
   } catch (err) {
     console.error("Cal webhook processing error:", err);
-    return Response.json(
-      { error: "Processing failed" },
-      { status: 500 }
-    );
+    return Response.json({ error: "Processing failed" }, { status: 500 });
   }
 
   return Response.json({ received: true });
