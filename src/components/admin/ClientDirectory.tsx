@@ -21,7 +21,38 @@ interface ClientRecord {
   lastServiceName: string | null;
 }
 
+interface SyncRun {
+  started_at: string;
+  finished_at: string | null;
+  status: "running" | "success" | "error";
+  error: string | null;
+  visits_recorded: number;
+  clients_created: number;
+  trigger: string | null;
+}
+
 type Sort = "last_visit" | "lifetime_value" | "visit_count" | "name";
+
+/** Sentinel for a 403, which means "wrong account", not "broken". */
+const NOT_STAFF = "NOT_STAFF";
+
+/**
+ * The nightly sync runs at 3am. Past this, a run has been missed and the list
+ * is no longer trustworthy — which the screen should say out loud.
+ */
+const STALE_AFTER_HOURS = 30;
+
+function hoursSince(iso: string): number {
+  return (Date.now() - new Date(iso).getTime()) / (1000 * 60 * 60);
+}
+
+function describeAge(iso: string): string {
+  const hours = hoursSince(iso);
+  if (hours < 1) return "less than an hour ago";
+  if (hours < 24) return `${Math.floor(hours)} hours ago`;
+  const days = Math.floor(hours / 24);
+  return days === 1 ? "yesterday" : `${days} days ago`;
+}
 
 const LAPSED_OPTIONS = [
   { label: "Everyone", value: "" },
@@ -65,6 +96,8 @@ export default function ClientDirectory() {
   // separate boolean would have to be set synchronously inside the effect.
   const [clients, setClients] = useState<ClientRecord[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Signed in with an address that is not on STAFF_ALLOWED_EMAILS.
+  const [forbidden, setForbidden] = useState(false);
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -74,6 +107,7 @@ export default function ClientDirectory() {
 
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
+  const [lastRun, setLastRun] = useState<SyncRun | null | undefined>(undefined);
 
   // --- auth ---------------------------------------------------------------
   useEffect(() => {
@@ -121,6 +155,10 @@ export default function ClientDirectory() {
     const res = await fetch(`/api/admin/crm/clients?${queryString}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+
+    // Signed in, but not staff — a different screen, not an error banner.
+    if (res.status === 403) throw new Error(NOT_STAFF);
+
     const data = await res.json();
     if (!res.ok) throw new Error(data.error ?? "Could not load clients");
 
@@ -139,6 +177,10 @@ export default function ClientDirectory() {
       })
       .catch((err: unknown) => {
         if (cancelled) return;
+        if (err instanceof Error && err.message === NOT_STAFF) {
+          setForbidden(true);
+          return;
+        }
         setError(err instanceof Error ? err.message : "Something went wrong");
       });
 
@@ -147,6 +189,27 @@ export default function ClientDirectory() {
       cancelled = true;
     };
   }, [token, fetchClientList]);
+
+  // Sync health, loaded once per session.
+  useEffect(() => {
+    if (!token) return;
+    let cancelled = false;
+
+    fetch("/api/admin/crm/sync", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => (res.ok ? res.json() : { lastRun: null }))
+      .then((data) => {
+        if (!cancelled) setLastRun(data.lastRun ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setLastRun(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
 
   // --- actions ------------------------------------------------------------
   async function signIn(e: React.FormEvent) {
@@ -184,6 +247,15 @@ export default function ClientDirectory() {
         `Scanned ${data.eventsScanned} events — ${data.visitsRecorded} sessions, ${data.clientsCreated} new clients.` +
           (data.errors?.length ? ` Warnings: ${data.errors.join("; ")}` : "")
       );
+      setLastRun({
+        started_at: new Date().toISOString(),
+        finished_at: new Date().toISOString(),
+        status: data.errors?.length ? "error" : "success",
+        error: data.errors?.length ? data.errors.join("; ") : null,
+        visits_recorded: data.visitsRecorded,
+        clients_created: data.clientsCreated,
+        trigger: "admin",
+      });
       setClients(await fetchClientList());
     } catch (err) {
       setSyncMessage(
@@ -291,6 +363,25 @@ export default function ClientDirectory() {
     );
   }
 
+  if (forbidden) {
+    return (
+      <div className="mx-auto max-w-md py-16 text-center">
+        <h1 className="mb-3 text-2xl font-bold">Not a staff account</h1>
+        <p className="mb-8 text-sm text-muted">
+          You are signed in as {session.user.email}, which is not on the staff
+          list. Add it to <code>STAFF_ALLOWED_EMAILS</code>, or sign in with an
+          address that is already on it.
+        </p>
+        <button
+          onClick={() => getSupabase().auth.signOut()}
+          className="border border-gold/40 px-4 py-2 text-sm text-gold transition hover:bg-gold/10"
+        >
+          Sign out
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="py-10">
       <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
@@ -323,6 +414,8 @@ export default function ClientDirectory() {
           </button>
         </div>
       </header>
+
+      <SyncHealth lastRun={lastRun} />
 
       {syncMessage && (
         <p className="mb-6 border border-gold/30 bg-charcoal p-4 text-sm text-gold">
@@ -379,86 +472,72 @@ export default function ClientDirectory() {
           No clients yet. Run a calendar sync to pull in past sessions.
         </p>
       ) : (
-        <div className="overflow-x-auto border border-charcoal-light">
-          <table className="w-full min-w-4xl text-left text-sm">
-            <thead className="border-b border-charcoal-light bg-charcoal text-xs uppercase tracking-wider text-muted">
-              <tr>
-                <th className="px-4 py-3">Client</th>
-                <th className="px-4 py-3">Contact</th>
-                <th className="px-4 py-3">Last visit</th>
-                <th className="px-4 py-3">Last service</th>
-                <th className="px-4 py-3 text-right">Visits</th>
-                <th className="px-4 py-3 text-right">Lifetime</th>
-                <th className="px-4 py-3 text-center">Contact OK</th>
-              </tr>
-            </thead>
-            <tbody>
-              {clients.map((client) => (
-                <tr
-                  key={client.id}
-                  className="border-b border-charcoal-light/60 last:border-0 hover:bg-charcoal/60"
-                >
-                  <td className="px-4 py-3">
-                    <span className="font-medium">
-                      {client.name ?? "Unknown"}
+        <>
+          {/* Phones: a card each, so nothing has to be scrolled sideways. */}
+          <ul className="flex flex-col gap-3 md:hidden">
+            {clients.map((client) => (
+              <li
+                key={client.id}
+                className="border border-charcoal-light bg-charcoal/40 p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-medium">{client.name ?? "Unknown"}</p>
+                    <p className="mt-0.5 text-xs text-muted">
+                      {client.lastServiceName ?? "Service not recorded"}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm">
+                      {client.lifetimeValueCents > 0
+                        ? formatPrice(client.lifetimeValueCents)
+                        : "—"}
+                    </p>
+                    <p className="text-xs text-muted">
+                      {client.visitCount} visit
+                      {client.visitCount === 1 ? "" : "s"}
+                    </p>
+                  </div>
+                </div>
+
+                <p className="mt-3 text-xs text-muted">
+                  Last in {formatDate(client.lastVisitAt)}
+                  {client.daysSinceLastVisit !== null && (
+                    <span
+                      className={
+                        client.daysSinceLastVisit >= 60 ? "text-gold" : ""
+                      }
+                    >
+                      {" "}
+                      · {client.daysSinceLastVisit} days ago
                     </span>
-                    {client.source === "manual" && (
-                      <span className="ml-2 text-xs text-muted">walk-in</span>
-                    )}
-                  </td>
+                  )}
+                </p>
 
-                  <td className="px-4 py-3">
-                    <div className="flex flex-col gap-0.5">
-                      {client.email ? (
-                        <a
-                          href={`mailto:${client.email}`}
-                          className="text-gold hover:text-gold-light"
-                        >
-                          {client.email}
-                        </a>
-                      ) : null}
-                      {client.phone ? (
-                        <a
-                          href={`tel:${client.phone}`}
-                          className="text-muted hover:text-foreground"
-                        >
-                          {client.phone}
-                        </a>
-                      ) : null}
-                      {!client.email && !client.phone && (
-                        <span className="text-muted">No contact details</span>
-                      )}
-                    </div>
-                  </td>
-
-                  <td className="px-4 py-3">
-                    <div>{formatDate(client.lastVisitAt)}</div>
-                    {client.daysSinceLastVisit !== null && (
-                      <div
-                        className={
-                          client.daysSinceLastVisit >= 60
-                            ? "text-xs text-gold"
-                            : "text-xs text-muted"
-                        }
-                      >
-                        {client.daysSinceLastVisit} days ago
-                      </div>
-                    )}
-                  </td>
-
-                  <td className="px-4 py-3 text-muted">
-                    {client.lastServiceName ?? "—"}
-                  </td>
-
-                  <td className="px-4 py-3 text-right">{client.visitCount}</td>
-
-                  <td className="px-4 py-3 text-right">
-                    {client.lifetimeValueCents > 0
-                      ? formatPrice(client.lifetimeValueCents)
-                      : "—"}
-                  </td>
-
-                  <td className="px-4 py-3 text-center">
+                {/* Big tap targets: this is the point of the screen on a phone. */}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {client.phone && (
+                    <a
+                      href={`tel:${client.phone}`}
+                      className="border border-gold/40 px-3 py-2 text-sm text-gold"
+                    >
+                      Call
+                    </a>
+                  )}
+                  {client.email && (
+                    <a
+                      href={`mailto:${client.email}`}
+                      className="border border-gold/40 px-3 py-2 text-sm text-gold"
+                    >
+                      Email
+                    </a>
+                  )}
+                  {!client.email && !client.phone && (
+                    <span className="py-2 text-sm text-muted">
+                      No contact details
+                    </span>
+                  )}
+                  <label className="ml-auto flex items-center gap-2 py-2 text-xs text-muted">
                     <input
                       type="checkbox"
                       checked={!client.marketingOptOut}
@@ -466,12 +545,107 @@ export default function ClientDirectory() {
                       aria-label={`Allow outreach to ${client.name ?? "this client"}`}
                       className="accent-gold"
                     />
-                  </td>
+                    Contact OK
+                  </label>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <div className="hidden overflow-x-auto border border-charcoal-light md:block">
+            <table className="w-full min-w-4xl text-left text-sm">
+              <thead className="border-b border-charcoal-light bg-charcoal text-xs uppercase tracking-wider text-muted">
+                <tr>
+                  <th className="px-4 py-3">Client</th>
+                  <th className="px-4 py-3">Contact</th>
+                  <th className="px-4 py-3">Last visit</th>
+                  <th className="px-4 py-3">Last service</th>
+                  <th className="px-4 py-3 text-right">Visits</th>
+                  <th className="px-4 py-3 text-right">Lifetime</th>
+                  <th className="px-4 py-3 text-center">Contact OK</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {clients.map((client) => (
+                  <tr
+                    key={client.id}
+                    className="border-b border-charcoal-light/60 last:border-0 hover:bg-charcoal/60"
+                  >
+                    <td className="px-4 py-3">
+                      <span className="font-medium">
+                        {client.name ?? "Unknown"}
+                      </span>
+                      {client.source === "manual" && (
+                        <span className="ml-2 text-xs text-muted">walk-in</span>
+                      )}
+                    </td>
+
+                    <td className="px-4 py-3">
+                      <div className="flex flex-col gap-0.5">
+                        {client.email ? (
+                          <a
+                            href={`mailto:${client.email}`}
+                            className="text-gold hover:text-gold-light"
+                          >
+                            {client.email}
+                          </a>
+                        ) : null}
+                        {client.phone ? (
+                          <a
+                            href={`tel:${client.phone}`}
+                            className="text-muted hover:text-foreground"
+                          >
+                            {client.phone}
+                          </a>
+                        ) : null}
+                        {!client.email && !client.phone && (
+                          <span className="text-muted">No contact details</span>
+                        )}
+                      </div>
+                    </td>
+
+                    <td className="px-4 py-3">
+                      <div>{formatDate(client.lastVisitAt)}</div>
+                      {client.daysSinceLastVisit !== null && (
+                        <div
+                          className={
+                            client.daysSinceLastVisit >= 60
+                              ? "text-xs text-gold"
+                              : "text-xs text-muted"
+                          }
+                        >
+                          {client.daysSinceLastVisit} days ago
+                        </div>
+                      )}
+                    </td>
+
+                    <td className="px-4 py-3 text-muted">
+                      {client.lastServiceName ?? "—"}
+                    </td>
+
+                    <td className="px-4 py-3 text-right">{client.visitCount}</td>
+
+                    <td className="px-4 py-3 text-right">
+                      {client.lifetimeValueCents > 0
+                        ? formatPrice(client.lifetimeValueCents)
+                        : "—"}
+                    </td>
+
+                    <td className="px-4 py-3 text-center">
+                      <input
+                        type="checkbox"
+                        checked={!client.marketingOptOut}
+                        onChange={() => toggleOptOut(client)}
+                        aria-label={`Allow outreach to ${client.name ?? "this client"}`}
+                        className="accent-gold"
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
 
       <p className="mt-4 text-xs text-muted">
@@ -480,5 +654,53 @@ export default function ClientDirectory() {
         service and length.
       </p>
     </div>
+  );
+}
+
+/**
+ * Says plainly whether the nightly sync is doing its job. Silence would let a
+ * broken cron pass for "no new clients this week".
+ */
+function SyncHealth({ lastRun }: { lastRun: SyncRun | null | undefined }) {
+  // Still loading; say nothing rather than flash a warning.
+  if (lastRun === undefined) return null;
+
+  if (lastRun === null) {
+    return (
+      <p className="mb-6 border border-gold/40 bg-charcoal p-4 text-sm text-gold">
+        The calendar sync has never run. Press <strong>Sync calendar</strong> to
+        pull in your history.
+      </p>
+    );
+  }
+
+  if (lastRun.status === "error") {
+    return (
+      <p className="mb-6 border border-red-500/40 bg-charcoal p-4 text-sm text-red-400">
+        Last sync failed {describeAge(lastRun.started_at)}
+        {lastRun.error ? `: ${lastRun.error}` : "."} The list below may be out
+        of date.
+      </p>
+    );
+  }
+
+  if (hoursSince(lastRun.started_at) > STALE_AFTER_HOURS) {
+    return (
+      <p className="mb-6 border border-gold/40 bg-charcoal p-4 text-sm text-gold">
+        Last synced {describeAge(lastRun.started_at)}. The nightly sync should
+        run every night at 3am — check that <code>CRON_SECRET</code> is set and
+        the cron is enabled.
+      </p>
+    );
+  }
+
+  return (
+    <p className="mb-6 text-xs text-muted">
+      Synced {describeAge(lastRun.started_at)} · {lastRun.visits_recorded}{" "}
+      session{lastRun.visits_recorded === 1 ? "" : "s"},{" "}
+      {lastRun.clients_created} new client
+      {lastRun.clients_created === 1 ? "" : "s"}
+      {lastRun.trigger === "cron" ? " · automatic" : ""}
+    </p>
   );
 }

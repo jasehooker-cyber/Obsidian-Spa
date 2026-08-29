@@ -73,6 +73,83 @@ second pass updates rows rather than duplicating them.
 
 ---
 
+## Admin access
+
+There is no separate admin app to install — `/admin/clients` **is** the admin
+area, and it signs you in itself. `/admin` redirects there, so that is the only
+address worth bookmarking.
+
+Sign-in is a magic link: type your email, get a link, click it. No password to
+store or lose. Four things have to be true for it to work.
+
+### 1. Put yourself on the staff list
+
+`STAFF_ALLOWED_EMAILS` is a comma-separated allowlist, checked on **every** admin
+API call:
+
+```
+STAFF_ALLOWED_EMAILS=jase@obsidianspas.com,admin@obsidianspas.com
+```
+
+This is the real gate. A signed-in account that is not on this list can load the
+page shell and nothing else — it gets "Not a staff account" and no data.
+
+### 2. Turn on email sign-in in Supabase
+
+Supabase → **Authentication → Providers → Email**. Magic links need only
+*Enable email provider*; you do not need passwords on.
+
+### 3. Allow the redirect URL
+
+Supabase → **Authentication → URL Configuration**:
+
+- **Site URL** — `https://<your-domain>`
+- **Redirect URLs** — add `https://<your-domain>/admin/clients` (and
+  `http://localhost:3000/admin/clients` if you sign in while developing)
+
+Miss this and the emailed link bounces you to the homepage still signed out. It
+is the most common reason magic links "do nothing".
+
+### 4. Close public signup
+
+By default Supabase creates an account for any address that requests a link.
+The allowlist still blocks them from data, but there is no reason to let
+strangers create accounts: Supabase → **Authentication → Sign In / Providers**
+→ turn **Allow new users to sign up** off, then add your own user once under
+**Authentication → Users → Add user**.
+
+Do this *after* your first successful sign-in, or you will lock yourself out
+before your account exists.
+
+---
+
+## Knowing the nightly sync actually ran
+
+A cron that fails quietly is worse than no cron, so the screen says how it went.
+At the top of `/admin/clients` you get one of:
+
+- `Synced 6 hours ago · 3 sessions, 1 new client · automatic` — normal.
+- **The calendar sync has never run** — expected before your first sync.
+- **Last synced 3 days ago** — the nightly run is not firing. Check `CRON_SECRET`
+  is set in Vercel and that Cron Jobs are enabled for the project.
+- **Last sync failed: …** — with the reason. Most often a calendar that has not
+  been shared with the service account.
+
+Every run is also written to the `crm_sync_runs` table if you want the history.
+
+**A missed night is not lost data.** Each run re-scans the last 90 days and is
+keyed on the Google event id, so the next successful run silently picks up
+everything that was missed. You only need to act if the warning persists.
+
+### A note on cron timing
+
+`vercel.json` schedules the run for 07:00 UTC — 3am New York — which is after
+the 10pm close. On Vercel's Hobby plan crons fire roughly once a day rather than
+to the minute, which is fine here; Pro schedules precisely. Either way the
+"Last synced" line tells you the truth rather than the intention.
+
+---
+
 ## What counts as a session
 
 Three kinds of event show up on a working spa calendar, and only the first two
