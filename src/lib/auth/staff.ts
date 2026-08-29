@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
-import { getEnv } from "@/lib/config/env";
+
+const DEFAULT_STAFF_EMAILS = ["admin@obsidianspas.com"];
 
 export class AuthError extends Error {
   constructor(
@@ -10,6 +11,26 @@ export class AuthError extends Error {
   }
 }
 
+function getStaffAuthConfig() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+  if (!url || !anonKey) {
+    throw new AuthError("Admin authentication is not configured", 503);
+  }
+
+  const configuredStaffEmails = (process.env.STAFF_ALLOWED_EMAILS ?? "")
+    .split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean);
+
+  const staffAllowedEmails = Array.from(
+    new Set([...DEFAULT_STAFF_EMAILS, ...configuredStaffEmails])
+  );
+
+  return { url, anonKey, staffAllowedEmails };
+}
+
 export async function assertStaffAuth(request: Request): Promise<string> {
   const authHeader = request.headers.get("authorization");
   if (!authHeader?.startsWith("Bearer ")) {
@@ -17,9 +38,9 @@ export async function assertStaffAuth(request: Request): Promise<string> {
   }
 
   const token = authHeader.slice(7);
-  const env = getEnv();
+  const { url, anonKey, staffAllowedEmails } = getStaffAuthConfig();
 
-  const supabase = createClient(env.supabase.url, env.supabase.anonKey);
+  const supabase = createClient(url, anonKey);
   const {
     data: { user },
     error,
@@ -30,7 +51,7 @@ export async function assertStaffAuth(request: Request): Promise<string> {
   }
 
   const email = user.email.toLowerCase();
-  if (!env.auth.staffAllowedEmails.includes(email)) {
+  if (!staffAllowedEmails.includes(email)) {
     throw new AuthError("Not authorized as staff", 403);
   }
 
