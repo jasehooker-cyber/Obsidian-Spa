@@ -45,6 +45,7 @@ different calendars, and both need sharing.
 | --- | --- | --- |
 | `CRM_CALENDAR_IDS` | no | Comma-separated calendars to scan. Defaults to `GOOGLE_CALENDAR_ID`. Set this if bookings and hand-typed sessions live on different calendars. |
 | `CRM_INTERNAL_EMAILS` | recommended | Comma-separated staff and owner addresses. Stops a therapist or colleague who is an attendee on a session from being filed as the client. |
+| `ADMIN_SECRET_PATH` | **yes** | The private URL that unlocks the admin area. Without it the admin is hidden from everyone, including you. See [Admin access](#admin-access). |
 | `CRON_SECRET` | yes, for the daily sync | Shared secret for `/api/cron/crm-sync`. Without it that endpoint returns 503 rather than running unauthenticated. |
 
 The organiser and creator of each event are treated as internal automatically,
@@ -75,51 +76,91 @@ second pass updates rows rather than duplicating them.
 
 ## Admin access
 
-There is no separate admin app to install — `/admin/clients` **is** the admin
-area, and it signs you in itself. `/admin` redirects there, so that is the only
-address worth bookmarking.
+The admin area is **hidden, not just protected**. `/admin` and everything under
+it returns the site's ordinary 404 page — byte for byte identical to a genuine
+typo — to anyone who has not been let in. A visitor, a crawler, or someone
+guessing URLs cannot tell it exists. The sign-in form is never publicly
+reachable.
 
-Sign-in is a magic link: type your email, get a link, click it. No password to
-store or lose. Four things have to be true for it to work.
+Two independent layers, and both matter:
 
-### 1. Put yourself on the staff list
+| Layer | What it does | Where |
+| --- | --- | --- |
+| **Concealment** | Hides that an admin exists at all | `src/proxy.ts` |
+| **Authentication** | Decides who may read the data | Supabase Auth + `STAFF_ALLOWED_EMAILS` |
 
-`STAFF_ALLOWED_EMAILS` is a comma-separated allowlist, checked on **every** admin
-API call:
+The second is what actually guards the data, and it is enforced on every admin
+API call independently. The first means nobody comes looking.
+
+### 1. Choose your private URL
+
+Set a server-only env var to something unguessable — treat it like a password,
+not like a path:
 
 ```
-STAFF_ALLOWED_EMAILS=jase@obsidianspas.com,admin@obsidianspas.com
+ADMIN_SECRET_PATH=k3p9wq2mzt7v
 ```
 
-This is the real gate. A signed-in account that is not on this list can load the
-page shell and nothing else — it gets "Not a staff account" and no data.
+Generate one with `openssl rand -hex 8`. It is read only on the server and
+never appears in the browser bundle, the sitemap, or `robots.txt`.
 
-### 2. Turn on email sign-in in Supabase
+Then visit **`https://<your-domain>/k3p9wq2mzt7v`** once. That sets a
+long-lived, httpOnly cookie and forwards you to the client list. From then on
+`/admin/clients` simply works in that browser, and stays a 404 in every other.
 
-Supabase → **Authentication → Providers → Email**. Magic links need only
-*Enable email provider*; you do not need passwords on.
+To revoke access — a lost laptop, a departing staff member — change
+`ADMIN_SECRET_PATH`. Every existing cookie stops working immediately.
 
-### 3. Allow the redirect URL
+**It fails closed.** If `ADMIN_SECRET_PATH` is not set, the admin is hidden from
+*everyone*, including you. That is deliberate: a missing variable must never
+mean "the admin is public". If you get a 404 at your own private URL, check the
+variable is set in Vercel and redeploy.
 
-Supabase → **Authentication → URL Configuration**:
+### 2. Put yourself on the staff list
 
-- **Site URL** — `https://<your-domain>`
-- **Redirect URLs** — add `https://<your-domain>/admin/clients` (and
-  `http://localhost:3000/admin/clients` if you sign in while developing)
+```
+STAFF_ALLOWED_EMAILS=jase@obsidianspas.com
+```
 
-Miss this and the emailed link bounces you to the homepage still signed out. It
-is the most common reason magic links "do nothing".
+Comma-separated, checked on **every** admin API call. For "me and only me", put
+one address here. A signed-in account that is not on the list gets "Not a staff
+account" and no data.
 
-### 4. Close public signup
+Adding staff later takes two things: give them the private URL, and add their
+address here. Both are required.
 
-By default Supabase creates an account for any address that requests a link.
-The allowlist still blocks them from data, but there is no reason to let
-strangers create accounts: Supabase → **Authentication → Sign In / Providers**
-→ turn **Allow new users to sign up** off, then add your own user once under
-**Authentication → Users → Add user**.
+### 3. Turn on email sign-in in Supabase
+
+Supabase -> **Authentication -> Providers -> Email**. Magic links need only
+*Enable email provider*; passwords can stay off.
+
+### 4. Allow the redirect URL
+
+Supabase -> **Authentication -> URL Configuration**:
+
+- **Site URL** - `https://<your-domain>`
+- **Redirect URLs** - add `https://<your-domain>/admin/clients` (plus
+  `http://localhost:3000/admin/clients` for local work)
+
+Miss this and the emailed link bounces you out still signed out. It is the most
+common reason magic links appear to "do nothing".
+
+### 5. Close public signup
+
+By default Supabase creates an account for any address that asks for a link.
+The allowlist still blocks them from the data, but there is no reason to allow
+it: Supabase -> **Authentication -> Sign In / Providers** -> turn **Allow new
+users to sign up** off, then add your own user under **Authentication -> Users**.
 
 Do this *after* your first successful sign-in, or you will lock yourself out
 before your account exists.
+
+### Signing in on a second device
+
+The gate cookie is per-browser. Opening the magic link on a phone that has never
+visited the private URL gives a 404. Visit
+`https://<your-domain>/<ADMIN_SECRET_PATH>` on that phone first, then sign in.
+Bookmark the private URL on every device you use.
 
 ---
 
