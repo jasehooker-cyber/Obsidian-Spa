@@ -27,7 +27,7 @@ Obsidian Men's Spa — a high-end, discreet, masculine luxury spa website with t
 - `npm run start` — serve production build
 - `npm run lint` — run ESLint
 - `npm run typecheck` — TypeScript type checking
-- `npm run test` — run Vitest (36 tests)
+- `npm run test` — run Vitest (103 tests)
 
 After any major change, run: `npm run lint && npm run typecheck && npm run test && npm run build`
 
@@ -57,6 +57,9 @@ After any major change, run: `npm run lint && npm run typecheck && npm run test 
 - `src/lib/booking/intake.ts` — intake token generation, validation, submission
 - `src/lib/payments/charge.ts` — centralized `chargeOffSession()` for all off-session Stripe charges
 - `src/lib/payments/setup.ts` — SetupIntent helpers
+- `src/lib/crm/parse.ts` — pure Google Calendar event → client visit parsing (see `docs/client-tracker.md`)
+- `src/lib/crm/sync.ts` — calendar → Supabase sync, idempotent on Google event id
+- `src/lib/crm/clients.ts` — client list queries and CSV export
 - `src/lib/auth/staff.ts` — staff auth via Supabase Auth + email allowlist
 - `src/lib/stripe/` — server (`stripe()`) and client (`getStripe()`) adapters
 - `src/lib/supabase/` — server (`supabaseServer()`) and client (`supabaseBrowser()`) adapters
@@ -87,6 +90,13 @@ After any major change, run: `npm run lint && npm run typecheck && npm run test 
 - `POST /api/admin/bookings/[id]/late-cancel` — charge $40, cancel booking
 - `POST /api/admin/bookings/[id]/no-show` — charge 50% of service price
 - `POST /api/admin/bookings/[id]/resend-intake` — new token, return URL
+- `GET /api/admin/crm/clients` — client list (search, sort, lapsed filter)
+- `GET /api/admin/crm/clients/export` — same list as CSV
+- `PATCH /api/admin/crm/clients/[id]` — correct contact details, notes, opt-out
+- `POST /api/admin/crm/sync` — run the calendar sync now (optional `lookbackDays`)
+
+### Cron
+- `GET /api/cron/crm-sync` — daily client sync, authorized by `CRON_SECRET` (see `vercel.json`)
 
 ## Security Rules
 
@@ -112,6 +122,7 @@ After any major change, run: `npm run lint && npm run typecheck && npm run test 
 - No-call/no-show: 50% of booked service price
 - Payment collected after service; card saved on file for policy fees only
 - v1 service policy: single-therapist services (Signature 60/90) are instant-book; multi-therapist services (Couples, Four-Handed) are request-based
+- Client tracker: a visit's value is the amount written on the calendar event (`paid 120`) if present, else the menu price for that service and length, else unrecorded — never guessed
 
 ## Workflow
 
@@ -126,5 +137,5 @@ After any major change, run: `npm run lint && npm run typecheck && npm run test 
 
 - Dark & luxurious: `#0a0a0a` background, `#c9a84c` gold accents, `#1a1a1a`/`#2a2a2a` charcoal cards/borders
 - Fonts: Geist Sans / Geist Mono via next/font
-- Pages: Home, Services, About, Booking, Booking Success, Intake Form
+- Pages: Home, Services, About, Booking, Booking Success, Intake Form, Admin Clients (`/admin/clients`)
 - Error boundaries and loading skeletons for booking and intake flows
