@@ -9,6 +9,15 @@ function optional(key: string, fallback: string): string {
 }
 
 function lazyEnv() {
+  const configuredStaffEmails = (process.env.STAFF_ALLOWED_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+
+  const staffAllowedEmails = Array.from(
+    new Set(["admin@obsidianspas.com", ...configuredStaffEmails])
+  );
+
   return {
     siteUrl: optional("NEXT_PUBLIC_SITE_URL", "http://localhost:3000"),
 
@@ -68,9 +77,7 @@ function lazyEnv() {
     },
 
     auth: {
-      staffAllowedEmails: required("STAFF_ALLOWED_EMAILS")
-        .split(",")
-        .map((e) => e.trim().toLowerCase()),
+      staffAllowedEmails,
       intakeTokenSecret: required("INTAKE_TOKEN_SECRET"),
     },
   };
