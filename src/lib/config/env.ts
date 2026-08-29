@@ -26,6 +26,7 @@ function lazyEnv() {
 
     cal: {
       apiKey: required("CALCOM_API_KEY"),
+      webhookSecret: required("CALCOM_WEBHOOK_SECRET"),
       versions: {
         bookings: optional("CALCOM_API_VERSION_BOOKINGS", "2024-08-13"),
         slots: optional("CALCOM_API_VERSION_SLOTS", "2024-09-04"),
@@ -45,12 +46,6 @@ function lazyEnv() {
     },
 
     crm: {
-      /**
-       * Calendars the client sync reads, most-specific first. Cal.com writes
-       * bookings to the calendar it was connected with, which is not
-       * necessarily GOOGLE_CALENDAR_ID, so this is a list. Falls back to the
-       * booking calendar when unset.
-       */
       calendarIds: (
         process.env.CRM_CALENDAR_IDS ??
         process.env.GOOGLE_CALENDAR_ID ??
@@ -59,17 +54,10 @@ function lazyEnv() {
         .split(",")
         .map((id) => id.trim())
         .filter(Boolean),
-
-      /**
-       * Staff and owner addresses. They appear as attendees on our own
-       * bookings, and must never be mistaken for the client.
-       */
       internalEmails: (process.env.CRM_INTERNAL_EMAILS ?? "")
         .split(",")
         .map((e) => e.trim().toLowerCase())
         .filter(Boolean),
-
-      /** Shared secret for the scheduled sync route. */
       cronSecret: process.env.CRON_SECRET ?? "",
     },
 
