@@ -37,6 +37,17 @@ type Sort = "last_visit" | "lifetime_value" | "visit_count" | "name";
 const NOT_STAFF = "NOT_STAFF";
 
 /**
+ * NEXT_PUBLIC_* values are inlined at build time, not read at runtime. If they
+ * were absent when the site was built, the Supabase client cannot be created
+ * and every sign-in throws — which the error boundary would report as
+ * "Something Went Wrong". Checked up front so the page can say what is
+ * actually wrong instead.
+ */
+const SUPABASE_CONFIGURED =
+  !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
+  !!process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+/**
  * The nightly sync runs at 3am. Past this, a run has been missed and the list
  * is no longer trustworthy — which the screen should say out loud.
  */
@@ -89,8 +100,10 @@ export default function ClientDirectory() {
   const [session, setSession] = useState<Session | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [linkSent, setLinkSent] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [signingIn, setSigningIn] = useState(false);
 
   // null means "not loaded yet", which is what shows the loading state — a
   // separate boolean would have to be set synchronously inside the effect.
@@ -111,6 +124,7 @@ export default function ClientDirectory() {
 
   // --- auth ---------------------------------------------------------------
   useEffect(() => {
+    if (!SUPABASE_CONFIGURED) return;
     let active = true;
 
     getSupabase().auth.getSession().then(({ data }) => {
@@ -215,14 +229,63 @@ export default function ClientDirectory() {
   async function signIn(e: React.FormEvent) {
     e.preventDefault();
     setAuthError(null);
+    setSigningIn(true);
 
-    const { error: signInError } = await getSupabase().auth.signInWithOtp({
-      email: email.trim(),
-      options: { emailRedirectTo: window.location.href },
-    });
+    try {
+      const { error: signInError } =
+        await getSupabase().auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        });
 
-    if (signInError) setAuthError(signInError.message);
-    else setLinkSent(true);
+      if (signInError) {
+        // Supabase says "Invalid login credentials" for a wrong password and
+        // for an address with no account, on purpose — saying which would let
+        // someone probe for valid staff addresses.
+        setAuthError(
+          signInError.message === "Invalid login credentials"
+            ? "That email and password do not match."
+            : signInError.message
+        );
+        return;
+      }
+
+      // Not kept in memory a moment longer than the request needs it.
+      setPassword("");
+    } finally {
+      setSigningIn(false);
+    }
+  }
+
+  /**
+   * Fallback for a forgotten password: a one-time link to the same address.
+   * Cheaper than a reset flow, and it lands on this page already signed in.
+   */
+  async function emailSignInLink() {
+    if (!email.trim()) {
+      setAuthError("Enter your email address first.");
+      return;
+    }
+
+    setAuthError(null);
+    setSigningIn(true);
+
+    try {
+      const { error: linkError } = await getSupabase().auth.signInWithOtp({
+        email: email.trim(),
+        // Never create an account from this form — the only accounts that
+        // should exist are the ones added deliberately in Supabase.
+        options: {
+          emailRedirectTo: window.location.href,
+          shouldCreateUser: false,
+        },
+      });
+
+      if (linkError) setAuthError(linkError.message);
+      else setLinkSent(true);
+    } finally {
+      setSigningIn(false);
+    }
   }
 
   async function runSync() {
@@ -322,6 +385,20 @@ export default function ClientDirectory() {
   }
 
   // --- render -------------------------------------------------------------
+  if (!SUPABASE_CONFIGURED) {
+    return (
+      <div className="mx-auto max-w-md py-16 text-center">
+        <h1 className="mb-3 text-2xl font-bold">Not configured</h1>
+        <p className="text-sm text-muted">
+          <code>NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
+          <code>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code> were missing when
+          this site was built. Set them in the hosting project and redeploy —
+          they are read at build time, so setting them alone is not enough.
+        </p>
+      </div>
+    );
+  }
+
   if (!authChecked) {
     return <p className="py-20 text-center text-muted">Loading…</p>;
   }
@@ -331,32 +408,62 @@ export default function ClientDirectory() {
       <div className="mx-auto max-w-md py-16">
         <h1 className="mb-2 text-2xl font-bold">Staff sign in</h1>
         <p className="mb-8 text-sm text-muted">
-          We&apos;ll email you a sign-in link.
+          Obsidian Men&apos;s Spa — client records.
         </p>
 
         {linkSent ? (
           <p className="border border-gold/30 bg-charcoal p-4 text-sm text-gold">
-            Check {email} for your sign-in link.
+            Check {email} for a sign-in link. Open it in this browser.
           </p>
         ) : (
           <form onSubmit={signIn} className="space-y-4">
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@obsidianspas.com"
-              className="w-full border border-charcoal-light bg-charcoal px-4 py-3 text-foreground outline-none focus:border-gold"
-            />
+            <label className="block">
+              <span className="mb-1 block text-xs uppercase tracking-wider text-muted">
+                Email
+              </span>
+              <input
+                type="email"
+                required
+                autoComplete="username"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@obsidianspas.com"
+                className="w-full border border-charcoal-light bg-charcoal px-4 py-3 text-foreground outline-none focus:border-gold"
+              />
+            </label>
+
+            <label className="block">
+              <span className="mb-1 block text-xs uppercase tracking-wider text-muted">
+                Password
+              </span>
+              <input
+                type="password"
+                required
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full border border-charcoal-light bg-charcoal px-4 py-3 text-foreground outline-none focus:border-gold"
+              />
+            </label>
+
             <button
               type="submit"
-              className="w-full bg-gold px-4 py-3 font-medium text-background transition hover:bg-gold-light"
+              disabled={signingIn}
+              className="w-full bg-gold px-4 py-3 font-medium text-background transition hover:bg-gold-light disabled:opacity-50"
             >
-              Send sign-in link
+              {signingIn ? "Signing in…" : "Sign in"}
             </button>
-            {authError && (
-              <p className="text-sm text-red-400">{authError}</p>
-            )}
+
+            {authError && <p className="text-sm text-red-400">{authError}</p>}
+
+            <button
+              type="button"
+              onClick={emailSignInLink}
+              disabled={signingIn}
+              className="w-full pt-2 text-center text-xs text-muted underline transition hover:text-foreground disabled:opacity-50"
+            >
+              Forgot your password? Email me a sign-in link instead
+            </button>
           </form>
         )}
       </div>

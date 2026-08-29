@@ -116,44 +116,62 @@ To revoke access — a lost laptop, a departing staff member — change
 mean "the admin is public". If you get a 404 at your own private URL, check the
 variable is set in Vercel and redeploy.
 
-### 2. Put yourself on the staff list
+### 2. Create your login in Supabase
+
+Supabase → **Authentication → Users → Add user → Create new user**:
+
+- **Email** — `admin@obsidianspas.com`
+- **Password** — pick a strong one; a password manager is the right home for it
+- **Auto Confirm User** — tick this, or the account cannot sign in
+
+Supabase stores the password hashed; it is never in this repo, in an env var,
+or anywhere the site can read it. To change it later, use **Reset password** on
+that user.
+
+### 3. Put yourself on the staff list
 
 ```
-STAFF_ALLOWED_EMAILS=jase@obsidianspas.com
+STAFF_ALLOWED_EMAILS=admin@obsidianspas.com
 ```
 
-Comma-separated, checked on **every** admin API call. For "me and only me", put
-one address here. A signed-in account that is not on the list gets "Not a staff
-account" and no data.
+Comma-separated, checked on **every** admin API call. One address here means
+one person gets in. A signed-in account that is not on this list gets "Not a
+staff account" and no data — so creating a Supabase user is not enough on its
+own, and neither is this. Both are required.
 
-Adding staff later takes two things: give them the private URL, and add their
-address here. Both are required.
+### 4. Turn on email sign-in in Supabase
 
-### 3. Turn on email sign-in in Supabase
+Supabase → **Authentication → Providers → Email**, and make sure the provider
+is enabled. Password sign-in needs it, and so does the "email me a sign-in
+link" fallback on the form.
 
-Supabase -> **Authentication -> Providers -> Email**. Magic links need only
-*Enable email provider*; passwords can stay off.
+### 5. Allow the redirect URL
 
-### 4. Allow the redirect URL
+Supabase → **Authentication → URL Configuration**:
 
-Supabase -> **Authentication -> URL Configuration**:
-
-- **Site URL** - `https://<your-domain>`
-- **Redirect URLs** - add `https://<your-domain>/admin/clients` (plus
+- **Site URL** — `https://<your-domain>`
+- **Redirect URLs** — add `https://<your-domain>/admin/clients` (plus
   `http://localhost:3000/admin/clients` for local work)
 
-Miss this and the emailed link bounces you out still signed out. It is the most
-common reason magic links appear to "do nothing".
+Password sign-in works without this. The sign-in-link fallback does not — the
+emailed link will bounce you out still signed out, which is the most common
+reason it appears to "do nothing".
 
-### 5. Close public signup
+### 6. Close public signup
 
 By default Supabase creates an account for any address that asks for a link.
 The allowlist still blocks them from the data, but there is no reason to allow
-it: Supabase -> **Authentication -> Sign In / Providers** -> turn **Allow new
-users to sign up** off, then add your own user under **Authentication -> Users**.
+it: Supabase → **Authentication → Sign In / Providers** → turn **Allow new
+users to sign up** off.
 
-Do this *after* your first successful sign-in, or you will lock yourself out
-before your account exists.
+Do this *after* creating your own user in step 2.
+
+### If you forget the password
+
+The sign-in form has **Email me a sign-in link instead**. It sends a one-time
+link to the address you typed, which signs you straight in — no reset flow to
+sit through. It only works for an account that already exists; it will not
+create one.
 
 ### Signing in on a second device
 
