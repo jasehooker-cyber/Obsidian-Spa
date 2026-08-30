@@ -20,17 +20,41 @@ export function getSupabaseServerEnv() {
   };
 }
 
-/** Google Calendar settings used by the CRM and calendar helpers. */
+/**
+ * Google Calendar settings used by the CRM and calendar helpers.
+ *
+ * Production prefers keyless Workload Identity Federation. A private key is
+ * retained only as a local/legacy fallback for environments that still have
+ * one. WIF configuration intentionally does not depend on GOOGLE_PRIVATE_KEY.
+ */
 export function getGoogleEnv() {
   const clientEmail = process.env.GOOGLE_CLIENT_EMAIL ?? "";
   const privateKey = process.env.GOOGLE_PRIVATE_KEY ?? "";
   const calendarId = process.env.GOOGLE_CALENDAR_ID ?? "";
+  const projectNumber = process.env.GCP_PROJECT_NUMBER ?? "";
+  const workloadIdentityPoolId =
+    process.env.GCP_WORKLOAD_IDENTITY_POOL_ID ?? "";
+  const workloadIdentityPoolProviderId =
+    process.env.GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID ?? "";
+
+  const wifConfigured = !!(
+    clientEmail &&
+    projectNumber &&
+    workloadIdentityPoolId &&
+    workloadIdentityPoolProviderId
+  );
+  const privateKeyConfigured = !!(clientEmail && privateKey);
 
   return {
     clientEmail,
     privateKey,
     calendarId,
-    configured: !!(clientEmail && privateKey && calendarId),
+    projectNumber,
+    workloadIdentityPoolId,
+    workloadIdentityPoolProviderId,
+    wifConfigured,
+    privateKeyConfigured,
+    configured: !!(calendarId && (wifConfigured || privateKeyConfigured)),
   };
 }
 
