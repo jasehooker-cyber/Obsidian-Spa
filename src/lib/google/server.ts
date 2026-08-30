@@ -1,4 +1,4 @@
-import { getEnv } from "@/lib/config/env";
+import { getGoogleEnv } from "@/lib/config/env";
 import { createPrivateKey, createSign } from "crypto";
 
 const GOOGLE_CALENDAR_API =
@@ -49,13 +49,14 @@ async function getAccessToken(): Promise<string> {
     return tokenCache.token;
   }
 
+  const google = getGoogleEnv();
   const now = Math.floor(Date.now() / 1000);
   const header = Buffer.from(
     JSON.stringify({ alg: "RS256", typ: "JWT" })
   ).toString("base64url");
   const payload = Buffer.from(
     JSON.stringify({
-      iss: getEnv().google.clientEmail,
+      iss: google.clientEmail,
       scope: "https://www.googleapis.com/auth/calendar",
       aud: "https://oauth2.googleapis.com/token",
       iat: now,
@@ -63,9 +64,7 @@ async function getAccessToken(): Promise<string> {
     })
   ).toString("base64url");
 
-  const key = createPrivateKey(
-    getEnv().google.privateKey.replace(/\\n/g, "\n")
-  );
+  const key = createPrivateKey(google.privateKey.replace(/\\n/g, "\n"));
   const signer = createSign("RSA-SHA256");
   signer.update(`${header}.${payload}`);
   const signature = signer.sign(key, "base64url");
@@ -102,7 +101,7 @@ export async function createCalendarEvent(params: {
   description?: string;
 }): Promise<CalendarEvent> {
   const token = await getAccessToken();
-  const calendarId = encodeURIComponent(getEnv().google.calendarId);
+  const calendarId = encodeURIComponent(getGoogleEnv().calendarId);
 
   const res = await fetch(
     `${GOOGLE_CALENDAR_API}/${calendarId}/events`,
@@ -178,7 +177,7 @@ export async function listCalendarEvents(params: {
 
 export async function deleteCalendarEvent(eventId: string): Promise<void> {
   const token = await getAccessToken();
-  const calendarId = encodeURIComponent(getEnv().google.calendarId);
+  const calendarId = encodeURIComponent(getGoogleEnv().calendarId);
 
   const res = await fetch(
     `${GOOGLE_CALENDAR_API}/${calendarId}/events/${eventId}`,
