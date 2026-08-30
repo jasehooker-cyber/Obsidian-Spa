@@ -8,6 +8,51 @@ function optional(key: string, fallback: string): string {
   return process.env[key] ?? fallback;
 }
 
+/**
+ * Server-side Supabase settings used by database helpers.
+ * Kept separate from the full app config so unrelated integrations cannot
+ * break CRM/database requests.
+ */
+export function getSupabaseServerEnv() {
+  return {
+    url: required("NEXT_PUBLIC_SUPABASE_URL"),
+    secretKey: required("SUPABASE_SECRET_KEY"),
+  };
+}
+
+/** Google Calendar settings used by the CRM and calendar helpers. */
+export function getGoogleEnv() {
+  const clientEmail = process.env.GOOGLE_CLIENT_EMAIL ?? "";
+  const privateKey = process.env.GOOGLE_PRIVATE_KEY ?? "";
+  const calendarId = process.env.GOOGLE_CALENDAR_ID ?? "";
+
+  return {
+    clientEmail,
+    privateKey,
+    calendarId,
+    configured: !!(clientEmail && privateKey && calendarId),
+  };
+}
+
+/** CRM-specific settings. These must not depend on Cal.com or Stripe secrets. */
+export function getCrmEnv() {
+  return {
+    calendarIds: (
+      process.env.CRM_CALENDAR_IDS ??
+      process.env.GOOGLE_CALENDAR_ID ??
+      ""
+    )
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean),
+    internalEmails: (process.env.CRM_INTERNAL_EMAILS ?? "")
+      .split(",")
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean),
+    cronSecret: process.env.CRON_SECRET ?? "",
+  };
+}
+
 function lazyEnv() {
   const configuredStaffEmails = (process.env.STAFF_ALLOWED_EMAILS ?? "")
     .split(",")
@@ -18,13 +63,14 @@ function lazyEnv() {
     new Set(["admin@obsidianspas.com", ...configuredStaffEmails])
   );
 
+  const supabaseServer = getSupabaseServerEnv();
+
   return {
     siteUrl: optional("NEXT_PUBLIC_SITE_URL", "http://localhost:3000"),
 
     supabase: {
-      url: required("NEXT_PUBLIC_SUPABASE_URL"),
+      ...supabaseServer,
       anonKey: required("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"),
-      secretKey: required("SUPABASE_SECRET_KEY"),
     },
 
     stripe: {
@@ -43,32 +89,8 @@ function lazyEnv() {
       },
     },
 
-    google: {
-      clientEmail: process.env.GOOGLE_CLIENT_EMAIL ?? "",
-      privateKey: process.env.GOOGLE_PRIVATE_KEY ?? "",
-      calendarId: process.env.GOOGLE_CALENDAR_ID ?? "",
-      configured: !!(
-        process.env.GOOGLE_CLIENT_EMAIL &&
-        process.env.GOOGLE_PRIVATE_KEY &&
-        process.env.GOOGLE_CALENDAR_ID
-      ),
-    },
-
-    crm: {
-      calendarIds: (
-        process.env.CRM_CALENDAR_IDS ??
-        process.env.GOOGLE_CALENDAR_ID ??
-        ""
-      )
-        .split(",")
-        .map((id) => id.trim())
-        .filter(Boolean),
-      internalEmails: (process.env.CRM_INTERNAL_EMAILS ?? "")
-        .split(",")
-        .map((e) => e.trim().toLowerCase())
-        .filter(Boolean),
-      cronSecret: process.env.CRON_SECRET ?? "",
-    },
+    google: getGoogleEnv(),
+    crm: getCrmEnv(),
 
     resend: {
       apiKey: process.env.RESEND_API_KEY ?? "",
