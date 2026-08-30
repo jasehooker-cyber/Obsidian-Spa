@@ -8,7 +8,7 @@
  * because the owner can trigger a wide backfill by hand at any time.
  */
 
-import { getEnv } from "@/lib/config/env";
+import { getCrmEnv, getGoogleEnv } from "@/lib/config/env";
 import { listCalendarEvents } from "@/lib/google/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { parseVisit, type ParsedVisit } from "@/lib/crm/parse";
@@ -276,15 +276,16 @@ async function refreshClientTotals(
 export async function syncClientVisits(
   options: SyncOptions = {}
 ): Promise<SyncResult> {
-  const env = getEnv();
-  const calendars = env.crm.calendarIds;
+  const crm = getCrmEnv();
+  const google = getGoogleEnv();
+  const calendars = crm.calendarIds;
 
   if (calendars.length === 0) {
     throw new Error(
       "No calendars configured. Set CRM_CALENDAR_IDS (or GOOGLE_CALENDAR_ID)."
     );
   }
-  if (!env.google.configured) {
+  if (!google.configured) {
     throw new Error(
       "Google service account not configured. Set GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY and GOOGLE_CALENDAR_ID."
     );
@@ -299,7 +300,7 @@ export async function syncClientVisits(
 
   const supabase = supabaseServer();
   const internalEmails = new Set([
-    ...env.crm.internalEmails,
+    ...crm.internalEmails,
     ...calendars.map((id) => id.toLowerCase()),
   ]);
 
