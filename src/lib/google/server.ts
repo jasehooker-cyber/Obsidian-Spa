@@ -1,5 +1,5 @@
 import { getGoogleEnv } from "@/lib/config/env";
-import { createPrivateKey, createSign } from "crypto";
+import { getGoogleCalendarAccessToken } from "@/lib/google/auth";
 
 const GOOGLE_CALENDAR_API =
   "https://www.googleapis.com/calendar/v3/calendars";
@@ -37,70 +37,13 @@ export interface GoogleCalendarEvent {
   }>;
 }
 
-/**
- * Cached service-account token. A CRM sync pages through several calendars in
- * one run, and minting a fresh JWT per request wastes a round trip each time.
- * Refreshed a minute early so a token never expires mid-flight.
- */
-let tokenCache: { token: string; expiresAt: number } | null = null;
-
-async function getAccessToken(): Promise<string> {
-  if (tokenCache && Date.now() < tokenCache.expiresAt) {
-    return tokenCache.token;
-  }
-
-  const google = getGoogleEnv();
-  const now = Math.floor(Date.now() / 1000);
-  const header = Buffer.from(
-    JSON.stringify({ alg: "RS256", typ: "JWT" })
-  ).toString("base64url");
-  const payload = Buffer.from(
-    JSON.stringify({
-      iss: google.clientEmail,
-      scope: "https://www.googleapis.com/auth/calendar",
-      aud: "https://oauth2.googleapis.com/token",
-      iat: now,
-      exp: now + 3600,
-    })
-  ).toString("base64url");
-
-  const key = createPrivateKey(google.privateKey.replace(/\\n/g, "\n"));
-  const signer = createSign("RSA-SHA256");
-  signer.update(`${header}.${payload}`);
-  const signature = signer.sign(key, "base64url");
-
-  const jwt = `${header}.${payload}.${signature}`;
-
-  const res = await fetch("https://oauth2.googleapis.com/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-      assertion: jwt,
-    }),
-  });
-
-  if (!res.ok) throw new Error(`Google auth failed: ${await res.text()}`);
-  const data = (await res.json()) as {
-    access_token: string;
-    expires_in?: number;
-  };
-
-  tokenCache = {
-    token: data.access_token,
-    expiresAt: Date.now() + ((data.expires_in ?? 3600) - 60) * 1000,
-  };
-
-  return data.access_token;
-}
-
 export async function createCalendarEvent(params: {
   summary: string;
   start: string;
   end: string;
   description?: string;
 }): Promise<CalendarEvent> {
-  const token = await getAccessToken();
+  const token = await getGoogleCalendarAccessToken();
   const calendarId = encodeURIComponent(getGoogleEnv().calendarId);
 
   const res = await fetch(
@@ -135,7 +78,7 @@ export async function listCalendarEvents(params: {
   timeMin: string;
   timeMax: string;
 }): Promise<GoogleCalendarEvent[]> {
-  const token = await getAccessToken();
+  const token = await getGoogleCalendarAccessToken();
   const calendarId = encodeURIComponent(params.calendarId);
 
   const events: GoogleCalendarEvent[] = [];
@@ -176,7 +119,7 @@ export async function listCalendarEvents(params: {
 }
 
 export async function deleteCalendarEvent(eventId: string): Promise<void> {
-  const token = await getAccessToken();
+  const token = await getGoogleCalendarAccessToken();
   const calendarId = encodeURIComponent(getGoogleEnv().calendarId);
 
   const res = await fetch(
