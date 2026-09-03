@@ -115,7 +115,7 @@ const jsonLd = {
   url: getEnv().siteUrl,
   telephone: BUSINESS.contact.phone,
   email: BUSINESS.contact.email,
-  priceRange: "$95-$240",
+  priceRange: "$95-$390",
   address: {
     "@type": "PostalAddress",
     streetAddress: BUSINESS.address.street,

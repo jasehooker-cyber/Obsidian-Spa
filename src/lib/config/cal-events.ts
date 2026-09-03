@@ -168,6 +168,56 @@ export const CAL_SERVICES: CalService[] = [
       },
     ],
   },
+  {
+    id: "couples-massage",
+    eyebrow: "TOGETHER",
+    name: "Couples Massage",
+    description:
+      "Two tables, one room, two therapists working at once. You and a partner or friend, massaged side by side.",
+    bestFor:
+      "When you want the room to yourself with someone else — a partner, a friend, anyone you'd rather not do this alone.",
+    durations: [
+      {
+        minutes: 60,
+        slug: "couples-massage",
+        namespace: "couples-massage",
+        eventTypeId: 6932688,
+        price: 290_00,
+      },
+      {
+        minutes: 90,
+        slug: "couples-massage-90-min",
+        namespace: "couples-massage-90-min",
+        eventTypeId: 6932763,
+        price: 390_00,
+      },
+    ],
+  },
+  {
+    id: "four-handed",
+    eyebrow: "FOUR HANDS",
+    name: "Four-Handed Massage",
+    description:
+      "Two therapists on one table, moving in sync. Twice the hands, twice the coverage — the most intensive session we offer.",
+    bestFor:
+      "When one therapist isn't enough, or you just want the deepest, most complete session on the menu.",
+    durations: [
+      {
+        minutes: 60,
+        slug: "four-handed-60-min",
+        namespace: "four-handed-60-min",
+        eventTypeId: 6932771,
+        price: 260_00,
+      },
+      {
+        minutes: 90,
+        slug: "four-handed-90-min",
+        namespace: "four-handed-90-min",
+        eventTypeId: 6932807,
+        price: 360_00,
+      },
+    ],
+  },
 ];
 
 /**

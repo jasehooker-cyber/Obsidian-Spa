@@ -12,21 +12,27 @@ import {
 const allDurations = CAL_SERVICES.flatMap((service) => service.durations);
 
 describe("cal.com service menu", () => {
-  it("offers 4 services across 7 event types", () => {
-    expect(CAL_SERVICES).toHaveLength(4);
-    expect(allDurations).toHaveLength(7);
+  it("offers 6 services across 11 event types", () => {
+    expect(CAL_SERVICES).toHaveLength(6);
+    expect(allDurations).toHaveLength(11);
   });
 
-  it("no longer offers couples or four-handed", () => {
+  it("offers couples massage and four-handed massage", () => {
     const names = CAL_SERVICES.map((service) => service.name.toLowerCase());
-    expect(names.some((name) => name.includes("couples"))).toBe(false);
-    expect(names.some((name) => name.includes("four-handed"))).toBe(false);
+    expect(names.some((name) => name.includes("couples"))).toBe(true);
+    expect(names.some((name) => name.includes("four-handed"))).toBe(true);
   });
 
-  it("has a unique slug and namespace per event type", () => {
+  it("has a unique slug, namespace, and event type id per event type", () => {
     const slugs = allDurations.map((duration) => duration.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
     expect(new Set(CAL_NAMESPACES).size).toBe(CAL_NAMESPACES.length);
+
+    // Cal reports the event type id (not the slug) on a completed booking, and
+    // google-ads.ts prices the conversion by looking that id up — a collision
+    // here would silently mis-price a conversion rather than error.
+    const eventTypeIds = allDurations.map((duration) => duration.eventTypeId);
+    expect(new Set(eventTypeIds).size).toBe(eventTypeIds.length);
   });
 
   it("prices each length, cheapest first within a service", () => {
@@ -48,6 +54,10 @@ describe("cal.com service menu", () => {
     expect(bySlug["blackout-copy"].price).toBe(150_00);
     expect(bySlug["blackout"].price).toBe(210_00);
     expect(bySlug["the-split"].price).toBe(95_00);
+    expect(bySlug["couples-massage"].price).toBe(290_00);
+    expect(bySlug["couples-massage-90-min"].price).toBe(390_00);
+    expect(bySlug["four-handed-60-min"].price).toBe(260_00);
+    expect(bySlug["four-handed-90-min"].price).toBe(360_00);
   });
 
   it("matches the session lengths configured in Cal.com", () => {
@@ -63,6 +73,10 @@ describe("cal.com service menu", () => {
     expect(bySlug["blackout-copy"]).toBe(60);
     expect(bySlug["blackout"]).toBe(90);
     expect(bySlug["the-split"]).toBe(30);
+    expect(bySlug["couples-massage"]).toBe(60);
+    expect(bySlug["couples-massage-90-min"]).toBe(90);
+    expect(bySlug["four-handed-60-min"]).toBe(60);
+    expect(bySlug["four-handed-90-min"]).toBe(90);
   });
 
   it("keeps the reversed Blackout slugs straight", () => {
