@@ -2,7 +2,6 @@ import Link from "next/link";
 import { formatPrice, BUSINESS } from "@/lib/config/business-rules";
 import { CAL_SERVICES, basePrice } from "@/lib/config/cal-events";
 import { formatTime } from "@/lib/config/format";
-import GatewayFrame from "@/components/GatewayFrame";
 
 export const metadata = {
   alternates: { canonical: "/" },
@@ -15,7 +14,6 @@ export default function Home() {
       <section className="noise-overlay relative flex min-h-[90vh] flex-col items-center justify-center overflow-hidden px-6 text-center">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(187,145,89,0.08)_0%,transparent_60%)]" />
         <div className="pointer-events-none absolute top-1/4 left-1/2 h-[500px] w-screen sm:w-[800px] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse,rgba(187,145,89,0.05)_0%,transparent_70%)] blur-3xl" />
-        <GatewayFrame />
 
         <p className="font-display animate-fade-up mb-6 text-sm tracking-[0.4em] text-gold">
           PREMIUM MEN&apos;S SPA
