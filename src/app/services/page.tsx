@@ -43,11 +43,12 @@ export default function ServicesPage() {
           </h2>
           <p className="mb-10 max-w-2xl text-sm leading-relaxed text-muted">
             Signature, The Forge, Blackout, and The Split are full-body massage
-            by the same licensed therapists — what changes is the pressure and
-            the intent, how hard we work, and whether the aim is to fix
-            something or to switch you off. Couples Massage and Four-Handed
-            change who is in the room: a partner alongside you, or a second
-            therapist working with the first.
+            by the same licensed therapists — what changes is the pressure,
+            the tools (hot stones, essential oils, stretching), and the
+            intent, whether the aim is to fix something or to switch you off.
+            Couples Massage and Four-Handed change who is in the room: a
+            partner alongside you, or a second therapist working with the
+            first.
           </p>
           <div className="flex flex-col gap-px overflow-hidden border border-charcoal-light bg-charcoal-light">
             {CAL_SERVICES.map((service) => (

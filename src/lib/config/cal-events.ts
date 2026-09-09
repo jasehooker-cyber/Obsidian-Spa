@@ -80,7 +80,7 @@ export const CAL_SERVICES: CalService[] = [
     eyebrow: "THE SIGNATURE",
     name: "Obsidian Signature Massage",
     description:
-      "Our signature. Built around wherever you're sore. Swedish, deep tissue, and stretch blended to the body on the table that day.",
+      "Our signature. Hot stones and essential oils to open the body, then deep, deliberate work and stretching blended to wherever you're sore — pressure, heat, and movement in one session.",
     bestFor:
       "When you are not sure what you need, or want a bit of everything.",
     durations: [
@@ -105,7 +105,7 @@ export const CAL_SERVICES: CalService[] = [
     eyebrow: "DEEP TISSUE",
     name: "The Forge",
     description:
-      "Slow, heavy, deliberate pressure. For men who lift, sit, or carry stress in their back.",
+      "Deep tissue with hot stones. Heat first, to soften the fascia, then slow, heavy, deliberate pressure into whatever is tight.",
     bestFor:
       "When something specific hurts — a locked shoulder, a tight lower back.",
     durations: [
@@ -130,7 +130,7 @@ export const CAL_SERVICES: CalService[] = [
     eyebrow: "RESTORATIVE",
     name: "Blackout",
     description:
-      "Slow, enveloping, and completely unhurried. Built to quiet everything down — most men are asleep long before the halfway mark.",
+      "The classic spa treatment. Warm essential oils, a hot towel wipe-down, and a facial steam, worked in slow and unhurried — most men are asleep long before the halfway mark.",
     bestFor:
       "When you do not want to be worked on. You want to switch off.",
     durations: [

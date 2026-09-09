@@ -25,10 +25,35 @@
   --font-display: var(--font-display), var(--font-geist-sans), sans-serif;
 }
 
+/*
+ * Dark-wood atmosphere for the whole site, built from CSS gradients rather
+ * than an image so it stays light and consistent on every page. Three
+ * effects layered together: a warm candlelight glow in one corner, two
+ * offset repeating-linear-gradients (different angle + spacing each, so the
+ * grain reads as organic streaks rather than a mechanical stripe pattern),
+ * and a fractal-noise pseudo-element on top for fine, irregular grain —
+ * same technique as .noise-overlay below, just spanning the full page via
+ * a `position: relative` body instead of being opted into per section.
+ */
 body {
-  background: var(--background);
+  position: relative;
+  background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse 70% 45% at 18% -8%, rgba(191, 140, 74, 0.05), transparent 70%),
+    repeating-linear-gradient(89deg, rgba(191, 140, 74, 0.025) 0px, rgba(191, 140, 74, 0.025) 1px, transparent 1px, transparent 6px),
+    repeating-linear-gradient(91deg, rgba(0, 0, 0, 0.1) 0px, rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 11px),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0%, transparent 12%, transparent 88%, rgba(0, 0, 0, 0.2) 100%);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+body::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.015 0.35' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)'/%3E%3C/svg%3E");
+  pointer-events: none;
 }
 
 ::selection {
@@ -147,6 +172,13 @@ body {
   height: 1px;
   width: 60px;
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* The small diamond glyph every divider centers on a subtle crystal-like
+   twinkle rather than sitting static. */
+.gold-divider > span {
+  display: inline-block;
+  animation: pulseGlow 3s ease-in-out infinite;
 }
 
 /* Section glow background */

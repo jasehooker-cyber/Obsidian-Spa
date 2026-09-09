@@ -13,8 +13,8 @@ export default function Footer() {
               OBSIDIAN MEN&apos;S SPA
             </h3>
             <p className="text-sm leading-relaxed text-muted">
-              {BUSINESS.tagline}. A private, refined space designed for men who
-              value professionalism and results.
+              {BUSINESS.tagline}. A private space made for men who value
+              holistic care, connection, and quality.
             </p>
           </div>
 
