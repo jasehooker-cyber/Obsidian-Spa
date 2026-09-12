@@ -76,11 +76,8 @@ export default function ServicesPage() {
                     {formatPrice(service.price)}
                   </span>
                 </div>
-                <p className="mb-4 text-sm leading-relaxed text-muted">
+                <p className="mb-6 flex-1 text-sm leading-relaxed text-muted">
                   {service.description}
-                </p>
-                <p className="mb-6 flex-1 border-l-2 border-gold/25 py-0.5 pl-4 text-sm leading-relaxed text-foreground/75">
-                  {service.bestFor}
                 </p>
                 <p className="mb-6 text-xs tracking-wider text-muted/60">
                   {service.duration.toUpperCase()}
