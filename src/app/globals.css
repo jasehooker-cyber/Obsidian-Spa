@@ -26,7 +26,9 @@
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
+  background-image: url("/textures/wood-dark.jpg");
+  background-repeat: repeat;
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
