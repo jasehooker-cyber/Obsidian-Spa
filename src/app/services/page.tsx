@@ -1,11 +1,13 @@
-import { BUSINESS } from "@/lib/config/business-rules";
+import { BUSINESS, formatPrice } from "@/lib/config/business-rules";
 import CalBookingMenu from "@/components/booking/CalBookingMenu";
 import { CAL_SERVICES } from "@/lib/config/cal-events";
+import { ACUPUNCTURE_SERVICES } from "@/lib/config/acupuncture";
+import { waitlistHref } from "@/lib/waitlist";
 
 export const metadata = {
   title: "Services & Pricing — Gay Men's Massage NYC",
   description:
-    "Gay men's massage in Midtown Manhattan — signature, deep tissue, restorative, and express sessions from $95. Male therapists, 30, 60, and 90 minutes. Book online.",
+    "Gay men's massage in Midtown Manhattan — signature, deep tissue, restorative, and express sessions from $95, plus acupuncture. Male therapists. Book online.",
   alternates: { canonical: "/services" },
 };
 
@@ -25,21 +27,92 @@ export default function ServicesPage() {
           <span className="text-xs text-gold/60">&#9670;</span>
         </div>
         <p className="animate-fade-up-delay-2 relative mx-auto max-w-lg text-lg text-muted">
-          Solo sessions, and options for two. Pick one to see live availability
-          and book on the spot.
+          Massage, and one-to-one acupuncture. Pick a massage below to see
+          live availability and book on the spot.
         </p>
       </section>
 
-      {/* Services — same live menu as the booking page */}
+      {/* Massage — same live menu as the booking page */}
       <section className="section-glow relative px-6 py-16">
+        <div className="mx-auto mb-10 max-w-5xl text-center">
+          <p className="font-display text-sm tracking-[0.4em] text-gold">
+            MASSAGE
+          </p>
+        </div>
         <CalBookingMenu />
+      </section>
+
+      {/* Acupuncture — full TCM consultations, not yet bookable in Cal.com */}
+      <section className="relative px-6 py-16">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-10 text-center">
+            <p className="font-display mb-3 text-sm tracking-[0.4em] text-gold">
+              ACUPUNCTURE
+            </p>
+            <h2 className="font-display mb-4 text-2xl uppercase tracking-[0.12em] md:text-3xl">
+              Traditional Chinese Medicine
+            </h2>
+            <p className="mx-auto max-w-lg text-sm leading-relaxed text-muted">
+              A full consultation, not just needles — we check in on what&apos;s
+              going on with you and prescribe herbs if they&apos;re called
+              for.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            {ACUPUNCTURE_SERVICES.map((service, i) => (
+              <article
+                key={service.id}
+                className="luxury-card animate-fade-up group flex flex-col p-8"
+                style={{ animationDelay: `${i * 0.1}s` }}
+              >
+                <p className="font-display mb-3 text-[11px] tracking-[0.3em] text-gold/70">
+                  {service.eyebrow}
+                </p>
+                <div className="mb-3 flex items-baseline justify-between gap-4">
+                  <h3 className="text-xl font-semibold tracking-wide transition-colors duration-300 group-hover:text-gold">
+                    {service.name}
+                  </h3>
+                  <span className="text-gold-gradient shrink-0 text-xl font-bold">
+                    {formatPrice(service.price)}
+                  </span>
+                </div>
+                <p className="mb-4 text-sm leading-relaxed text-muted">
+                  {service.description}
+                </p>
+                <p className="mb-6 flex-1 border-l-2 border-gold/25 py-0.5 pl-4 text-sm leading-relaxed text-foreground/75">
+                  {service.bestFor}
+                </p>
+                <p className="mb-6 text-xs tracking-wider text-muted/60">
+                  {service.duration.toUpperCase()}
+                </p>
+                <a
+                  href={waitlistHref(service)}
+                  className="self-start border border-gold/30 px-6 py-3 text-xs font-semibold tracking-widest text-gold/90 transition-all duration-300 hover:border-gold hover:text-gold"
+                >
+                  JOIN THE LIST &rarr;
+                </a>
+              </article>
+            ))}
+          </div>
+          <p className="mt-6 text-sm leading-relaxed text-muted">
+            Not bookable online yet — join the list and we&apos;ll reach out
+            directly to schedule, or call{" "}
+            <a
+              href={`tel:${BUSINESS.contact.phone.replace(/[^\d+]/g, "")}`}
+              className="text-gold transition-colors hover:text-gold-light"
+            >
+              {BUSINESS.contact.phone}
+            </a>
+            .
+          </p>
+        </div>
       </section>
 
       {/* Choosing between them — the question people actually arrive with */}
       <section className="relative px-6 py-12">
         <div className="mx-auto max-w-5xl">
           <h2 className="font-display mb-3 text-2xl uppercase tracking-[0.12em]">
-            Which One?
+            Which Massage?
           </h2>
           <p className="mb-10 max-w-2xl text-sm leading-relaxed text-muted">
             Signature, The Forge, Blackout, and The Split are full-body massage

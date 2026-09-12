@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { BUSINESS, formatPrice } from "@/lib/config/business-rules";
-import { SPA_EVENTS, type SpaEvent } from "@/lib/config/events";
+import { SPA_EVENTS } from "@/lib/config/events";
 import { calLink, CAL_TRIGGER_CONFIG } from "@/lib/config/cal-events";
+import { waitlistHref } from "@/lib/waitlist";
 
 export const metadata = {
   title: "Events & Classes — LGBTQ+ Wellness in Midtown",
@@ -9,15 +10,6 @@ export const metadata = {
     "Yoga, group acupuncture, and couples massage workshops for gay and queer men in Midtown Manhattan. Group classes and private studio hire at Obsidian Men's Spa.",
   alternates: { canonical: "/events" },
 };
-
-/** Prefilled enquiry, so an interested visitor does not have to compose one. */
-function waitlistHref(event: SpaEvent) {
-  const subject = `Interest: ${event.name} at ${BUSINESS.name}`;
-  const body = `I'd like to hear when ${event.name} is scheduled.\n\nName:\nPhone:\nPreferred days/times:\nNumber of people:\n`;
-  return `mailto:${BUSINESS.contact.email}?subject=${encodeURIComponent(
-    subject
-  )}&body=${encodeURIComponent(body)}`;
-}
 
 export default function EventsPage() {
   return (
