@@ -32,11 +32,11 @@ describe("fee calculations", () => {
     ).toBe(120_00);
   });
 
-  it("no-show fee for the 75 minute KILN is $127.50", () => {
-    const duration = allDurations.find((d) => d.slug === "kiln-75")!;
+  it("no-show fee for the 75 minute KILN is $110", () => {
+    const duration = allDurations.find((d) => d.slug === "the-forge")!;
     expect(
       Math.round(duration.price * (BUSINESS.fees.noShowPercent / 100))
-    ).toBe(127_50);
+    ).toBe(110_00);
   });
 
   it("every session price halves to whole cents", () => {

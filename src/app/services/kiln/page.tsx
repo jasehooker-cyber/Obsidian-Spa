@@ -9,7 +9,7 @@ const kiln = CAL_SERVICES.find((service) => service.id === "kiln")!;
 
 const TITLE = "KILN — Herbal Heat Ritual | Obsidian Men's Spa, Midtown NYC";
 const DESCRIPTION =
-  "Obsidian's signature herbal heat ritual: steamed compresses, a warm cocoon, head and scalp massage and deep oil bodywork. 60, 75 or 90 minutes in Midtown.";
+  "Obsidian's signature herbal heat ritual: steamed compresses, a warm cocoon, head and scalp massage and deep oil bodywork. 75 or 90 minutes in Midtown.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },

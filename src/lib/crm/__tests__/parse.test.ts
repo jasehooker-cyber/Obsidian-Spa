@@ -435,19 +435,23 @@ describe("service matching and pricing", () => {
   });
 
   it("prices each length of a service", () => {
-    const forge = CAL_SERVICES.find((s) => s.id === "the-forge")!;
+    const forge = RETIRED_SERVICES.find((s) => s.id === "the-forge")!;
     expect(listPriceFor(forge, 60)).toBe(165_00);
     expect(listPriceFor(forge, 90)).toBe(225_00);
   });
 
   it("tolerates a calendar block running slightly long", () => {
-    const forge = CAL_SERVICES.find((s) => s.id === "the-forge")!;
+    const forge = RETIRED_SERVICES.find((s) => s.id === "the-forge")!;
     expect(listPriceFor(forge, 65)).toBe(165_00);
   });
 
   it("refuses to price a length nowhere near the menu", () => {
-    const forge = CAL_SERVICES.find((s) => s.id === "the-forge")!;
+    const forge = RETIRED_SERVICES.find((s) => s.id === "the-forge")!;
     expect(listPriceFor(forge, 200)).toBeNull();
+  });
+
+  it("matches a KILN booking by the title Cal gives it", () => {
+    expect(matchService("Kiln (75 min) between Jase Hooker and Sam")?.id).toBe("kiln");
   });
 
   it("still recognises and prices The Split after it left the menu", () => {

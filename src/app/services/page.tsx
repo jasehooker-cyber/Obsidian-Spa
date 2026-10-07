@@ -1,6 +1,6 @@
 import { BUSINESS, formatPrice } from "@/lib/config/business-rules";
 import CalBookingMenu from "@/components/booking/CalBookingMenu";
-import { CAL_SERVICES } from "@/lib/config/cal-events";
+import { CAL_SERVICES, PAYMENT_NOTICE } from "@/lib/config/cal-events";
 import { ACUPUNCTURE_SERVICES } from "@/lib/config/acupuncture";
 import { waitlistHref } from "@/lib/waitlist";
 
@@ -112,7 +112,7 @@ export default function ServicesPage() {
             Which Massage?
           </h2>
           <p className="mb-10 max-w-2xl text-sm leading-relaxed text-muted">
-            Signature, The Forge, and Blackout are full-body massage
+            Signature and Blackout are full-body massage
             by the same licensed therapists — what changes is the pressure,
             the tools (hot stones, essential oils, stretching), and the
             intent, whether the aim is to fix something or to switch you off.
@@ -162,7 +162,7 @@ export default function ServicesPage() {
             {[
               {
                 title: "Payment",
-                text: "No card is needed to book and nothing is charged online. Pay by card or cash at the spa after your session.",
+                text: PAYMENT_NOTICE,
               },
               {
                 title: "Cancellation",

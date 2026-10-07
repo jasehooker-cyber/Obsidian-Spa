@@ -107,54 +107,23 @@ export const CAL_SERVICES: CalService[] = [
     href: "/services/kiln",
     description:
       "Steamed herbal compresses pressed along the spine, a warm cocoon of herbal towels, head and scalp massage, then slow, deep oil bodywork. Ninety minutes of heat, cedar, stone and stillness.",
-    // PENDING (Step 6): eventTypeIds are placeholders until the three Cal.com
-    // event types exist. Replace with the real ids before committing.
+    // KILN lives on the two event types that used to be The Forge, so the
+    // slugs still read `the-forge`. Rename them in Cal.com only together with
+    // a change here — the ids would survive a rename, the slugs would not.
     durations: [
-      {
-        minutes: 60,
-        slug: "kiln-60",
-        namespace: "kiln-60",
-        eventTypeId: -60,
-        price: 215_00,
-      },
       {
         minutes: 75,
-        slug: "kiln-75",
-        namespace: "kiln-75",
-        eventTypeId: -75,
-        price: 255_00,
-      },
-      {
-        minutes: 90,
-        slug: "kiln-90",
-        namespace: "kiln-90",
-        eventTypeId: -90,
-        price: 295_00,
-      },
-    ],
-  },
-  {
-    id: "the-forge",
-    eyebrow: "DEEP TISSUE",
-    name: "The Forge",
-    description:
-      "Deep tissue with hot stones. Heat first, to soften the fascia, then slow, heavy, deliberate pressure into whatever is tight.",
-    bestFor:
-      "When something specific hurts — a locked shoulder, a tight lower back.",
-    durations: [
-      {
-        minutes: 60,
         slug: "the-forge",
         namespace: "the-forge",
         eventTypeId: 6640251,
-        price: 165_00,
+        price: 220_00,
       },
       {
         minutes: 90,
         slug: "the-forge-copy",
         namespace: "the-forge-copy",
         eventTypeId: 6640308,
-        price: 225_00,
+        price: 280_00,
       },
     ],
   },
@@ -242,6 +211,30 @@ export const CAL_SERVICES: CalService[] = [
  */
 export const RETIRED_SERVICES: CalService[] = [
   {
+    // Its Cal.com event types now carry KILN; these ids are historical and
+    // nothing looks them up — retired services are matched by name only.
+    id: "the-forge",
+    eyebrow: "DEEP TISSUE",
+    name: "The Forge",
+    description: "",
+    durations: [
+      {
+        minutes: 60,
+        slug: "the-forge",
+        namespace: "the-forge",
+        eventTypeId: 6640251,
+        price: 165_00,
+      },
+      {
+        minutes: 90,
+        slug: "the-forge-copy",
+        namespace: "the-forge-copy",
+        eventTypeId: 6640308,
+        price: 225_00,
+      },
+    ],
+  },
+  {
     id: "the-split",
     eyebrow: "EXPRESS",
     name: "The Split",
@@ -264,7 +257,7 @@ export const RETIRED_SERVICES: CalService[] = [
  * paying now.
  */
 export const PAYMENT_NOTICE =
-  "No card is needed to book and nothing is charged online. Pay by card or cash at the spa after your session.";
+  "No card is needed to book and nothing is charged online. Pay by card or cash at the spa after your session, and please bring a cash tip of 20% of your service.";
 
 /** Lowest price across a service's lengths, for the “from” price on its card. */
 export function basePrice(service: CalService): number {

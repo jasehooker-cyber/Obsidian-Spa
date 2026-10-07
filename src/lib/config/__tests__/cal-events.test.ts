@@ -5,6 +5,7 @@ import {
   CAL_TEAM_SLUG,
   CAL_LAYOUT,
   CAL_TRIGGER_CONFIG,
+  PAYMENT_NOTICE,
   basePrice,
   calLink,
 } from "@/lib/config/cal-events";
@@ -12,9 +13,9 @@ import {
 const allDurations = CAL_SERVICES.flatMap((service) => service.durations);
 
 describe("cal.com service menu", () => {
-  it("offers 6 services across 13 event types", () => {
-    expect(CAL_SERVICES).toHaveLength(6);
-    expect(allDurations).toHaveLength(13);
+  it("offers 5 services across 10 event types", () => {
+    expect(CAL_SERVICES).toHaveLength(5);
+    expect(allDurations).toHaveLength(10);
   });
 
   it("offers couples massage and four-handed massage", () => {
@@ -49,13 +50,11 @@ describe("cal.com service menu", () => {
     );
     expect(bySlug["obsidian"].price).toBe(180_00);
     expect(bySlug["obsidian-copy"].price).toBe(240_00);
-    expect(bySlug["the-forge"].price).toBe(165_00);
-    expect(bySlug["the-forge-copy"].price).toBe(225_00);
     expect(bySlug["blackout-copy"].price).toBe(150_00);
     expect(bySlug["blackout"].price).toBe(210_00);
-    expect(bySlug["kiln-60"].price).toBe(215_00);
-    expect(bySlug["kiln-75"].price).toBe(255_00);
-    expect(bySlug["kiln-90"].price).toBe(295_00);
+    // KILN runs on the event types that used to be The Forge.
+    expect(bySlug["the-forge"].price).toBe(220_00);
+    expect(bySlug["the-forge-copy"].price).toBe(280_00);
     expect(bySlug["couples-massage"].price).toBe(290_00);
     expect(bySlug["couples-massage-90-min"].price).toBe(390_00);
     expect(bySlug["four-handed-60-min"].price).toBe(260_00);
@@ -70,13 +69,10 @@ describe("cal.com service menu", () => {
     );
     expect(bySlug["obsidian"]).toBe(60);
     expect(bySlug["obsidian-copy"]).toBe(90);
-    expect(bySlug["the-forge"]).toBe(60);
-    expect(bySlug["the-forge-copy"]).toBe(90);
     expect(bySlug["blackout-copy"]).toBe(60);
     expect(bySlug["blackout"]).toBe(90);
-    expect(bySlug["kiln-60"]).toBe(60);
-    expect(bySlug["kiln-75"]).toBe(75);
-    expect(bySlug["kiln-90"]).toBe(90);
+    expect(bySlug["the-forge"]).toBe(75);
+    expect(bySlug["the-forge-copy"]).toBe(90);
     expect(bySlug["couples-massage"]).toBe(60);
     expect(bySlug["couples-massage-90-min"]).toBe(90);
     expect(bySlug["four-handed-60-min"]).toBe(60);
@@ -94,14 +90,14 @@ describe("cal.com service menu", () => {
 
   it("reports the lowest price as the base price", () => {
     const kiln = CAL_SERVICES.find((s) => s.id === "kiln")!;
-    expect(basePrice(kiln)).toBe(215_00);
+    expect(basePrice(kiln)).toBe(220_00);
 
     const obsidian = CAL_SERVICES.find((s) => s.id === "obsidian-signature")!;
     expect(basePrice(obsidian)).toBe(180_00);
   });
 
   it("builds team booking links", () => {
-    expect(calLink("kiln-75")).toBe(`team/${CAL_TEAM_SLUG}/kiln-75`);
+    expect(calLink("obsidian")).toBe(`team/${CAL_TEAM_SLUG}/obsidian`);
   });
 
   it("tells the embed to use the slot view on small screens", () => {
@@ -111,9 +107,23 @@ describe("cal.com service menu", () => {
     });
   });
 
-  it("no longer offers The Split", () => {
+  it("no longer offers The Split or The Forge", () => {
     expect(allDurations.some((d) => d.slug === "the-split")).toBe(false);
-    expect(CAL_SERVICES.some((s) => s.id === "the-split")).toBe(false);
+    const ids = CAL_SERVICES.map((s) => s.id);
+    expect(ids).not.toContain("the-split");
+    expect(ids).not.toContain("the-forge");
+  });
+
+  it("puts the KILN booking buttons on the former Forge event types", () => {
+    const kiln = CAL_SERVICES.find((s) => s.id === "kiln")!;
+    expect(kiln.durations.map((d) => [d.minutes, d.eventTypeId])).toEqual([
+      [75, 6640251],
+      [90, 6640308],
+    ]);
+  });
+
+  it("asks guests to bring a 20% cash tip wherever booking happens", () => {
+    expect(PAYMENT_NOTICE).toContain("cash tip of 20%");
   });
 
   it("lists KILN right after the Signature", () => {
