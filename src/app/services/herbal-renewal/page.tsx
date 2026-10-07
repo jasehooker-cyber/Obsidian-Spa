@@ -7,7 +7,7 @@ import ServiceBookingButtons from "@/components/booking/ServiceBookingButtons";
 
 const service = CAL_SERVICES.find((s) => s.id === "kiln")!;
 
-const TITLE = "Herbal Renewal — Herbal Heat Ritual | Obsidian Men's Spa, Midtown NYC";
+const TITLE = "Herbal Renewal — Heat, Stone & Myrrh | Obsidian Men's Spa, Midtown NYC";
 const DESCRIPTION =
   "Obsidian's signature herbal heat ritual: steamed compresses, a warm cocoon, head and scalp massage and deep oil bodywork. 75 or 90 minutes in Midtown.";
 
@@ -62,7 +62,7 @@ export default function HerbalRenewalPage() {
           {service.name}
         </h1>
         <p className="animate-fade-up-delay-1 mb-6 text-lg text-foreground/90">
-          An herbal heat ritual, in two firings
+          A ritual of heat, stone and myrrh
         </p>
         <div className="gold-divider animate-fade-up-delay-2 mx-auto mb-8">
           <span className="text-xs text-gold/60">&#9670;</span>
