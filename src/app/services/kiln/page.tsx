@@ -68,13 +68,9 @@ export default function KilnPage() {
           <span className="text-xs text-gold/60">&#9670;</span>
         </div>
         <p className="animate-fade-up-delay-2 mb-12 text-base leading-relaxed text-muted md:text-lg">
-          KILN begins at the feet: hot herbal towels, one breath of frankincense
-          and black pepper, then steamed compresses of ginger, lemongrass and
-          cedar pressed along the back. After a single turn you are wrapped in
-          herbal towels and a heavy blanket while your therapist works scalp and
-          jaw without product. The wrap opens one limb at a time into deep oil
-          bodywork. A cool stone in each palm ends ninety minutes of heat in
-          stillness.
+          Steamed ginger, lemongrass and cedar compresses along the back, a warm
+          herbal wrap, scalp and jaw work, then deep oil bodywork. It ends with
+          a cool stone in each palm.
         </p>
 
         <div className="animate-fade-up-delay-3">
