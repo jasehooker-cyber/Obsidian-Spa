@@ -1,26 +1,40 @@
 import { describe, it, expect } from "vitest";
-import { ACUPUNCTURE_SERVICES, HAS_BOOKABLE_ACUPUNCTURE } from "@/lib/config/acupuncture";
+import { ACUPUNCTURE_SERVICES } from "@/lib/config/acupuncture";
+import {
+  BOOKABLE_SERVICES,
+  CAL_NAMESPACES,
+  CAL_SERVICES,
+} from "@/lib/config/cal-events";
 
-describe("acupuncture menu", () => {
-  it("offers acupuncture and electro-acupuncture", () => {
-    expect(ACUPUNCTURE_SERVICES).toHaveLength(2);
-    const ids = ACUPUNCTURE_SERVICES.map((service) => service.id);
-    expect(ids).toContain("acupuncture");
-    expect(ids).toContain("electro-acupuncture");
+describe("acupuncture", () => {
+  it("offers one-to-one acupuncture only — no electro-acupuncture", () => {
+    expect(ACUPUNCTURE_SERVICES.map((service) => service.id)).toEqual([
+      "acupuncture",
+    ]);
   });
 
-  it("prices acupuncture at $180 and electro-acupuncture at $200", () => {
-    const bySlug = Object.fromEntries(
-      ACUPUNCTURE_SERVICES.map((service) => [service.id, service.price])
+  it("matches the TCM event type configured in Cal.com", () => {
+    // Verified against cal.com/team/obsidian-spa/tcm-60-min.
+    const [duration] = ACUPUNCTURE_SERVICES[0].durations;
+    expect(duration).toEqual({
+      minutes: 60,
+      slug: "tcm-60-min",
+      namespace: "tcm-60-min",
+      eventTypeId: 7388978,
+      price: 180_00,
+    });
+  });
+
+  it("is bookable online but kept out of the massage menu", () => {
+    expect(BOOKABLE_SERVICES.some((s) => s.id === "acupuncture")).toBe(true);
+    expect(CAL_NAMESPACES).toContain("tcm-60-min");
+    expect(CAL_SERVICES.some((s) => s.id === "acupuncture")).toBe(false);
+  });
+
+  it("has an event type id no massage shares", () => {
+    const ids = BOOKABLE_SERVICES.flatMap((s) =>
+      s.durations.map((d) => d.eventTypeId)
     );
-    expect(bySlug["acupuncture"]).toBe(180_00);
-    expect(bySlug["electro-acupuncture"]).toBe(200_00);
-  });
-
-  it("is not bookable online until a Cal.com event type is set", () => {
-    expect(HAS_BOOKABLE_ACUPUNCTURE).toBe(false);
-    for (const service of ACUPUNCTURE_SERVICES) {
-      expect(service.calSlug).toBeUndefined();
-    }
+    expect(new Set(ids).size).toBe(ids.length);
   });
 });

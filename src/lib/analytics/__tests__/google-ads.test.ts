@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { CAL_SERVICES } from "@/lib/config/cal-events";
+import { BOOKABLE_SERVICES } from "@/lib/config/cal-events";
 
 /**
  * The module reads the conversion label at import time and keeps a module-level
@@ -95,9 +95,9 @@ describe("booking conversions", () => {
     expect(gtag.mock.calls[0][2]).toMatchObject({ value: undefined });
   });
 
-  it("covers every event type on the menu", async () => {
+  it("covers every bookable event type, acupuncture included", async () => {
     const { reportBookingConversion } = await load();
-    const durations = CAL_SERVICES.flatMap((s) => s.durations);
+    const durations = BOOKABLE_SERVICES.flatMap((s) => s.durations);
 
     durations.forEach((duration, i) =>
       reportBookingConversion({
@@ -113,8 +113,8 @@ describe("booking conversions", () => {
 });
 
 describe("event type ids", () => {
-  it("are unique across the menu", () => {
-    const ids = CAL_SERVICES.flatMap((s) =>
+  it("are unique across everything bookable", () => {
+    const ids = BOOKABLE_SERVICES.flatMap((s) =>
       s.durations.map((d) => d.eventTypeId)
     );
     expect(new Set(ids).size).toBe(ids.length);

@@ -7,7 +7,7 @@
  * CalBookingMenu; this module owns what gets sent.
  */
 
-import { CAL_SERVICES } from "@/lib/config/cal-events";
+import { BOOKABLE_SERVICES } from "@/lib/config/cal-events";
 
 /** Same account as the tag in the root layout. */
 export const GOOGLE_ADS_ID = "AW-18369793323";
@@ -36,7 +36,7 @@ export const CONVERSION_LABEL =
 
 /** Cal identifies the booked session by event type id; we price it from there. */
 const BY_EVENT_TYPE_ID = new Map(
-  CAL_SERVICES.flatMap((service) =>
+  BOOKABLE_SERVICES.flatMap((service) =>
     service.durations.map((duration) => [
       duration.eventTypeId,
       { name: `${service.name} (${duration.minutes}m)`, price: duration.price },

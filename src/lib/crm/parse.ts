@@ -35,7 +35,7 @@
  */
 
 import {
-  CAL_SERVICES,
+  BOOKABLE_SERVICES,
   RETIRED_SERVICES,
   type CalService,
 } from "@/lib/config/cal-events";
@@ -260,7 +260,7 @@ export function parseCalDescription(
  * Longest names first, so a service whose name contains another's still wins
  * on specificity.
  */
-const SERVICES_BY_SPECIFICITY = [...CAL_SERVICES, ...RETIRED_SERVICES].sort(
+const SERVICES_BY_SPECIFICITY = [...BOOKABLE_SERVICES, ...RETIRED_SERVICES].sort(
   (a, b) => b.name.length - a.name.length
 );
 

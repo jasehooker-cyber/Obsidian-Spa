@@ -1,8 +1,12 @@
 import { BUSINESS, formatPrice } from "@/lib/config/business-rules";
 import CalBookingMenu from "@/components/booking/CalBookingMenu";
-import { CAL_SERVICES, PAYMENT_NOTICE } from "@/lib/config/cal-events";
+import {
+  CAL_SERVICES,
+  PAYMENT_NOTICE,
+  basePrice,
+} from "@/lib/config/cal-events";
 import { ACUPUNCTURE_SERVICES } from "@/lib/config/acupuncture";
-import { waitlistHref } from "@/lib/waitlist";
+import CalDurationButton from "@/components/booking/CalDurationButton";
 
 export const metadata = {
   title: "Services & Pricing — Gay Men's Massage NYC",
@@ -27,7 +31,7 @@ export default function ServicesPage() {
           <span className="text-xs text-gold/60">&#9670;</span>
         </div>
         <p className="animate-fade-up-delay-2 relative mx-auto max-w-lg text-lg text-muted">
-          Massage, and one-to-one acupuncture. Pick a massage below to see
+          Massage, and one-to-one acupuncture. Pick a session below to see
           live availability and book on the spot.
         </p>
       </section>
@@ -42,7 +46,7 @@ export default function ServicesPage() {
         <CalBookingMenu />
       </section>
 
-      {/* Acupuncture — full TCM consultations, not yet bookable in Cal.com */}
+      {/* Acupuncture — full TCM consultations, booked through Cal.com */}
       <section className="relative px-6 py-16">
         <div className="mx-auto max-w-5xl">
           <div className="mb-10 text-center">
@@ -58,7 +62,7 @@ export default function ServicesPage() {
               for.
             </p>
           </div>
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="mx-auto grid max-w-lg gap-6">
             {ACUPUNCTURE_SERVICES.map((service, i) => (
               <article
                 key={service.id}
@@ -73,35 +77,24 @@ export default function ServicesPage() {
                     {service.name}
                   </h3>
                   <span className="text-gold-gradient shrink-0 text-xl font-bold">
-                    {formatPrice(service.price)}
+                    {formatPrice(basePrice(service))}
                   </span>
                 </div>
-                <p className="mb-6 flex-1 text-sm leading-relaxed text-muted">
+                <p className="mb-8 flex-1 text-sm leading-relaxed text-muted">
                   {service.description}
                 </p>
-                <p className="mb-6 text-xs tracking-wider text-muted/60">
-                  {service.duration.toUpperCase()}
-                </p>
-                <a
-                  href={waitlistHref(service)}
-                  className="self-start border border-gold/30 px-6 py-3 text-xs font-semibold tracking-widest text-gold/90 transition-all duration-300 hover:border-gold hover:text-gold"
-                >
-                  JOIN THE LIST &rarr;
-                </a>
+                <div className="flex flex-wrap items-center gap-3">
+                  {service.durations.map((duration) => (
+                    <CalDurationButton
+                      key={duration.slug}
+                      serviceName={service.name}
+                      duration={duration}
+                    />
+                  ))}
+                </div>
               </article>
             ))}
           </div>
-          <p className="mt-6 text-sm leading-relaxed text-muted">
-            Not bookable online yet — join the list and we&apos;ll reach out
-            directly to schedule, or call{" "}
-            <a
-              href={`tel:${BUSINESS.contact.phone.replace(/[^\d+]/g, "")}`}
-              className="text-gold transition-colors hover:text-gold-light"
-            >
-              {BUSINESS.contact.phone}
-            </a>
-            .
-          </p>
         </div>
       </section>
 

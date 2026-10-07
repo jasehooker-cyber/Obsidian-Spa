@@ -455,6 +455,12 @@ describe("service matching and pricing", () => {
     expect(matchService("Kiln (75 min) between Jase Hooker and Sam")?.id).toBe("kiln");
   });
 
+  it("matches an acupuncture booking by the title Cal gives it", () => {
+    const visit = matchService("TCM (60 min) between Jase Hooker and Sam");
+    expect(visit?.id).toBe("acupuncture");
+    expect(listPriceFor(visit!, 60)).toBe(180_00);
+  });
+
   it("still recognises and prices The Split after it left the menu", () => {
     expect(matchService("The Split between Jase and Sam")?.id).toBe("the-split");
     const split = RETIRED_SERVICES.find((s) => s.id === "the-split")!;

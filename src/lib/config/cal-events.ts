@@ -7,6 +7,8 @@
  * screen shows whatever is set in the Cal.com dashboard.
  */
 
+import { ACUPUNCTURE_SERVICES } from "@/lib/config/acupuncture";
+
 /** Cal.com team slug. Booking links are `team/<slug>/<event-slug>`. */
 export const CAL_TEAM_SLUG = "obsidian-spa";
 
@@ -108,7 +110,7 @@ export const CAL_SERVICES: CalService[] = [
     name: "Herbal Renewal",
     href: "/services/herbal-renewal",
     description:
-      "Steamed herbal compresses pressed along the spine, a warm cocoon of herbal towels, head and scalp massage, then slow, deep oil bodywork. Ninety minutes of heat, cedar, stone and stillness.",
+      "An exfoliating scrub, steamed herbal compresses along the spine, a warm cocoon of herbal towels, head and scalp massage, then slow, deep oil bodywork. Heat, cedar, stone and stillness.",
     // Herbal Renewal lives on the two event types that used to be The Forge, so the
     // slugs still read `the-forge`. Rename them in Cal.com only together with
     // a change here — the ids would survive a rename, the slugs would not.
@@ -207,11 +209,20 @@ export const CAL_SERVICES: CalService[] = [
 ];
 
 /**
- * Services taken off the website but still on past calendar events. Never
- * rendered — only the CRM sync reads this, so a visit booked before a service
- * was retired keeps its menu price instead of going unrecorded on re-sync.
+ * Names the CRM sync must recognise beyond the current menu: services taken
+ * off the website but still on past calendar events, and the titles Cal.com
+ * gives bookings when they differ from the website name. Never rendered — so a
+ * visit keeps its menu price instead of going unrecorded on re-sync.
  */
 export const RETIRED_SERVICES: CalService[] = [
+  {
+    // Cal.com titles Acupuncture bookings "TCM (60 min)".
+    id: "acupuncture",
+    eyebrow: "TRADITIONAL",
+    name: "TCM",
+    description: "",
+    durations: ACUPUNCTURE_SERVICES[0].durations,
+  },
   {
     // Herbal Renewal's launch name. Cal.com titles its bookings "Kiln (75
     // min)" until the event types are renamed there, so the CRM must still
@@ -291,8 +302,18 @@ export function basePrice(service: CalService): number {
   return Math.min(...service.durations.map((duration) => duration.price));
 }
 
+/**
+ * Everything bookable online: the massage menu plus acupuncture, which has its
+ * own section on the Services page. Booking setup, conversion pricing and CRM
+ * matching all work from this list.
+ */
+export const BOOKABLE_SERVICES: CalService[] = [
+  ...CAL_SERVICES,
+  ...ACUPUNCTURE_SERVICES,
+];
+
 /** Every embed namespace on the page, for one-time UI theming on mount. */
-export const CAL_NAMESPACES: string[] = CAL_SERVICES.flatMap((service) =>
+export const CAL_NAMESPACES: string[] = BOOKABLE_SERVICES.flatMap((service) =>
   service.durations.map((duration) => duration.namespace)
 );
 

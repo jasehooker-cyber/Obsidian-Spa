@@ -5,7 +5,7 @@ import Script from "next/script";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { BUSINESS } from "@/lib/config/business-rules";
-import { CAL_SERVICES, basePrice } from "@/lib/config/cal-events";
+import { BOOKABLE_SERVICES, basePrice } from "@/lib/config/cal-events";
 import { META_PIXEL_ID } from "@/lib/analytics/meta-pixel";
 import { getEnv } from "@/lib/config/env-public";
 import { spaEntityId } from "@/lib/seo";
@@ -147,7 +147,7 @@ const jsonLd = {
   hasOfferCatalog: {
     "@type": "OfferCatalog",
     name: "Spa Services",
-    itemListElement: CAL_SERVICES.map((service) => ({
+    itemListElement: BOOKABLE_SERVICES.map((service) => ({
       "@type": "Offer",
       itemOffered: {
         "@type": "Service",

@@ -9,7 +9,7 @@ const service = CAL_SERVICES.find((s) => s.id === "kiln")!;
 
 const TITLE = "Herbal Renewal — Heat, Stone & Myrrh | Obsidian Men's Spa, Midtown NYC";
 const DESCRIPTION =
-  "Obsidian's signature herbal heat ritual: steamed compresses, a warm cocoon, head and scalp massage and deep oil bodywork. 75 or 90 minutes in Midtown.";
+  "Obsidian's signature herbal heat ritual: an exfoliating scrub, steamed compresses, a warm cocoon, head and scalp massage and deep oil bodywork. 75 or 90 minutes in Midtown.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
@@ -68,9 +68,9 @@ export default function HerbalRenewalPage() {
           <span className="text-xs text-gold/60">&#9670;</span>
         </div>
         <p className="animate-fade-up-delay-2 mb-12 text-base leading-relaxed text-muted md:text-lg">
-          Steamed ginger, lemongrass and cedar compresses along the back, a warm
-          herbal wrap, scalp and jaw work, then deep oil bodywork. It ends with
-          a cool stone in each palm.
+          An exfoliating scrub, steamed ginger, lemongrass and cedar
+          compresses, a warm herbal wrap, scalp and jaw work, then deep oil
+          bodywork. It ends with a cool stone in each palm.
         </p>
 
         <div className="animate-fade-up-delay-3">
