@@ -7,7 +7,7 @@ import { waitlistHref } from "@/lib/waitlist";
 export const metadata = {
   title: "Services & Pricing — Gay Men's Massage NYC",
   description:
-    "Gay men's massage in Midtown Manhattan — signature, deep tissue, restorative, and express sessions from $95, plus acupuncture. Male therapists. Book online.",
+    "Gay men's massage in Midtown Manhattan — signature, deep tissue, and restorative sessions from $150, plus acupuncture. Male therapists. Book online.",
   alternates: { canonical: "/services" },
 };
 
@@ -112,7 +112,7 @@ export default function ServicesPage() {
             Which Massage?
           </h2>
           <p className="mb-10 max-w-2xl text-sm leading-relaxed text-muted">
-            Signature, The Forge, Blackout, and The Split are full-body massage
+            Signature, The Forge, and Blackout are full-body massage
             by the same licensed therapists — what changes is the pressure,
             the tools (hot stones, essential oils, stretching), and the
             intent, whether the aim is to fix something or to switch you off.
@@ -121,7 +121,7 @@ export default function ServicesPage() {
             first.
           </p>
           <div className="flex flex-col gap-px overflow-hidden border border-charcoal-light bg-charcoal-light">
-            {CAL_SERVICES.map((service) => (
+            {CAL_SERVICES.filter((service) => service.bestFor).map((service) => (
               <div
                 key={service.id}
                 className="grid gap-2 bg-background/95 p-6 md:grid-cols-[minmax(0,14rem)_1fr] md:items-baseline md:gap-8"

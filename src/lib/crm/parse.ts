@@ -34,7 +34,11 @@
  *    These must not become clients.
  */
 
-import { CAL_SERVICES, type CalService } from "@/lib/config/cal-events";
+import {
+  CAL_SERVICES,
+  RETIRED_SERVICES,
+  type CalService,
+} from "@/lib/config/cal-events";
 import type { GoogleCalendarEvent } from "@/lib/google/server";
 
 export interface ParsedVisit {
@@ -256,7 +260,7 @@ export function parseCalDescription(
  * Longest names first, so a service whose name contains another's still wins
  * on specificity.
  */
-const SERVICES_BY_SPECIFICITY = [...CAL_SERVICES].sort(
+const SERVICES_BY_SPECIFICITY = [...CAL_SERVICES, ...RETIRED_SERVICES].sort(
   (a, b) => b.name.length - a.name.length
 );
 

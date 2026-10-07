@@ -8,7 +8,7 @@ import {
   parseManualSummary,
   parseVisit,
 } from "@/lib/crm/parse";
-import { CAL_SERVICES } from "@/lib/config/cal-events";
+import { CAL_SERVICES, RETIRED_SERVICES } from "@/lib/config/cal-events";
 import type { GoogleCalendarEvent } from "@/lib/google/server";
 
 /**
@@ -450,8 +450,9 @@ describe("service matching and pricing", () => {
     expect(listPriceFor(forge, 200)).toBeNull();
   });
 
-  it("prices the one-length service at any duration", () => {
-    const split = CAL_SERVICES.find((s) => s.id === "the-split")!;
+  it("still recognises and prices The Split after it left the menu", () => {
+    expect(matchService("The Split between Jase and Sam")?.id).toBe("the-split");
+    const split = RETIRED_SERVICES.find((s) => s.id === "the-split")!;
     expect(listPriceFor(split, 30)).toBe(95_00);
     expect(listPriceFor(split, 120)).toBe(95_00);
   });

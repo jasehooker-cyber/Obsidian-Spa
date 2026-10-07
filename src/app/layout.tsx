@@ -8,6 +8,7 @@ import { BUSINESS } from "@/lib/config/business-rules";
 import { CAL_SERVICES, basePrice } from "@/lib/config/cal-events";
 import { META_PIXEL_ID } from "@/lib/analytics/meta-pixel";
 import { getEnv } from "@/lib/config/env-public";
+import { spaEntityId } from "@/lib/seo";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,7 +33,7 @@ const display = Josefin_Sans({
 const GOOGLE_ADS_ID = "AW-18369793323";
 
 const description =
-  "A gay men's spa in Midtown Manhattan, welcoming to every queer person. Signature, deep tissue, restorative, and express massages in a private, refined setting. Open daily 8 AM – 10 PM. Book online.";
+  "A gay men's spa in Midtown Manhattan, welcoming to every queer person. Signature, deep tissue, and restorative massages in a private, refined setting. Open daily 8 AM – 10 PM. Book online.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getEnv().siteUrl),
@@ -48,7 +49,6 @@ export const metadata: Metadata = {
     "massage for men NYC",
     "deep tissue massage Manhattan",
     "sports massage Midtown",
-    "express massage NYC",
     "luxury spa New York",
     "men's massage therapy",
     "gay spa NYC",
@@ -75,7 +75,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Obsidian Men's Spa",
     description:
-      "A gay men's spa in Midtown Manhattan, welcoming to every queer person. Signature, deep tissue, restorative, and express massage. Open daily 8 AM – 10 PM.",
+      "A gay men's spa in Midtown Manhattan, welcoming to every queer person. Signature, deep tissue, and restorative massage. Open daily 8 AM – 10 PM.",
   },
   robots: {
     index: true,
@@ -97,9 +97,10 @@ export const viewport: Viewport = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "DaySpa",
+  "@id": spaEntityId(),
   name: BUSINESS.name,
   description:
-    "A gay men's spa in Midtown Manhattan, welcoming to every queer person, offering signature, deep tissue, restorative, and express massages in a private, refined setting.",
+    "A gay men's spa in Midtown Manhattan, welcoming to every queer person, offering signature, deep tissue, and restorative massages in a private, refined setting.",
   // Stated for search engines rather than left implicit in the prose.
   audience: {
     "@type": "Audience",
@@ -115,7 +116,7 @@ const jsonLd = {
   url: getEnv().siteUrl,
   telephone: BUSINESS.contact.phone,
   email: BUSINESS.contact.email,
-  priceRange: "$95-$390",
+  priceRange: "$150-$390",
   address: {
     "@type": "PostalAddress",
     streetAddress: BUSINESS.address.street,

@@ -55,20 +55,20 @@ export interface CalService {
   name: string;
   description: string;
   /**
-   * The one-line answer to "which of these do I want?". The descriptions say
-   * what a session is; this says who it is for, so the four are told apart at
-   * a glance rather than read as four kinds of massage.
+   * The one-line answer to "which of these do I want?", shown in the Services
+   * page comparison table. Optional: a service without one is left out of that
+   * table rather than given invented copy.
    */
-  bestFor: string;
+  bestFor?: string;
   durations: CalDuration[];
   /** Quiet bronze emphasis on the service card — border, glow, and badge. */
   featured?: boolean;
+  /** The service's own page, when it has one; the menu card links to it. */
+  href?: string;
 }
 
 /**
- * The seven Cal.com event types, grouped into the four services they represent.
- * Three services are offered at two lengths; The Split is a single 30-minute
- * session.
+ * The bookable menu, in display order.
  *
  * Note the Blackout slugs: `blackout` is the 90-minute event and
  * `blackout-copy` is the 60-minute one, which is the reverse of the other pairs.
@@ -97,6 +97,39 @@ export const CAL_SERVICES: CalService[] = [
         namespace: "obsidian-copy",
         eventTypeId: 6640200,
         price: 240_00,
+      },
+    ],
+  },
+  {
+    id: "kiln",
+    eyebrow: "SIGNATURE RITUAL",
+    name: "KILN",
+    href: "/services/kiln",
+    description:
+      "Steamed herbal compresses pressed along the spine, a warm cocoon of herbal towels, head and scalp massage, then slow, deep oil bodywork. Ninety minutes of heat, cedar, stone and stillness.",
+    // PENDING (Step 6): eventTypeIds are placeholders until the three Cal.com
+    // event types exist. Replace with the real ids before committing.
+    durations: [
+      {
+        minutes: 60,
+        slug: "kiln-60",
+        namespace: "kiln-60",
+        eventTypeId: -60,
+        price: 215_00,
+      },
+      {
+        minutes: 75,
+        slug: "kiln-75",
+        namespace: "kiln-75",
+        eventTypeId: -75,
+        price: 255_00,
+      },
+      {
+        minutes: 90,
+        slug: "kiln-90",
+        namespace: "kiln-90",
+        eventTypeId: -90,
+        price: 295_00,
       },
     ],
   },
@@ -151,24 +184,6 @@ export const CAL_SERVICES: CalService[] = [
     ],
   },
   {
-    id: "the-split",
-    eyebrow: "EXPRESS",
-    name: "The Split",
-    description:
-      "Our shortest session. Focused, targeted work on the areas that need it most, for when time is tight.",
-    bestFor:
-      "When time is short, or one area needs attention and nothing else does.",
-    durations: [
-      {
-        minutes: 30,
-        slug: "the-split",
-        namespace: "the-split",
-        eventTypeId: 6640747,
-        price: 95_00,
-      },
-    ],
-  },
-  {
     id: "couples-massage",
     eyebrow: "TOGETHER",
     name: "Couples Massage",
@@ -215,6 +230,29 @@ export const CAL_SERVICES: CalService[] = [
         namespace: "four-handed-90-min",
         eventTypeId: 6932807,
         price: 360_00,
+      },
+    ],
+  },
+];
+
+/**
+ * Services taken off the website but still on past calendar events. Never
+ * rendered — only the CRM sync reads this, so a visit booked before a service
+ * was retired keeps its menu price instead of going unrecorded on re-sync.
+ */
+export const RETIRED_SERVICES: CalService[] = [
+  {
+    id: "the-split",
+    eyebrow: "EXPRESS",
+    name: "The Split",
+    description: "",
+    durations: [
+      {
+        minutes: 30,
+        slug: "the-split",
+        namespace: "the-split",
+        eventTypeId: 6640747,
+        price: 95_00,
       },
     ],
   },
