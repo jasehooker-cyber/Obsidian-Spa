@@ -32,7 +32,7 @@ describe("fee calculations", () => {
     ).toBe(120_00);
   });
 
-  it("no-show fee for the 75 minute KILN is $110", () => {
+  it("no-show fee for the 75 minute Herbal Renewal is $110", () => {
     const duration = allDurations.find((d) => d.slug === "the-forge")!;
     expect(
       Math.round(duration.price * (BUSINESS.fees.noShowPercent / 100))

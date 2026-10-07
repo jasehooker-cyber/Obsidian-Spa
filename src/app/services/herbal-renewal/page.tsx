@@ -5,20 +5,20 @@ import { getEnv } from "@/lib/config/env-public";
 import { spaEntityId } from "@/lib/seo";
 import ServiceBookingButtons from "@/components/booking/ServiceBookingButtons";
 
-const kiln = CAL_SERVICES.find((service) => service.id === "kiln")!;
+const service = CAL_SERVICES.find((s) => s.id === "kiln")!;
 
-const TITLE = "KILN — Herbal Heat Ritual | Obsidian Men's Spa, Midtown NYC";
+const TITLE = "Herbal Renewal — Herbal Heat Ritual | Obsidian Men's Spa, Midtown NYC";
 const DESCRIPTION =
   "Obsidian's signature herbal heat ritual: steamed compresses, a warm cocoon, head and scalp massage and deep oil bodywork. 75 or 90 minutes in Midtown.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESCRIPTION,
-  alternates: { canonical: "/services/kiln" },
+  alternates: { canonical: "/services/herbal-renewal" },
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
-    url: "/services/kiln",
+    url: "/services/herbal-renewal",
     type: "website",
     siteName: "Obsidian Men's Spa",
     locale: "en_US",
@@ -33,19 +33,19 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Service",
-  name: kiln.name,
-  description: kiln.description,
-  url: `${getEnv().siteUrl}/services/kiln`,
+  name: service.name,
+  description: service.description,
+  url: `${getEnv().siteUrl}/services/herbal-renewal`,
   provider: { "@id": spaEntityId() },
-  offers: kiln.durations.map((duration) => ({
+  offers: service.durations.map((duration) => ({
     "@type": "Offer",
-    name: `KILN · ${duration.minutes} min`,
+    name: `${service.name} · ${duration.minutes} min`,
     price: (duration.price / 100).toFixed(0),
     priceCurrency: "USD",
   })),
 };
 
-export default function KilnPage() {
+export default function HerbalRenewalPage() {
   return (
     <section className="noise-overlay relative overflow-hidden px-6 pb-24 pt-28 text-center">
       <script
@@ -58,8 +58,8 @@ export default function KilnPage() {
         <p className="font-display animate-fade-up mb-3 text-sm tracking-[0.4em] text-gold">
           SIGNATURE RITUAL
         </p>
-        <h1 className="font-display text-gold-gradient animate-fade-up-delay-1 mb-4 text-4xl tracking-[0.2em] md:text-6xl">
-          KILN
+        <h1 className="font-display text-gold-gradient animate-fade-up-delay-1 mb-4 text-3xl uppercase tracking-[0.15em] md:text-5xl lg:text-6xl">
+          {service.name}
         </h1>
         <p className="animate-fade-up-delay-1 mb-6 text-lg text-foreground/90">
           An herbal heat ritual, in two firings
@@ -74,7 +74,7 @@ export default function KilnPage() {
         </p>
 
         <div className="animate-fade-up-delay-3">
-          <ServiceBookingButtons service={kiln} />
+          <ServiceBookingButtons service={service} />
           <p className="mx-auto mt-8 max-w-md text-sm leading-relaxed text-muted">
             {PAYMENT_NOTICE}
           </p>

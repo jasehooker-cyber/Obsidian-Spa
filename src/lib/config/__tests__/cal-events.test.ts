@@ -52,7 +52,7 @@ describe("cal.com service menu", () => {
     expect(bySlug["obsidian-copy"].price).toBe(240_00);
     expect(bySlug["blackout-copy"].price).toBe(150_00);
     expect(bySlug["blackout"].price).toBe(210_00);
-    // KILN runs on the event types that used to be The Forge.
+    // Herbal Renewal runs on the event types that used to be The Forge.
     expect(bySlug["the-forge"].price).toBe(220_00);
     expect(bySlug["the-forge-copy"].price).toBe(280_00);
     expect(bySlug["couples-massage"].price).toBe(290_00);
@@ -114,7 +114,7 @@ describe("cal.com service menu", () => {
     expect(ids).not.toContain("the-forge");
   });
 
-  it("puts the KILN booking buttons on the former Forge event types", () => {
+  it("puts the Herbal Renewal booking buttons on the former Forge event types", () => {
     const kiln = CAL_SERVICES.find((s) => s.id === "kiln")!;
     expect(kiln.durations.map((d) => [d.minutes, d.eventTypeId])).toEqual([
       [75, 6640251],
@@ -126,7 +126,13 @@ describe("cal.com service menu", () => {
     expect(PAYMENT_NOTICE).toContain("cash tip of 20%");
   });
 
-  it("lists KILN right after the Signature", () => {
+  it("shows the ritual as Herbal Renewal, at its own page", () => {
+    const service = CAL_SERVICES.find((s) => s.id === "kiln")!;
+    expect(service.name).toBe("Herbal Renewal");
+    expect(service.href).toBe("/services/herbal-renewal");
+  });
+
+  it("lists Herbal Renewal right after the Signature", () => {
     const ids = CAL_SERVICES.map((s) => s.id);
     expect(ids.indexOf("kiln")).toBe(ids.indexOf("obsidian-signature") + 1);
   });

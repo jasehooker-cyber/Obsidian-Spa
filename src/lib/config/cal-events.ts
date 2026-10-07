@@ -101,13 +101,15 @@ export const CAL_SERVICES: CalService[] = [
     ],
   },
   {
+    // Shown as Herbal Renewal; the id stays `kiln` because the CRM stores it
+    // on every synced visit.
     id: "kiln",
     eyebrow: "SIGNATURE RITUAL",
-    name: "KILN",
-    href: "/services/kiln",
+    name: "Herbal Renewal",
+    href: "/services/herbal-renewal",
     description:
       "Steamed herbal compresses pressed along the spine, a warm cocoon of herbal towels, head and scalp massage, then slow, deep oil bodywork. Ninety minutes of heat, cedar, stone and stillness.",
-    // KILN lives on the two event types that used to be The Forge, so the
+    // Herbal Renewal lives on the two event types that used to be The Forge, so the
     // slugs still read `the-forge`. Rename them in Cal.com only together with
     // a change here — the ids would survive a rename, the slugs would not.
     durations: [
@@ -211,7 +213,32 @@ export const CAL_SERVICES: CalService[] = [
  */
 export const RETIRED_SERVICES: CalService[] = [
   {
-    // Its Cal.com event types now carry KILN; these ids are historical and
+    // Herbal Renewal's launch name. Cal.com titles its bookings "Kiln (75
+    // min)" until the event types are renamed there, so the CRM must still
+    // recognise it — same id, so those visits land on the same service.
+    id: "kiln",
+    eyebrow: "SIGNATURE RITUAL",
+    name: "Kiln",
+    description: "",
+    durations: [
+      {
+        minutes: 75,
+        slug: "the-forge",
+        namespace: "the-forge",
+        eventTypeId: 6640251,
+        price: 220_00,
+      },
+      {
+        minutes: 90,
+        slug: "the-forge-copy",
+        namespace: "the-forge-copy",
+        eventTypeId: 6640308,
+        price: 280_00,
+      },
+    ],
+  },
+  {
+    // Its Cal.com event types now carry Herbal Renewal; these ids are historical and
     // nothing looks them up — retired services are matched by name only.
     id: "the-forge",
     eyebrow: "DEEP TISSUE",

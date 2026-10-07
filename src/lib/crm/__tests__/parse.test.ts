@@ -450,7 +450,8 @@ describe("service matching and pricing", () => {
     expect(listPriceFor(forge, 200)).toBeNull();
   });
 
-  it("matches a KILN booking by the title Cal gives it", () => {
+  it("matches Herbal Renewal under its new name and Cal's old Kiln title", () => {
+    expect(matchService("Herbal Renewal (75 min) between Jase Hooker and Sam")?.id).toBe("kiln");
     expect(matchService("Kiln (75 min) between Jase Hooker and Sam")?.id).toBe("kiln");
   });
 
