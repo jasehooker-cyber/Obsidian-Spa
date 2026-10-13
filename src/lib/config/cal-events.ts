@@ -295,7 +295,7 @@ export const RETIRED_SERVICES: CalService[] = [
  * paying now.
  */
 export const PAYMENT_NOTICE =
-  "No card is needed to book and nothing is charged online. Pay by card or cash at the spa after your session, and please bring a cash tip of 20% of your service.";
+  "No card is needed to book and nothing is charged online. Pay by card or cash at the spa after your session. We kindly ask that you bring a cash tip of at least 20% of your service.";
 
 /** Lowest price across a service's lengths, for the “from” price on its card. */
 export function basePrice(service: CalService): number {

@@ -123,7 +123,9 @@ describe("cal.com service menu", () => {
   });
 
   it("asks guests to bring a 20% cash tip wherever booking happens", () => {
-    expect(PAYMENT_NOTICE).toContain("cash tip of 20%");
+    expect(PAYMENT_NOTICE).toContain(
+      "We kindly ask that you bring a cash tip of at least 20% of your service."
+    );
   });
 
   it("shows the ritual as Herbal Renewal, at its own page", () => {
