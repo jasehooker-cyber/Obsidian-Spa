@@ -1,6 +1,7 @@
 import { BUSINESS } from "@/lib/config/business-rules";
 import { formatTime } from "@/lib/config/format";
 import CalBookingMenu from "@/components/booking/CalBookingMenu";
+import AcupunctureSection from "@/components/booking/AcupunctureSection";
 
 export const metadata = {
   title: "Book a Massage — Gay Men's Spa, Midtown Manhattan",
@@ -32,6 +33,8 @@ export default function BookingPage() {
       <section className="section-glow relative px-6 pb-20">
         <CalBookingMenu />
       </section>
+
+      <AcupunctureSection />
 
       {/* Visit details */}
       <section className="relative px-6 pb-24">
