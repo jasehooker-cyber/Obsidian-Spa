@@ -58,6 +58,18 @@ export function getGoogleEnv() {
   };
 }
 
+/**
+ * The public events calendar (classes, workshops). Deliberately a separate
+ * calendar from GOOGLE_CALENDAR_ID: everything on it is shown on the website.
+ */
+export function getEventsCalendarEnv() {
+  const google = getGoogleEnv();
+  return {
+    calendarId: (process.env.GOOGLE_EVENTS_CALENDAR_ID ?? "").trim(),
+    authConfigured: google.wifConfigured || google.privateKeyConfigured,
+  };
+}
+
 /** CRM-specific settings. These must not depend on Cal.com or Stripe secrets. */
 export function getCrmEnv() {
   return {

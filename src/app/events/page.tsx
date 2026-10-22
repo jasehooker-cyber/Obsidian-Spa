@@ -3,15 +3,25 @@ import { BUSINESS, formatPrice } from "@/lib/config/business-rules";
 import { SPA_EVENTS } from "@/lib/config/events";
 import { calLink, CAL_TRIGGER_CONFIG } from "@/lib/config/cal-events";
 import { waitlistHref } from "@/lib/waitlist";
+import { getUpcomingEvents } from "@/lib/events/calendar";
+import EventsCalendar from "@/components/events/EventsCalendar";
 
 export const metadata = {
   title: "Events & Classes — LGBTQ+ Wellness in Midtown",
   description:
-    "Yoga, group acupuncture, and couples massage workshops for gay and queer men in Midtown Manhattan. Group classes and private studio hire at Obsidian Men's Spa.",
+    "Upcoming yoga, group acupuncture, and couples massage classes for gay and queer men in Midtown Manhattan — dates, times, and reservations. Private studio hire at Obsidian Men's Spa.",
   alternates: { canonical: "/events" },
 };
 
-export default function EventsPage() {
+/**
+ * The calendar is read from Google Calendar; re-read at most every 5 minutes,
+ * so a class added there shows up here without a redeploy.
+ */
+export const revalidate = 300;
+
+export default async function EventsPage() {
+  const upcoming = await getUpcomingEvents();
+
   return (
     <>
       {/* Header */}
@@ -32,9 +42,19 @@ export default function EventsPage() {
         </p>
       </section>
 
+      <EventsCalendar upcoming={upcoming} />
+
       {/* Offerings */}
-      <section className="section-glow relative px-6 py-12">
+      <section className="relative px-6 py-12">
         <div className="mx-auto max-w-5xl">
+          <div className="mb-10 text-center">
+            <p className="font-display mb-3 text-sm tracking-[0.4em] text-gold">
+              IN THE STUDIO
+            </p>
+            <h2 className="font-display text-2xl uppercase tracking-[0.12em] md:text-3xl">
+              What We Run
+            </h2>
+          </div>
           <div className="grid gap-6 md:grid-cols-2">
             {SPA_EVENTS.map((event, i) => (
               <article
@@ -116,8 +136,8 @@ export default function EventsPage() {
           </div>
 
           <p className="animate-fade-up mx-auto mt-10 max-w-2xl border-l-2 border-gold/20 py-1 pl-5 text-sm leading-relaxed text-muted">
-            Dates are being set now. Join the list for anything above and
-            we&apos;ll come to you first with times — or call{" "}
+            Join the list for anything above and we&apos;ll come to you
+            first with new dates — or call{" "}
             <a
               href={`tel:${BUSINESS.contact.phone.replace(/[^\d+]/g, "")}`}
               className="text-gold transition-colors hover:text-gold-light"

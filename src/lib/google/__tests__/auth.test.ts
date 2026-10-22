@@ -75,6 +75,41 @@ describe("getGoogleCalendarAccessToken", () => {
     ]);
   });
 
+  it("uses the per-request OIDC header at runtime, when the env var is absent", async () => {
+    setWifEnv();
+    delete process.env.VERCEL_OIDC_TOKEN;
+    delete process.env.GOOGLE_PRIVATE_KEY;
+    const REQ_CONTEXT = Symbol.for("@vercel/request-context");
+    const g = globalThis as Record<symbol, unknown>;
+    g[REQ_CONTEXT] = {
+      get: () => ({ headers: { "x-vercel-oidc-token": "header-oidc-token" } }),
+    };
+
+    const fetchMock = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ access_token: "federated", expires_in: 3600 }), { status: 200 })
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            accessToken: "calendar-token",
+            expireTime: new Date(Date.now() + 3_600_000).toISOString(),
+          }),
+          { status: 200 }
+        )
+      );
+
+    try {
+      const { getGoogleCalendarAccessToken } = await import("@/lib/google/auth");
+      expect(await getGoogleCalendarAccessToken()).toBe("calendar-token");
+      const stsBody = JSON.parse(String(fetchMock.mock.calls[0][1]?.body));
+      expect(stsBody.subjectToken).toBe("header-oidc-token");
+    } finally {
+      delete g[REQ_CONTEXT];
+    }
+  });
+
   it("fails clearly when WIF is configured but the Vercel token is unavailable", async () => {
     setWifEnv();
     delete process.env.VERCEL_OIDC_TOKEN;

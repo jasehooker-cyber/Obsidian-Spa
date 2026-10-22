@@ -1,4 +1,5 @@
 import { createPrivateKey, createSign } from "crypto";
+import { getVercelOidcTokenSync } from "@vercel/oidc";
 import { getGoogleEnv } from "@/lib/config/env";
 
 const GOOGLE_STS_URL = "https://sts.googleapis.com/v1/token";
@@ -27,9 +28,13 @@ function upstreamError(label: string, status: number): Error {
 
 async function getWorkloadIdentityToken(): Promise<CachedToken> {
   const google = getGoogleEnv();
-  const subjectToken = process.env.VERCEL_OIDC_TOKEN;
-
-  if (!subjectToken) {
+  // Vercel supplies the token in the VERCEL_OIDC_TOKEN env var only at build
+  // time; at runtime it arrives on each request as x-vercel-oidc-token.
+  // getVercelOidcTokenSync reads the request header first, then the env var.
+  let subjectToken: string;
+  try {
+    subjectToken = getVercelOidcTokenSync();
+  } catch {
     throw new Error(
       "Vercel OIDC token is unavailable for Google authentication"
     );
