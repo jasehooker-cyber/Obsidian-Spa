@@ -94,6 +94,9 @@ export async function getUpcomingEvents(
 ): Promise<UpcomingEvents> {
   const { calendarId, authConfigured } = getEventsCalendarEnv();
   if (!calendarId || !authConfigured) {
+    console.warn(
+      `Events calendar not read: ${!calendarId ? "no calendar id" : "Google auth is not configured in this environment"}`
+    );
     return { status: "unconfigured", events: [] };
   }
 
@@ -112,7 +115,10 @@ export async function getUpcomingEvents(
     );
     return { status: "ok", events };
   } catch (error) {
-    console.error("Events calendar read failed", error);
+    console.error(
+      "Events calendar read failed:",
+      error instanceof Error ? error.message : error
+    );
     return { status: "error", events: [] };
   }
 }

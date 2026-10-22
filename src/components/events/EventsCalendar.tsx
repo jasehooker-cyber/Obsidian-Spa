@@ -14,7 +14,10 @@ export default function EventsCalendar({ upcoming }: { upcoming: UpcomingEvents 
   const phoneHref = `tel:${BUSINESS.contact.phone.replace(/[^\d+]/g, "")}`;
 
   return (
-    <section className="section-glow relative px-6 py-12">
+    <section
+      className="section-glow relative px-6 py-12"
+      data-calendar-status={upcoming.status}
+    >
       <div className="mx-auto max-w-4xl">
         <div className="mb-10 text-center">
           <p className="font-display mb-3 text-sm tracking-[0.4em] text-gold">
