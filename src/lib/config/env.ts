@@ -59,24 +59,19 @@ export function getGoogleEnv() {
 }
 
 /**
- * The "Obsidian Events" Google Calendar. Not a secret — reading it still
- * needs the calendar to be shared with the site's service account.
+ * The "Obsidian Events" Google Calendar. It is public in Google and read
+ * through its public iCal feed, so no credentials are involved.
  * GOOGLE_EVENTS_CALENDAR_ID overrides it, e.g. to point a preview elsewhere.
  */
 export const EVENTS_CALENDAR_ID =
   "c_7fe9597f7118d7e4469c93fb7c235be27161617b6daadde496a2f89718ec08a5@group.calendar.google.com";
 
-/**
- * The public events calendar (classes, workshops). Deliberately a separate
- * calendar from GOOGLE_CALENDAR_ID: everything on it is shown on the website.
- */
+/** The public events calendar (classes, workshops). */
 export function getEventsCalendarEnv() {
-  const google = getGoogleEnv();
   return {
     calendarId: (
       process.env.GOOGLE_EVENTS_CALENDAR_ID || EVENTS_CALENDAR_ID
     ).trim(),
-    authConfigured: google.wifConfigured || google.privateKeyConfigured,
   };
 }
 

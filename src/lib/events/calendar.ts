@@ -1,19 +1,20 @@
+import ICAL from "ical.js";
 import { BUSINESS } from "@/lib/config/business-rules";
 import { getEventsCalendarEnv } from "@/lib/config/env";
-import {
-  listCalendarEvents,
-  type GoogleCalendarEvent,
-} from "@/lib/google/server";
 
 /**
- * The public events calendar: classes and workshops read from a dedicated
- * Google Calendar (GOOGLE_EVENTS_CALENDAR_ID), never the bookings calendar.
- * Everything on that calendar is shown publicly — its title, time,
- * location and description — so client appointments must not live there.
+ * The public events calendar: classes and workshops read from the "Obsidian
+ * Events" Google Calendar, never the bookings calendar. That calendar is set
+ * to public in Google, so it is read from Google's public iCal feed with no
+ * credentials. Everything on it — title, time, location, description — is
+ * shown on the website, so client appointments must not live there.
  */
 
 /** How far ahead the Events page looks. */
 export const EVENTS_HORIZON_DAYS = 120;
+
+/** Safety cap when expanding a repeating event. */
+const MAX_OCCURRENCES_PER_EVENT = 500;
 
 export interface PublicEvent {
   id: string;
@@ -66,52 +67,117 @@ export function plainText(html: string): string {
     .trim();
 }
 
-/** A calendar entry as the website shows it, or null if it should not show. */
-export function toPublicEvent(event: GoogleCalendarEvent): PublicEvent | null {
-  if (event.status === "cancelled") return null;
-  const title = event.summary?.trim();
-  if (!title) return null;
+/** The public iCal feed Google serves for a public calendar. */
+export function publicFeedUrl(calendarId: string): string {
+  return `https://calendar.google.com/calendar/ical/${encodeURIComponent(
+    calendarId
+  )}/public/basic.ics`;
+}
 
-  const allDay = !event.start?.dateTime && !!event.start?.date;
-  const start = event.start?.dateTime ?? event.start?.date;
-  const end = event.end?.dateTime ?? event.end?.date ?? start;
-  if (!start || !end) return null;
+function pad(n: number): string {
+  return String(n).padStart(2, "0");
+}
 
-  return {
-    id: event.id,
-    title,
-    description: plainText(event.description ?? ""),
-    location: event.location?.trim() ?? "",
-    start,
-    end,
-    allDay,
+/** `YYYY-MM-DD` for an all-day date; an ISO instant for a timed one. */
+function stamp(time: ICAL.Time): string {
+  return time.isDate
+    ? `${time.year}-${pad(time.month)}-${pad(time.day)}`
+    : time.toJSDate().toISOString();
+}
+
+function isCancelled(event: ICAL.Event): boolean {
+  const status = event.component.getFirstPropertyValue("status");
+  return typeof status === "string" && status.toUpperCase() === "CANCELLED";
+}
+
+function text(event: ICAL.Event, name: string): string {
+  const value = event.component.getFirstPropertyValue(name);
+  return typeof value === "string" ? value : "";
+}
+
+/**
+ * Every occurrence that overlaps [from, to), from an iCal feed. Repeating
+ * events are expanded, edited and cancelled occurrences are honoured, and
+ * times are converted using the time zones the feed itself defines.
+ */
+export function parseIcsFeed(ics: string, from: Date, to: Date): PublicEvent[] {
+  const root = new ICAL.Component(ICAL.parse(ics));
+  for (const zone of root.getAllSubcomponents("vtimezone")) {
+    ICAL.TimezoneService.register(zone);
+  }
+
+  const masters = new Map<string, ICAL.Event>();
+  const exceptions: ICAL.Event[] = [];
+  for (const component of root.getAllSubcomponents("vevent")) {
+    const event = new ICAL.Event(component);
+    if (event.isRecurrenceException()) exceptions.push(event);
+    else masters.set(event.uid, event);
+  }
+  for (const exception of exceptions) {
+    masters.get(exception.uid)?.relateException(exception);
+  }
+
+  const fromMs = from.getTime();
+  const toMs = to.getTime();
+  const out: PublicEvent[] = [];
+
+  const keep = (item: ICAL.Event, start: ICAL.Time, end: ICAL.Time) => {
+    if (isCancelled(item)) return;
+    const title = item.summary?.trim();
+    if (!title) return;
+    const startMs = start.toJSDate().getTime();
+    const endMs = end.toJSDate().getTime();
+    if (endMs <= fromMs || startMs >= toMs) return;
+    out.push({
+      id: `${item.uid}:${stamp(start)}`,
+      title,
+      description: plainText(text(item, "description")),
+      location: text(item, "location").trim(),
+      start: stamp(start),
+      end: stamp(end),
+      allDay: start.isDate,
+    });
   };
+
+  for (const event of masters.values()) {
+    if (!event.isRecurring()) {
+      keep(event, event.startDate, event.endDate);
+      continue;
+    }
+    const iterator = event.iterator();
+    for (let i = 0; i < MAX_OCCURRENCES_PER_EVENT; i++) {
+      const next = iterator.next();
+      if (!next || next.toJSDate().getTime() >= toMs) break;
+      const details = event.getOccurrenceDetails(next);
+      keep(details.item, details.startDate, details.endDate);
+    }
+  }
+
+  return sortEvents(out);
 }
 
 /** Upcoming events from the events calendar, soonest first. */
 export async function getUpcomingEvents(
   now: Date = new Date()
 ): Promise<UpcomingEvents> {
-  const { calendarId, authConfigured } = getEventsCalendarEnv();
-  if (!calendarId || !authConfigured) {
-    console.warn(
-      `Events calendar not read: ${!calendarId ? "no calendar id" : "Google auth is not configured in this environment"}`
-    );
+  const { calendarId } = getEventsCalendarEnv();
+  if (!calendarId) {
+    console.warn("Events calendar not read: no calendar id");
     return { status: "unconfigured", events: [] };
   }
 
   try {
-    const raw = await listCalendarEvents({
-      calendarId,
-      timeMin: now.toISOString(),
-      timeMax: new Date(
-        now.getTime() + EVENTS_HORIZON_DAYS * 24 * 60 * 60 * 1000
-      ).toISOString(),
+    const res = await fetch(publicFeedUrl(calendarId), {
+      next: { revalidate: 300 },
     });
-    const events = sortEvents(
-      raw
-        .map(toPublicEvent)
-        .filter((event): event is PublicEvent => event !== null)
+    if (!res.ok) {
+      // 404 here means the calendar is not set to public in Google.
+      throw new Error(`public feed returned ${res.status}`);
+    }
+    const events = parseIcsFeed(
+      await res.text(),
+      now,
+      new Date(now.getTime() + EVENTS_HORIZON_DAYS * 24 * 60 * 60 * 1000)
     );
     return { status: "ok", events };
   } catch (error) {

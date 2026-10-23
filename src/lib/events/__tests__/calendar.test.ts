@@ -1,57 +1,181 @@
 import { describe, expect, it } from "vitest";
-import type { GoogleCalendarEvent } from "@/lib/google/server";
 import {
   dateBadge,
   groupByMonth,
   longWhen,
+  parseIcsFeed,
   plainText,
-  sortEvents,
+  publicFeedUrl,
   timeLabel,
-  toPublicEvent,
   type PublicEvent,
 } from "@/lib/events/calendar";
 
-const timed = (
-  id: string,
-  start: string,
-  end: string,
-  extra: Partial<GoogleCalendarEvent> = {}
-): GoogleCalendarEvent => ({
-  id,
-  summary: `Class ${id}`,
-  start: { dateTime: start },
-  end: { dateTime: end },
-  ...extra,
+/** Wraps VEVENTs in the calendar envelope and time zone Google's feed uses. */
+function feed(...events: string[]): string {
+  return [
+    "BEGIN:VCALENDAR",
+    "PRODID:-//Google Inc//Google Calendar 70.9054//EN",
+    "VERSION:2.0",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "X-WR-CALNAME:Obsidian Events",
+    "X-WR-TIMEZONE:America/New_York",
+    "BEGIN:VTIMEZONE",
+    "TZID:America/New_York",
+    "BEGIN:DAYLIGHT",
+    "TZOFFSETFROM:-0500",
+    "TZOFFSETTO:-0400",
+    "TZNAME:EDT",
+    "DTSTART:19700308T020000",
+    "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU",
+    "END:DAYLIGHT",
+    "BEGIN:STANDARD",
+    "TZOFFSETFROM:-0400",
+    "TZOFFSETTO:-0500",
+    "TZNAME:EST",
+    "DTSTART:19701101T020000",
+    "RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU",
+    "END:STANDARD",
+    "END:VTIMEZONE",
+    ...events,
+    "END:VCALENDAR",
+    "",
+  ].join("\r\n");
+}
+
+const vevent = (...lines: string[]) =>
+  ["BEGIN:VEVENT", "DTSTAMP:20261022T212653Z", ...lines, "END:VEVENT"].join("\r\n");
+
+const FROM = new Date("2026-10-22T00:00:00Z");
+const TO = new Date("2027-02-19T00:00:00Z");
+
+describe("parseIcsFeed", () => {
+  it("reads the real 'tester' event as Sat Oct 24, 5–6 PM New York time", () => {
+    const [event] = parseIcsFeed(
+      feed(
+        vevent(
+          "DTSTART:20261024T210000Z",
+          "DTEND:20261024T220000Z",
+          "UID:1j6gto7opg4ghf200sb6f6j9be@google.com",
+          "DESCRIPTION:",
+          "LOCATION:",
+          "STATUS:CONFIRMED",
+          "SUMMARY:tester"
+        )
+      ),
+      FROM,
+      TO
+    );
+    expect(event.title).toBe("tester");
+    expect(dateBadge(event)).toEqual({ weekday: "SAT", day: "24", month: "OCT" });
+    expect(timeLabel(event)).toBe("5:00 – 6:00 PM");
+    expect(event.description).toBe("");
+    expect(event.location).toBe("");
+  });
+
+  it("expands a weekly class across the clock change, honouring skipped, moved and cancelled weeks", () => {
+    const events = parseIcsFeed(
+      feed(
+        vevent(
+          "DTSTART;TZID=America/New_York:20261020T190000",
+          "DTEND;TZID=America/New_York:20261020T200000",
+          "RRULE:FREQ=WEEKLY;COUNT=5",
+          "EXDATE;TZID=America/New_York:20261027T190000",
+          "UID:yoga@google.com",
+          "LOCATION:The Studio",
+          "SUMMARY:Slow Strength Yoga"
+        ),
+        // Nov 3 moved to 8 PM.
+        vevent(
+          "RECURRENCE-ID;TZID=America/New_York:20261103T190000",
+          "DTSTART;TZID=America/New_York:20261103T200000",
+          "DTEND;TZID=America/New_York:20261103T210000",
+          "UID:yoga@google.com",
+          "SUMMARY:Slow Strength Yoga"
+        ),
+        // Nov 10 cancelled.
+        vevent(
+          "RECURRENCE-ID;TZID=America/New_York:20261110T190000",
+          "DTSTART;TZID=America/New_York:20261110T190000",
+          "DTEND;TZID=America/New_York:20261110T200000",
+          "STATUS:CANCELLED",
+          "UID:yoga@google.com",
+          "SUMMARY:Slow Strength Yoga"
+        )
+      ),
+      FROM,
+      TO
+    );
+
+    expect(
+      events.map((e) => [dateBadge(e).month, dateBadge(e).day, timeLabel(e)])
+    ).toEqual([
+      // Oct 20 is before the window; Oct 27 skipped; Nov 10 cancelled.
+      ["NOV", "3", "8:00 – 9:00 PM"],
+      // After clocks go back on Nov 1 — still 7 PM in New York.
+      ["NOV", "17", "7:00 – 8:00 PM"],
+    ]);
+  });
+
+  it("keeps all-day events as calendar days", () => {
+    const [event] = parseIcsFeed(
+      feed(
+        vevent(
+          "DTSTART;VALUE=DATE:20261114",
+          "DTEND;VALUE=DATE:20261115",
+          "UID:open@google.com",
+          "SUMMARY:Open Studio Day"
+        )
+      ),
+      FROM,
+      TO
+    );
+    expect(event.allDay).toBe(true);
+    expect(timeLabel(event)).toBe("All day");
+    expect(dateBadge(event)).toEqual({ weekday: "SAT", day: "14", month: "NOV" });
+  });
+
+  it("turns description markup and escapes into plain text", () => {
+    const [event] = parseIcsFeed(
+      feed(
+        vevent(
+          "DTSTART:20261031T150000Z",
+          "DTEND:20261031T160000Z",
+          "UID:acu@google.com",
+          "SUMMARY:Group Acupuncture",
+          "DESCRIPTION:Recline and let an hour pass.<br>All welcome\\, no experience n",
+          " eeded &amp; mats provided."
+        )
+      ),
+      FROM,
+      TO
+    );
+    expect(event.description).toBe(
+      "Recline and let an hour pass.\nAll welcome, no experience needed & mats provided."
+    );
+  });
+
+  it("drops past, too-far-ahead, cancelled and untitled events", () => {
+    const events = parseIcsFeed(
+      feed(
+        vevent("DTSTART:20261001T230000Z", "DTEND:20261002T000000Z", "UID:past@g", "SUMMARY:Past"),
+        vevent("DTSTART:20270401T230000Z", "DTEND:20270402T000000Z", "UID:far@g", "SUMMARY:Far"),
+        vevent("DTSTART:20261028T230000Z", "DTEND:20261029T000000Z", "UID:c@g", "STATUS:CANCELLED", "SUMMARY:Called off"),
+        vevent("DTSTART:20261029T230000Z", "DTEND:20261030T000000Z", "UID:u@g", "SUMMARY:  "),
+        vevent("DTSTART:20261030T230000Z", "DTEND:20261031T000000Z", "UID:ok@g", "SUMMARY:Kept")
+      ),
+      FROM,
+      TO
+    );
+    expect(events.map((e) => e.title)).toEqual(["Kept"]);
+  });
 });
 
-const pub = (e: GoogleCalendarEvent) => toPublicEvent(e) as PublicEvent;
-
-describe("toPublicEvent", () => {
-  it("keeps the title, location and a plain-text description", () => {
-    const event = pub(
-      timed("y", "2026-10-24T23:30:00Z", "2026-10-25T00:30:00Z", {
-        summary: "  Yoga  ",
-        location: " Studio ",
-        description: "Bring a mat.<br>No experience needed &amp; all welcome.",
-      })
+describe("publicFeedUrl", () => {
+  it("builds Google's public iCal address for the calendar", () => {
+    expect(publicFeedUrl("c_abc@group.calendar.google.com")).toBe(
+      "https://calendar.google.com/calendar/ical/c_abc%40group.calendar.google.com/public/basic.ics"
     );
-    expect(event).toMatchObject({
-      title: "Yoga",
-      location: "Studio",
-      description: "Bring a mat.\nNo experience needed & all welcome.",
-      allDay: false,
-    });
-  });
-
-  it("drops cancelled and untitled entries", () => {
-    expect(toPublicEvent(timed("c", "2026-10-24T23:30:00Z", "2026-10-25T00:30:00Z", { status: "cancelled" }))).toBeNull();
-    expect(toPublicEvent(timed("u", "2026-10-24T23:30:00Z", "2026-10-25T00:30:00Z", { summary: "  " }))).toBeNull();
-  });
-
-  it("recognises all-day events", () => {
-    const event = pub({ id: "a", summary: "Open Studio", start: { date: "2026-11-07" }, end: { date: "2026-11-08" } });
-    expect(event.allDay).toBe(true);
-    expect(event.start).toBe("2026-11-07");
   });
 });
 
@@ -63,55 +187,45 @@ describe("plainText", () => {
   });
 });
 
+const timed = (id: string, start: string, end: string): PublicEvent => ({
+  id, title: `Class ${id}`, description: "", location: "", start, end, allDay: false,
+});
+const allDay = (id: string, start: string, end: string): PublicEvent => ({
+  id, title: `Day ${id}`, description: "", location: "", start, end, allDay: true,
+});
+
 describe("display in New York time", () => {
-  // 23:30 UTC on Oct 24 is 7:30 PM EDT, still Saturday Oct 24 in New York.
-  const evening = pub(timed("e", "2026-10-24T23:30:00Z", "2026-10-25T01:00:00Z"));
+  const evening = timed("e", "2026-10-24T23:30:00.000Z", "2026-10-25T01:00:00.000Z");
 
   it("badges the New York date, not the UTC date", () => {
     expect(dateBadge(evening)).toEqual({ weekday: "SAT", day: "24", month: "OCT" });
   });
 
-  it("shows the time range once-per-period", () => {
+  it("shows the period once when both ends share it", () => {
     expect(timeLabel(evening)).toBe("7:30 – 9:00 PM");
-    const midday = pub(timed("m", "2026-10-24T15:30:00Z", "2026-10-24T17:00:00Z"));
-    expect(timeLabel(midday)).toBe("11:30 AM – 1:00 PM");
+    expect(timeLabel(timed("m", "2026-10-24T15:30:00Z", "2026-10-24T17:00:00Z"))).toBe(
+      "11:30 AM – 1:00 PM"
+    );
   });
 
-  it("follows the switch from daylight to standard time", () => {
-    // Nov 7 2026 is after DST ends: 7 PM EST is 00:00 UTC the next day.
-    const winter = pub(timed("w", "2026-11-08T00:00:00Z", "2026-11-08T01:00:00Z"));
-    expect(timeLabel(winter)).toBe("7:00 – 8:00 PM");
-    expect(dateBadge(winter).day).toBe("7");
-  });
-
-  it("labels all-day and multi-day events", () => {
-    const one = pub({ id: "1", summary: "x", start: { date: "2026-11-07" }, end: { date: "2026-11-08" } });
-    const three = pub({ id: "3", summary: "x", start: { date: "2026-11-07" }, end: { date: "2026-11-10" } });
-    const across = pub({ id: "4", summary: "x", start: { date: "2026-10-30" }, end: { date: "2026-11-02" } });
-    expect(timeLabel(one)).toBe("All day");
-    expect(timeLabel(three)).toBe("Nov 7 – 9");
-    expect(timeLabel(across)).toBe("Oct 30 – Nov 1");
-    expect(dateBadge(one)).toEqual({ weekday: "SAT", day: "7", month: "NOV" });
+  it("labels multi-day all-day events", () => {
+    expect(timeLabel(allDay("3", "2026-11-07", "2026-11-10"))).toBe("Nov 7 – 9");
+    expect(timeLabel(allDay("4", "2026-10-30", "2026-11-02"))).toBe("Oct 30 – Nov 1");
   });
 
   it("gives the reservation email a full date and time", () => {
     expect(longWhen(evening)).toBe("Saturday, October 24, 2026, 7:30 – 9:00 PM");
   });
-});
 
-describe("grouping and order", () => {
-  it("groups by New York month and sorts all-day before timed on the same day", () => {
-    const events = sortEvents([
-      pub(timed("nov-eve", "2026-11-03T00:30:00Z", "2026-11-03T01:30:00Z")), // Nov 2, 7:30 PM EST
-      pub({ id: "nov-all", summary: "x", start: { date: "2026-11-02" }, end: { date: "2026-11-03" } }),
-      pub(timed("oct-late", "2026-11-01T02:00:00Z", "2026-11-01T03:00:00Z")), // Oct 31, 10 PM EDT
+  it("groups by the New York month", () => {
+    // 10 PM Oct 31 New York is already Nov 1 in UTC.
+    const groups = groupByMonth([
+      timed("oct-late", "2026-11-01T02:00:00Z", "2026-11-01T03:00:00Z"),
+      allDay("nov", "2026-11-02", "2026-11-03"),
     ]);
-    expect(events.map((e) => e.id)).toEqual(["oct-late", "nov-all", "nov-eve"]);
-
-    const groups = groupByMonth(events);
     expect(groups.map((g) => [g.label, g.events.map((e) => e.id)])).toEqual([
       ["October 2026", ["oct-late"]],
-      ["November 2026", ["nov-all", "nov-eve"]],
+      ["November 2026", ["nov"]],
     ]);
   });
 });
